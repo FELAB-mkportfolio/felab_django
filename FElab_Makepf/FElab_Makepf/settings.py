@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'FElab_app',
 ]
 
 MIDDLEWARE = [
@@ -75,10 +76,15 @@ WSGI_APPLICATION = 'FElab_Makepf.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'teststocks',
+        'USER' : 'root',
+        'PASSWORD' : 'su970728!',
+        'HOST' : 'localhost',
+        'PORT' : '3306',
     }
 }
+DATABASE_OPTIONS = {'charset' : 'utf-8'}
 
 
 # Password validation
