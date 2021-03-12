@@ -1,6 +1,11 @@
-﻿{% extends 'FElab_app/base.html' %}
+﻿
+{% extends 'FElab_app/base.html' %}
 
 {% block content %}
+{% load static %}
+<head>
+    <script type='text/javascript' src="{% static 'js/portfolio_optimize.js' %}"></script>
+</head>
 <div class="header" style="height:300px;position:relative;display:flex;">
     <div style="width:30%;display:flex;justify-content:center;">
         <image src="/static/images/user.png" style="width:200px;height:200px;top:50%;position:absolute;transform:translateY(-50%);margin-left: 30px;"></image>
@@ -16,18 +21,13 @@
 <div style="align-items: center;display:flex;justify-content:space-between;margin: 0 30px; padding-top:80px;">
     <div class="GroupWrapper">
         <div class="contentsBox" style="height: 500px;width:400px;cursor:default;">
-            <div class="searchBox">
-                <select name="selectBox">
-                    <option selected value="name">종목명</option>
-                    <option value="code">종목코드</option>
+            <div class="ui-widget">
+                <select id="combobox">
+                    
                 </select>
-                <input type="text" style="border:none;border-bottom:1px solid #eeeeee" />
-
             </div>
             <div class="assetsBox">
-                {% for item in dbdata %}
-                <p>{{ item }}</p>
-                {% endfor %}
+                
             </div>
             
         </div>
@@ -35,4 +35,3 @@
 
 </div>
 {% endblock %}
-

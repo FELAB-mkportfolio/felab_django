@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.http import HttpResponse,JsonResponse
+import json
 import pymysql
 #-*-coding:utf-8 -*-
 # Create your views here.
@@ -7,9 +9,11 @@ def home(request):
     return render(request, 'FElab_app/home.html',{})
 #-------------------------------#
 
-#포트폴리오 최적화 페이지
-def portfolio_optimize(request):
-    #DB정보
+#ajax 통신 (디비 내용 json으로 response)
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def ajax_db_return(request):
+    #db 
     host= "localhost"
     user= "root"
     password = "su970728!"
@@ -26,11 +30,11 @@ def portfolio_optimize(request):
     curs.close()
     conn.close()
 
-    #프론트에 보낼 내용들
-    context = {
-        'dbdata' : data,
-    }
-    return render(request, 'FElab_app/portfolio_optimize.html',context)
+    return JsonResponse(data, safe=False)
+
+#포트폴리오 최적화 페이지
+def portfolio_optimize(request):
+    return render(request, 'FElab_app/portfolio_optimize.html',{})
 #--------------------------------#
 
 #포트폴리오 백테스트 페이지
