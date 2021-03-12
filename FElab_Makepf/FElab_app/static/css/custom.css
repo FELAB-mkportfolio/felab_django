@@ -5,6 +5,7 @@
 }
 body {
     background-color: #f4f9f9;
+    font-family: 'Nanum Gothic', sans-serif;
 }
 #wrap {
     background-color: #f4f9f9;
@@ -104,6 +105,9 @@ body {
     padding-bottom: 20px;
 
 }
+.graphContainer{
+    width: 80%;
+}
 .contentsBox {
     margin-top: 20px;
     margin: 0 5px;
@@ -159,10 +163,39 @@ select {
 .selectBox{
     border:0px;
 }
-.assetsBox{
-    height:440px;
-    width:400px;
-    overflow:scroll;
+.searchBox{
+    margin: 0 20px;
+}
+#comboBox{
+    height:30px;
+    border:none;
+    border-bottom: 1px solid #8C0000
+}
+.assetBox{
+    text-align:center;
+}
+
+#chartdiv {
+    width: 100%;
+    height: 500px;
+    max-width: 100%;
+}
+#controls {
+    overflow: hidden;
+    padding-bottom: 3px;
+}
+input[class=amcharts-input]{
+    border:none;
+    border-bottom: 1px solid #8C0000;
+    margin: 5px 0;
+}
+button[class=amcharts-input]{
+    border-radius: 5px;
+    width: 60px;
+    border:none;
+    margin: 5px 0;
+    background-color: #E4FBFF
+
 }
 footer{
     margin-top:50px;

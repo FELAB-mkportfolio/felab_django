@@ -18,18 +18,38 @@
     </div>
 </div>
 
-<div style="align-items: center;display:flex;justify-content:space-between;margin: 0 30px; padding-top:80px;">
-    <div class="GroupWrapper">
-        <div class="contentsBox" style="height: 500px;width:400px;cursor:default;">
-            <div class="ui-widget">
-                <select id="combobox">
-                    
-                </select>
-            </div>
-            <div class="assetsBox">
-                
-            </div>
+<div style="display:flex;justify-content:space-between;margin: 0 30px; padding-top:80px;">
+    <div class="contentsBox" style="width:300px;cursor:default;margin-top:0px;text-align:center;">
+        <h3 style="margin-top:10px;border-bottom:1px solid #eeeeee;">담긴 종목</h3>
+
+        <div id="assetsBox">
             
+        </div>
+
+    </div>
+    
+    <div class="graphContainer">
+        <div class="searchBox">
+            <input id="comboBox" onfocus="if(this.value == '종목 검색') { this.value = ''; }" value="종목 검색" />
+            <image src="/static/images/loupe.png" style="width:30px;height:30px;"></image>
+            <button id="putin_btn"style="border-radius:5px;width:60px;background-color:#8C0000;height:30px;bottom:0;border:none;color:white;">담기</button>
+        </div>
+        <div class="contentsBox" style="height: 500px;width:100%;cursor:default;margin: 0 20px;overflow:scroll">
+            <div id="controls" style="width: 100%; overflow: hidden;">
+                <div style="float: left; margin-left: 15px;">
+                    From: <input type="text" id="fromfield" class="amcharts-input" />
+                    To: <input type="text" id="tofield" class="amcharts-input" />
+                </div>
+                <div style="float: right; margin-right: 15px;">
+                    <button id="b1m" class="amcharts-input">1m</button>
+                    <button id="b3m" class="amcharts-input">3m</button>
+                    <button id="b6m" class="amcharts-input">6m</button>
+                    <button id="b1y" class="amcharts-input">1y</button>
+                    <button id="bytd" class="amcharts-input">YTD</button>
+                    <button id="bmax" class="amcharts-input">MAX</button>
+                </div>
+            </div>
+            <div id="chartdiv"></div>
         </div>
     </div>
 

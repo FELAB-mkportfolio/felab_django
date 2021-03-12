@@ -19,7 +19,12 @@ def ajax_db_return(request):
     password = "su970728!"
     db = "teststocks"
     conn = pymysql.connect(host=host, user=user, password=password, db=db)
-    sql = "SHOW TABLES;"
+    
+    #종목코드를 입력받으면 시세를 반환하고 아무것도 없으면 단순 종목 이름들만 반환한다.
+    if 'stock_code' in request.POST:
+        sql = "SELECT * FROM "+ request.POST['stock_code']+";"
+    else:
+        sql = "SHOW TABLES;"
 
     #sql문 실행/ 데이터 받기
     curs = conn.cursor()
