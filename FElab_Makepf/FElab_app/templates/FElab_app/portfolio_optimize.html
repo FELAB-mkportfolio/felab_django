@@ -1,0 +1,37 @@
+﻿
+{% extends 'FElab_app/base.html' %}
+
+{% block content %}
+{% load static %}
+<head>
+    <script type='text/javascript' src="{% static 'js/portfolio_optimize.js' %}"></script>
+</head>
+<div class="header" style="height:300px;position:relative;display:flex;">
+    <div style="width:30%;display:flex;justify-content:center;">
+        <image src="/static/images/user.png" style="width:200px;height:200px;top:50%;position:absolute;transform:translateY(-50%);margin-left: 30px;"></image>
+    </div>
+    <div class="User_info" style="color:white; font-family: 'Nanum Gothic', sans-serif;">
+        <div style="position:relative; top:50%;transform:translateY(-50%);">
+            <h2 style="width:100%;">USER</h2>
+            <p style="width:100%;">님의 포트폴리오</p>
+        </div>
+    </div>
+</div>
+
+<div style="align-items: center;display:flex;justify-content:space-between;margin: 0 30px; padding-top:80px;">
+    <div class="GroupWrapper">
+        <div class="contentsBox" style="height: 500px;width:400px;cursor:default;">
+            <div class="ui-widget">
+                <select id="combobox">
+                    
+                </select>
+            </div>
+            <div class="assetsBox">
+                
+            </div>
+            
+        </div>
+    </div>
+
+</div>
+{% endblock %}
