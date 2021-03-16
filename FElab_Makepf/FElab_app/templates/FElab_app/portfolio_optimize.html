@@ -17,24 +17,43 @@
         </div>
     </div>
 </div>
+    <div style="display:flex;justify-content:center; padding:40px;background-color: white;border-bottom: 1px solid #eeeeee;margin:0 40px;">
+    <div class="commentBox" style="width:90%;position:relative;">
+        <span style='font-size: 40px;color:#46b3e6;'>포트폴리오 이론</span>은 해리 마코위츠(Harry Max Markowitz)에 의해 체계화된 이론으로, 자산을 분산투자하여 포트폴리오를 만들게 되면 분산투자 전보다 위험을 감소시킬 수 있다는 이론입니다.
+        투자자산의 가치는 그 투자로부터 기대되는 수익률이 클수록 커지며, 반면에 위험이 클수록 작아집니다. 지배 원리란 같은 위험 하에서는 기대 수익률이 높은 것이, 같은 기대수익률 하에서는 위험이 작은 것이 그렇지 않은 투자대상을 지배한다는 것입니다. 이 지배원리에 입각하여 선택되는 투자안이 <span style='font-size: 40px;color:#46b3e6;'>효율적 투자대상</span>이 됩니다.
+    </div>
+</div>
+<div style="display:flex;justify-content:space-between;margin: 0 30px; padding : 80px 0;">
+    <div style="width:400px;height:540px;">
+        <div class="contentsBox" style="width:100%;cursor:default;margin-top:0px;text-align:center;padding:0;">
+            <h3 style="margin-top:10px;border-bottom:1px solid #eeeeee;">담긴 종목</h3>
+            <div id="assetsBox">
+            </div>
 
-<div style="display:flex;justify-content:space-between;margin: 0 30px; padding-top:80px;">
-    <div class="contentsBox" style="width:300px;cursor:default;margin-top:0px;text-align:center;">
-        <h3 style="margin-top:10px;border-bottom:1px solid #eeeeee;">담긴 종목</h3>
-
-        <div id="assetsBox">
-            
         </div>
-
+        <div class="contentsBox" style="width:100%;height:260px;cursor:default;margin-top:10px;padding:0;text-align:center;">
+            <h3 style="margin-top:10px;border-bottom:1px solid #eeeeee;">INPUT</h3>
+            <p>사용할 과거 데이터 기간 설정</p>
+            <label for="from">시작</label>
+            <input type="text" class="input_date" id="from" name="from">
+            <label for="to">종료</label>
+            <input type="text" class="input_date" id="to" name="to">
+            <p style="margin-top:10px;">포트폴리오 모델</p>
+            <div>
+                <input type="radio" id="gmv" name="pf_model" value="gmv" checked /><label for="gmv">Global Minimum Variance</label>
+            </div>
+            <button id="optimize_btn" style="border-radius:5px;width:60px;background-color:#8C0000;height:30px;margin-bottom:5px;border:none;color:white;" >최적화</button>
+        </div>
     </div>
     
+
     <div class="graphContainer">
         <div class="searchBox">
             <input id="comboBox" onfocus="if(this.value == '종목 검색') { this.value = ''; }" value="종목 검색" />
             <image src="/static/images/loupe.png" style="width:30px;height:30px;"></image>
-            <button id="putin_btn"style="border-radius:5px;width:60px;background-color:#8C0000;height:30px;bottom:0;border:none;color:white;">담기</button>
+            <button id="putin_btn" style="border-radius:5px;width:60px;background-color:#8C0000;height:30px;bottom:0;border:none;color:white;">담기</button>
         </div>
-        <div class="contentsBox" style="height: 500px;width:100%;cursor:default;margin: 0 20px;overflow:scroll">
+        <div class="contentsBox" style="height: 500px;width:100%;cursor:default;margin: 0 20px;overflow-y:auto;overflow-x: hidden;">
             <div id="controls" style="width: 100%; overflow: hidden;">
                 <div style="float: left; margin-left: 15px;">
                     From: <input type="text" id="fromfield" class="amcharts-input" />
@@ -52,6 +71,22 @@
             <div id="chartdiv"></div>
         </div>
     </div>
-
 </div>
+ <div class="optimize_result" style="background-color: white;">
+     <div class="graphContainer" style="width:100%;display:flex;">
+         <div class="contentsBox" style="height: 400px;width:50%;cursor:default;margin: 0 23px;">
+             <h2>효율적 투자선</h2>
+         </div>
+         <div class="opt_report">
+             <div id="opt_report_chart"></div>
+         </div>
+
+        <button onclick="tobacktest()" id="tobacktest_btn" style="border-radius:5px;width:100px;background-color:#8C0000;height:60px;margin-bottom:5px;border:none;color:white;">
+            최적 비중으로 백테스트 하기
+        </button>
+     </div>
+</div>
+<footer>
+
+</footer>
 {% endblock %}
