@@ -224,7 +224,7 @@ select {
     width:70px;
     height:70px;
 }
-.input_date{
+.input_date, .input_amount{
     width:100px;
     border:none;
     background-color: #eeeeee;

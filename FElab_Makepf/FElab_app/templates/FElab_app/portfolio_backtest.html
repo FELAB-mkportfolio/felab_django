@@ -49,16 +49,52 @@
             <img src='/static/images/3.png' class='backtest_icon'>
         </div>
         <h3>투자 기간</h3>
+        <div>
+            <label for="from">시작</label>
+            <input type="text" class="input_date" id="from" name="from"/>
+        </div>
+        <div>
+            <label for="to">종료</label>
+            <input type="text" class="input_date" id="to" name="to"/>
+        </div>
+        <div>
+            <label for='rebalancing_month'>리밸런싱 주기</label>
+            <select id='rebalancing_month'>
+                <option value='1'>1개월</option>
+                <option value='2'>2개월</option>
+                <option value='3'>3개월</option>
+                <option value='4'>4개월</option>
+                <option value='5'>5개월</option>
+                <option value='6'>6개월</option>
+                <option value='7'>7개월</option>
+                <option value='8'>8개월</option>
+                <option value='9'>9개월</option>
+                <option value='10'>10개월</option>
+                <option value='11'>11개월</option>
+                <option value='12'>12개월</option>
+            </select>
+        </div>
+        <div>
+            <label for=''>시작 금액</label>
+            <input type='text' class='input_amount' id='start_amount'/>
+        </div>
     </div>
     <div class="backtest_step">
         <div class="iconBox">
             <img src='/static/images/4.png' class='backtest_icon'>
         </div>
         <h3>투자 전략</h3>
+        <div>
+            <label><input type='radio' name='strategy' value='GMV' checked/>GMV 포트폴리오</label>
+            <label><input type='radio' name='strategy' value='MSR'/>Maximum Sharpe ratio 포트폴리오</label>
+        </div>
     </div>
 
+    
 </div>
-
+<div style='margin-top:50px;display: flex;justify-content: center;'>
+    <button style='width:85%; height:50px;border-radius: 10px;background-color: #8C0000;border:none;color:white;' id='backtest_btn'>백테스트 시작</button>
+</div>
 <footer>
     
 </footer>

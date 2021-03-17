@@ -42,6 +42,7 @@ def ajax_db_return(request):
 
     return JsonResponse(data, safe=False)
 #포트폴리오 최적화 한 것을 ajax로 통신
+@csrf_exempt
 def ajax_portfolio_optimize_return(request):
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
     #종목코드를 입력받으면 시세를 반환하고 아무것도 없으면 단순 종목 이름들만 반환한다.
@@ -60,7 +61,18 @@ def ajax_portfolio_optimize_return(request):
     conn.close()
 
     return JsonResponse(data, safe=False)
+#ajax 백테스트
+@csrf_exempt
+def ajax_backtest(request):
+    assetnames= request.POST.getlist('assetsBox[]')
+    assetweights = request.POST.getlist('assetweights[]')
+    from_period = request.POST.get('from')
+    to_period = request.POST.get('to')
+    rebalancing_month = request.POST.get('rebalancing_month')
+    start_amount = request.POST.get('start_amount')
+    strategy = request.POST.get('strategy')
 
+    return JsonResponse(strategy, safe=False)
 #포트폴리오 최적화 페이지
 def portfolio_optimize(request):
     return render(request, 'FElab_app/portfolio_optimize.html',{})
