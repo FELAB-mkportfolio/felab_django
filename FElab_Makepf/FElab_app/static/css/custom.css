@@ -255,6 +255,20 @@ button[class=amcharts-input]{
     background-color: #E4FBFF
 
 }
+.backtest_result{
+    width:100%;
+    margin: 50px 20px;
+    display:flex;
+    justify-content: center;
+}
+.bt_left{
+    width:50%;
+    height:600px;
+}
+.bt_right{
+    width:50%;
+    height:600px;
+}
 footer{
     margin-top:50px;
     height:100px;
