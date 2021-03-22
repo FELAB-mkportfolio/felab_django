@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 db = {
         'host': "localhost",
         'user': "root",
-        'password' : "su970728!",
+        'password' : "root",
         'db_name' : "teststocks",
     }
 
