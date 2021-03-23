@@ -3,8 +3,8 @@ from django.http import HttpResponse,JsonResponse
 import json
 import pymysql
 from django.views.decorators.csrf import csrf_exempt
-
-
+from plotly.offline import plot
+from plotly.graph_objs import Scatter
 #-*-coding:utf-8 -*-
 # Create your views here.
 #db 
@@ -80,7 +80,14 @@ def portfolio_optimize(request):
 
 #포트폴리오 백테스트 페이지
 def portfolio_backtest(request):
-    return render(request, 'FElab_app/portfolio_backtest.html',{})
+    x_data = [0,1,2,3]
+    y_data = [x**2 for x in x_data]
+    
+    plot_div = plot([Scatter(x=x_data, y=y_data,
+                        mode='lines', name='test',
+                        opacity=0.8, marker_color='green')],
+               output_type='div', include_plotlyjs=False, show_link=False, link_text='')
+    return render(request, 'FElab_app/portfolio_backtest.html',context={'plot_div': plot_div})
 #--------------------------------#
 
 #텍스트 마이닝 페이지

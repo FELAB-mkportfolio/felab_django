@@ -4,6 +4,7 @@
 {% load static %}
 <head>
     <script type='text/javascript' src="{% static 'js/portfolio_backtest.js' %}"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <div class="header" style="height:300px;position:relative;display:flex;">
     <div style="width:30%;display:flex;justify-content:center;">
@@ -22,7 +23,7 @@
     평소 사용해보고 싶었던 투자전략들을 과거 데이터를 활용해서 해보는 것입니다.
     </div>
 </div>
-<div style="display:flex;justify-content:center;width:100%;height:500px;margin: 0;background-color: #fbfbfd;">
+<div style="display: flex;justify-content:center;width:100%;height:600px;margin: 0;background-color: #fbfbfd;">
     <div class="backtest_step">
         <div class="iconBox">
             <img src='/static/images/1.png' class='backtest_icon'>
@@ -89,24 +90,123 @@
             <label><input type='radio' name='strategy' value='MSR'/>Maximum Sharpe ratio 포트폴리오</label>
         </div>
     </div>
-
-    
 </div>
-<div style='margin-top:50px;display: flex;justify-content: center;'>
+<div style='display: flex;justify-content: center;background-color: #fbfbfd;'>
     <button style='width:85%; height:50px;border-radius: 10px;background-color: #8C0000;border:none;color:white;' id='backtest_btn'>백테스트 시작</button>
 </div>
 
+<div class='commentBox' style='margin:100px 0px 0px 0px;padding: 0 0 0 20px; text-align: left;'>
+    <h2>백테스트 결과</h2><span>투자기간..(2020-01-01 ~ 2021-01-01)</span>
+</div>
 <div class='backtest_result'>
     <div class='bt_left'>
-
+        <div class='graph_block'>
+            <div class='graph_title'>
+                <h2>GMV Portfolio</h2>
+                
+            </div>
+            <div class='graph_comment'>
+                <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                     when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+                     It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
+                     It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
+            </div>
+        </div>
+        <div class='graph_block'>
+            <div class='graph_title'>
+                <h2>Value Chart</h2>
+            </div>
+            <div class='graph_comment'>
+                <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                     when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+                     It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
+                     It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
+            </div>
+            <div class='graph_field'>
+                {% autoescape off %}
+                {{ plot_div }}
+                {% endautoescape %}
+            </div>
+        </div>
+        <div class='graph_block'>
+            <div class='graph_title'>
+                <h2>Return Chart</h2>
+            </div>
+            <div class='graph_comment'>
+                <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                     when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+                     It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
+                     It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
+            </div>
+            <div class='graph_field'>
+                {% autoescape off %}
+                {{ plot_div }}
+                {% endautoescape %}
+            </div>
+        </div>
     </div>
     <div class='bt_right'>
-        
+        <div class='graph_block'>
+            <div class='graph_title'>
+                <h2>DrawDown Chart</h2>
+            </div>
+            <div class='graph_comment'>
+                <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+                        It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
+                        It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
+            </div>
+            <div class='graph_field'>
+                {% autoescape off %}
+                {{ plot_div }}
+                {% endautoescape %}
+            </div>
+        </div>
+        <div class='graph_block'>
+            <div class='graph_title'>
+                <h2>Histogram</h2>
+            </div>
+            <div class='graph_comment'>
+                <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+                        It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
+                        It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
+            </div>
+            <div class='graph_field'>
+                {% autoescape off %}
+                {{ plot_div }}
+                {% endautoescape %}
+            </div>
+
+        </div>
+        <div class='graph_block'>
+            <div class='graph_title'>
+                <h2>Indicators</h2>
+            </div>
+            <div class='graph_comment'>
+                <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+                        It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
+                        It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
+            </div>
+            <div class='graph_field'>
+                {% autoescape off %}
+                {{ plot_div }}
+                {% endautoescape %}
+            </div>
+            
+        </div>
     </div>
 </div>
 
 <footer>
-    
+ 
 </footer>
 {% endblock %}
 
