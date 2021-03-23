@@ -3,8 +3,8 @@ from django.http import HttpResponse,JsonResponse
 import json
 import pymysql
 from django.views.decorators.csrf import csrf_exempt
-
-
+from plotly.offline import plot
+from plotly.graph_objs import Scatter
 #-*-coding:utf-8 -*-
 # Create your views here.
 #db 
@@ -42,6 +42,7 @@ def ajax_db_return(request):
 
     return JsonResponse(data, safe=False)
 #포트폴리오 최적화 한 것을 ajax로 통신
+@csrf_exempt
 def ajax_portfolio_optimize_return(request):
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
     #종목코드를 입력받으면 시세를 반환하고 아무것도 없으면 단순 종목 이름들만 반환한다.
@@ -60,7 +61,18 @@ def ajax_portfolio_optimize_return(request):
     conn.close()
 
     return JsonResponse(data, safe=False)
+#ajax 백테스트
+@csrf_exempt
+def ajax_backtest(request):
+    assetnames= request.POST.getlist('assetsBox[]')
+    assetweights = request.POST.getlist('assetweights[]')
+    from_period = request.POST.get('from')
+    to_period = request.POST.get('to')
+    rebalancing_month = request.POST.get('rebalancing_month')
+    start_amount = request.POST.get('start_amount')
+    strategy = request.POST.get('strategy')
 
+    return JsonResponse(strategy, safe=False)
 #포트폴리오 최적화 페이지
 def portfolio_optimize(request):
     return render(request, 'FElab_app/portfolio_optimize.html',{})
@@ -68,7 +80,14 @@ def portfolio_optimize(request):
 
 #포트폴리오 백테스트 페이지
 def portfolio_backtest(request):
-    return render(request, 'FElab_app/portfolio_backtest.html',{})
+    x_data = [0,1,2,3]
+    y_data = [x**2 for x in x_data]
+    
+    plot_div = plot([Scatter(x=x_data, y=y_data,
+                        mode='lines', name='test',
+                        opacity=0.8, marker_color='green')],
+               output_type='div', include_plotlyjs=False, show_link=False, link_text='')
+    return render(request, 'FElab_app/portfolio_backtest.html',context={'plot_div': plot_div})
 #--------------------------------#
 
 #텍스트 마이닝 페이지

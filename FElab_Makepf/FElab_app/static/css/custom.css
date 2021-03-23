@@ -203,7 +203,7 @@ select {
 }
 .backtest_step{
     width: 20%;
-    height: 100%;
+    height: 80%;
     position:relative;
     text-align: center;
     box-shadow : 1px 1px 1px 1px gray;
@@ -224,7 +224,7 @@ select {
     width:70px;
     height:70px;
 }
-.input_date{
+.input_date, .input_amount{
     width:100px;
     border:none;
     background-color: #eeeeee;
@@ -254,6 +254,26 @@ button[class=amcharts-input]{
     margin: 5px 0;
     background-color: #E4FBFF
 
+}
+.backtest_result{
+    width:100%;
+    margin: 0 20px;
+    display:flex;
+    justify-content: center;
+    font-family: 'AppleSDGothicNeoM';
+}
+.bt_left{
+    width:50%;
+}
+.bt_right{
+    width:50%;
+}
+.graph_block{
+    height:auto;
+    margin: 50px 10px;
+}
+.graph_block > .graph_field{
+    height:500px;
 }
 footer{
     margin-top:50px;
