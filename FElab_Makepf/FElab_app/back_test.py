@@ -13,7 +13,7 @@ from scipy.stats import norm
 import pymysql
 
 class back_test:
-    asdasasd
+    
     # 단순 일별수익률의 평균을 *365하여 연간수익률을 산출
     def Arithmetic_Mean_Annual(input,ret) :
         
