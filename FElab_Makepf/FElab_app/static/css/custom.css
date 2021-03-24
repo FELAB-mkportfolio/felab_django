@@ -267,6 +267,7 @@ button[class=amcharts-input]{
 }
 .optimize_result{
     margin-top:50px;
+    display:flex;
 }
 .bt_left{
     width:50%;

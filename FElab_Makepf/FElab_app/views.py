@@ -50,9 +50,9 @@ def ajax_portfolio_optimize_return(request):
     to_period = pd.to_datetime(request.POST.get('to'))
     strategy = request.POST.get('strategy')
     c_m = c_Models(assets,from_period,to_period,strategy,conn)
-    data = c_m.plotting()
+    ret_vol,tret_tvol = c_m.plotting()
 
-    return JsonResponse(data, safe=False)
+    return JsonResponse(ret_vol, safe=False)
 #ajax 백테스트
 @csrf_exempt
 def ajax_backtest(request):

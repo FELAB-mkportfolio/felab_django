@@ -116,13 +116,13 @@ class c_Models:
         return rp.x     #, RC(self.cov, rp.x)
     
     def plotting(self):
+        
         ret_gmv = np.dot(self.gmv_opt(), self.mu)
         ret_ms = np.dot(self.ms_opt(), self.mu)
         ret_rp = np.dot(self.rp_opt(), self.mu)
         vol_gmv = np.sqrt(np.dot(self.gmv_opt(), np.dot(self.cov, self.gmv_opt())))
         vol_ms = np.sqrt(np.dot(self.ms_opt(), np.dot(self.cov, self.ms_opt())))
         vol_rp = np.sqrt(np.dot(self.rp_opt(), np.dot(self.cov, self.rp_opt())))
-        
         trets = np.linspace(ret_gmv, max(self.mu), 30) # 30개 짜르기 
         tvols = []
         for tret in trets: #이 개별 return마다 최소 risk 찾기
