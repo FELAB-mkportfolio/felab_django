@@ -238,10 +238,6 @@ select {
     overflow: hidden;
     padding-bottom: 3px;
 }
-.optimize_result{
-    margin-top: 100px;
-    /*display:none;*/
-}
 input[class=amcharts-input]{
     border:none;
     border-bottom: 1px solid #8C0000;
@@ -255,12 +251,22 @@ button[class=amcharts-input]{
     background-color: #E4FBFF
 
 }
-.backtest_result{
-    width:100%;
+.backtest_result, .optimize_result{
     margin: 0 20px;
     display:flex;
     justify-content: center;
     font-family: 'AppleSDGothicNeoM';
+}
+.opt_task{
+    margin: 30px 5px 0 30px;
+    width:50%;
+    height:500px;
+    text-align: center;
+    padding: 0 20px;
+    border:1px solid #eeeeee;
+}
+.optimize_result{
+    margin-top:50px;
 }
 .bt_left{
     width:50%;
@@ -274,6 +280,25 @@ button[class=amcharts-input]{
 }
 .graph_block > .graph_field{
     height:500px;
+}
+.table{
+    width:100%;
+    max-width: 100%;
+    margin-bottom:20px;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
 }
 footer{
     margin-top:50px;

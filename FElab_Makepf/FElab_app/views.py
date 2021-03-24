@@ -5,6 +5,8 @@ import pymysql
 from django.views.decorators.csrf import csrf_exempt
 from plotly.offline import plot
 from plotly.graph_objs import Scatter
+from FElab_app.opt_models import c_Models
+import pandas as pd
 #-*-coding:utf-8 -*-
 # Create your views here.
 #db 
@@ -14,8 +16,6 @@ db = {
         'password' : "root",
         'db_name' : "teststocks",
     }
-
-
 #홈페이지 메인
 def home(request):
     return render(request, 'FElab_app/home.html',{})
@@ -45,20 +45,12 @@ def ajax_db_return(request):
 @csrf_exempt
 def ajax_portfolio_optimize_return(request):
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
-    #종목코드를 입력받으면 시세를 반환하고 아무것도 없으면 단순 종목 이름들만 반환한다.
-    if 'stock_code' in request.POST:
-        sql = "SELECT * FROM "+ request.POST['stock_code']+";"
-    else:
-        sql = "SHOW TABLES;"
-
-    #sql문 실행/ 데이터 받기
-    curs = conn.cursor()
-    curs.execute(sql)
-    data = curs.fetchall()
-
-    #db 접속 종료
-    curs.close()
-    conn.close()
+    assets= request.POST.getlist('assetsBox[]')
+    from_period = pd.to_datetime(request.POST.get('from'))
+    to_period = pd.to_datetime(request.POST.get('to'))
+    strategy = request.POST.get('strategy')
+    c_m = c_Models(assets,from_period,to_period,strategy,conn)
+    data = c_m.plotting()
 
     return JsonResponse(data, safe=False)
 #ajax 백테스트

@@ -67,6 +67,22 @@ $(document).ready(function () {
         position : {my : 'right top', at: 'right bottom'},
     });
 
+    $('#optimize_btn').click(function() {
+        $.ajax({
+            url: '/ajax_portfolio_optimize_return/',
+            type: "POST",
+            dataType: "json",
+            data : {"assetsBox[]" : assetsBox, "from" : $('#from').val(), 'to' : $('#to').val(),
+        'strategy': $('input[name=strategy]:checked').val()},
+            success: function (data) {
+                console.log(data)
+            },
+            error: function (request, status, error) {
+                console.log('실패');
+            }
+        });
+
+    });
     $("#putin_btn").click(function () {
         if (stocknames.includes($('#comboBox').val())) {
             assetsBox.push($('#comboBox').val());
@@ -393,5 +409,155 @@ function stockGraph(stockdata,chart) {
 
 
     }); // end am4core.ready()
+}
+function drawEfGraph(gmv_pfo,msharp_pfo,ef_pfo,individual_pfo,index_names) {
+    var gmv_vol= gmv_pfo['gmv_volatility'];
+    var gmv_ret = gmv_pfo['gmv_return'];
+    
+    var msharp_ret= msharp_pfo['msharp_return'];
+    var msharp_vol = msharp_pfo['msharp_volatility'];
+    
+    var ef_pfo_vols = ef_pfo['ef_volatilities'];
+    var ef_pfo_rets = ef_pfo['ef_returns'];
+
+    var ind_rets = individual_pfo['rets'];
+    var ind_vols = individual_pfo['stds'];
+    var ind_names= index_names;
+    var ind_weight = ef_pfo['ef_weights'];
+    
+    $('#msharp_ret').html(msharp_ret);
+    $('#msharp_vol').html(msharp_vol);
+    $('#gmv_ret').html(gmv_ret);
+    $('#gmv_vol').html(gmv_vol);
+
+
+    ef_pfo_rets = slicing(ef_pfo_rets);
+    ef_pfo_vols = slicing(ef_pfo_vols);
+    ind_rets = slicing(ind_rets);
+    ind_vols = slicing(ind_vols);
+
+
+    ind_names = slicing(ind_names);
+    //doughnutGraph(ind_names,ind_weight);
+
+    var ctx = document.getElementById('efficient_frontier_graph').getContext('2d');
+
+    var ef_storage= [];
+    
+    for (var i=0;i<ef_pfo_vols.length;i++){
+        x = Number(ef_pfo_vols[i]);
+        y = Number(ef_pfo_rets[i]);
+        var json = {x: x, y:y};
+        ef_storage.push(json);
+    }
+    window.chart2 = new Chart(ctx, {
+        type: 'scatter',
+        data : {
+            labels : ef_pfo_vols,
+            datasets : [{
+                type : 'line',
+                label : '효율적 투자선',
+                backgroundColor : '#385a7c',
+                borderColor : '#f6f4f1',
+                data : ef_storage,
+                showLine : true,
+                fill : false,
+                order : 1,
+            }]
+        },
+        options : {
+            title : {
+                display: true,
+                text : '효율적 투자선',
+            },
+            maintainAspectRatio : false,
+            legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                    fontColor: '#333',
+                }
+            },
+            scales : {
+                yAxes : [{
+                    ticks : {
+                        callback : function (value) {
+                            return (value/100).toLocaleString('de-DE', {style:'percent'});
+                        }
+                    },
+                    scaleLabel :{
+                        display : true,
+                        labelString : 'annual return',
+                        fontStyle : 'bold',
+                        fontSize : '15',
+                    }
+                }],
+                xAxes : [{
+                    ticks : {
+                        callback : function (value) {
+                            return (value/100).toLocaleString('de-DE', {style:'percent'});
+                        }
+                    },
+                    scaleLabel :{
+                        display : true,
+                        labelString : 'annual volatility',
+                        fontStyle : 'bold',
+                        fontSize : '15',
+
+                    }
+                }]
+            },
+            tooltips : {
+                mode : 'single',
+                displayColors : false,
+                backgroundColor : '#282721',
+                titleFontColor : '#fff',
+                titleAlign : 'center',
+                bodySpacing : 2,
+                bodyFontColor :'#fff',
+                bodyAlign : 'center',
+                callbacks : {
+                    title : function(tooltipitem, data){
+                        return data.datasets[tooltipitem[0]['datasetIndex']].label;
+                    },
+                    label : function(tooltipitem, data){
+                        var label = "annual_volatility : " + tooltipitem['xLabel'];
+                        label += "  annual_return : " + tooltipitem['yLabel'];
+                        return label;
+                    },
+                    afterLabel : function(tooltipitem,data){
+                        var footer = ' ';
+                        if(tooltipitem['datasetIndex']==0){
+                            for(var i =0; i<ind_names.length; i++){
+                                footer+= ind_names[i]+" : "+ind_weight[tooltipitem['index']][i]+"%\n";
+                            }
+                        }
+                        return footer;
+                    }
+                    }
+                }
+        },
+    });
+    pushscatter(msharp_vol, msharp_ret, "Maximum Sharpe Portfolio",'#bada55',3);
+    pushscatter(gmv_vol,gmv_ret, "Minimum Volatility Portfolio",'#f7347a',3);
+    for(var i=0;i<ind_rets.length;i++){
+        var randcolor = "#" + Math.round(Math.random()*0xFFFFFF).toString(16);
+        pushscatter(ind_vols[i],ind_rets[i],ind_names[i],randcolor,2);
+    }
+    window.chart2.update();
+}
+function pushscatter(x,y,label,color,order){
+    chart2.data.datasets.push({
+        type: 'scatter',
+        label : label,
+        showLine : false,
+        data : [{ x: x, y:y}],
+        backgroundColor : color,
+        pointBackgroundColor : color,
+        pointRadius: 8,
+        pointHoverRadius: 8,
+        order : order,
+    });
+    window.chart2.update();
 }
 
