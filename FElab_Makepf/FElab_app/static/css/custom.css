@@ -103,8 +103,11 @@ body {
     padding-bottom: 20px;
 
 }
-.graphContainer{
+.graph_container{
     width:100%;
+}
+#result_container{
+    display:none;
 }
 @font-face {
     font-family: 'AppleSDGothicNeoB';
@@ -173,7 +176,8 @@ select {
     margin: 0 20px;
 }
 #comboBox{
-    height:30px;
+    width: 500px;
+    height:40px;
     border:none;
 
 }
@@ -202,15 +206,12 @@ select {
     line-height:30px;
 }
 .backtest_step{
-    width: 20%;
     height: 80%;
     position:relative;
     text-align: center;
-    box-shadow : 1px 1px 1px 1px gray;
     border: 1px solid #eeeeee;
     background-color: white;
-    margin: 30px 10px;
-    border-radius: 10px;
+    margin: 50px 30px;
     overflow-y: auto;
     overflow-x: hidden;
     font-family: 'AppleSDGothicNeoM';
@@ -228,6 +229,14 @@ select {
     width:100px;
     border:none;
     background-color: #eeeeee;
+}
+label{
+    font-size:20px;
+}
+.row{
+    display:flex;
+    justify-content: center;
+    margin: 20px 0;
 }
 #chartdiv {
     width: 100%;
@@ -257,6 +266,11 @@ button[class=amcharts-input]{
     justify-content: center;
     font-family: 'AppleSDGothicNeoM';
 }
+.backtest_result {
+    display: flex;
+    flex-direction: column;
+    font-family: 'AppleSDGothicNeoM';
+}
 .opt_task{
     margin: 30px 5px 0 30px;
     width:50%;
@@ -268,6 +282,11 @@ button[class=amcharts-input]{
 .optimize_result{
     margin-top:50px;
     display:flex;
+}
+.graph_container{
+    height:700px;
+    display:flex;
+    justify-content:center;
 }
 .bt_left{
     width:50%;
@@ -300,6 +319,7 @@ tr {
     display: table-row;
     vertical-align: inherit;
     border-color: inherit;
+    text-align: center;
 }
 footer{
     margin-top:50px;

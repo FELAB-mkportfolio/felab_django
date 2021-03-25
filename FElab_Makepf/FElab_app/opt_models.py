@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 import numpy as np
 from scipy.optimize import minimize
-
+import json
 
 class c_Models:
     def __init__(self, assets, start, end, strategy,conn):
@@ -29,8 +29,9 @@ class c_Models:
         
         
         if data.isnull().values.any() == True: #불러온 data에 결측있으면 x
-            print("입력 기간 내 데이터가 없습니다.")
+            return "No Data",''
         else:
+            
             data = data.resample('M').mean() #일별 데이터를 월별 데이터로 만들어줌
             data = data.pct_change() #월별 주가 데이터를 이용해 수익률 데이터로 변환
             data.dropna(inplace=True) #결측치 제외(첫 row)
@@ -116,7 +117,6 @@ class c_Models:
         return rp.x     #, RC(self.cov, rp.x)
     
     def plotting(self):
-        
         ret_gmv = np.dot(self.gmv_opt(), self.mu)
         ret_ms = np.dot(self.ms_opt(), self.mu)
         ret_rp = np.dot(self.rp_opt(), self.mu)
@@ -130,12 +130,13 @@ class c_Models:
             w0 = np.ones(n_assets) / n_assets
             fun = lambda w: np.sqrt(np.dot(w.T ,np.dot(self.cov, w)))
             constraints = [{'type': 'eq', 'fun': lambda x: np.sum(x) - 1},
-                           {'type': 'ineq', 'fun': lambda x: np.dot(x, self.mu) - tret}]
-                           #{'type': 'ineq', 'fun': lambda x: x}]
+                            {'type': 'ineq', 'fun': lambda x: np.dot(x, self.mu) - tret}]
+                            #{'type': 'ineq', 'fun': lambda x: x}]
 
             minvol = minimize(fun, w0, method='SLSQP', constraints=constraints)
             tvols.append(np.sqrt(np.dot(minvol.x, np.dot(self.cov, minvol.x))))
+
         
-        ret_vol = {"GMV": [vol_gmv, ret_gmv], "MaxSharp": [vol_ms, ret_ms], "RiskParity": [vol_rp, ret_rp]}
-        tret_tvol = {"Trets" : trets, "Tvols": tvols}
-        return ret_vol, tret_tvol
+        ret_vol = {"GMV": [vol_gmv, ret_gmv],"MaxSharp": [vol_ms, ret_ms],"RiskParity": [vol_rp, ret_rp], "Trets" : trets.tolist(), "Tvols": tvols}        
+        return ret_vol
+        # {"GMV": [vol_gmv, ret_gmv].tolist(), "MaxSharp": [vol_ms, ret_ms].tolist(), "RiskParity": [vol_rp, ret_rp], "Trets" : trets, "Tvols": tvols}

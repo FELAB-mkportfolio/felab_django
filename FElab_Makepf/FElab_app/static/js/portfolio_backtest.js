@@ -11,12 +11,10 @@ $(document).ready(function () {
             assetsBox.push(obj[i]);
         }
         for (i = 0; i < assetsBox.length; i++) {
-            $('#assetsBox').append("<div style='position:relative;margin: 10px 0;width:100%;height:30px;display:flex;justify-content:center;border-bottom:1px solid #eeeeee;'><p>"
-                        + assetsBox[i] + "</p > <button id='putout_btn' name=" + assetsBox[i] +
-                        " style='position:absolute;right:5px;;width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></div>");
-            
-            $('#weightBox').append("<div style='position:relative;margin: 10px 0;width:100%;height:30px;display:flex;justify-content:space-around;border-bottom:1px solid #eeeeee;'><p style='font-size:20px;'>"
-            + assetsBox[i] + "</p> <input id='assetweight"+i+"' class='input_weight' type='text' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value="+jparse[assetsBox[i]]+"></div>")
+            $('#asset_row').append("<tr><td class='numberCell'>"+assetsBox[i]+
+            "</td><td class='numberCell'><input id='assetweight"+i+"' class='input_weight' type='text' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value="+jparse[assetsBox[i]]+
+            "></td><td class='numberCell'><button id='putout_btn' name=" + assetsBox[i] +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td></tr>");
         }
         var chart = createChart(chartdiv, charttype);
         DrawChart(chart, assetsBox);
@@ -57,30 +55,26 @@ $(document).ready(function () {
         if (stocknames.includes($('#comboBox').val())) {
             assetsBox.push($('#comboBox').val());
             stocknames.splice(stocknames.indexOf($('#comboBox').val()),1);
-            $('#assetsBox').empty();
-            $('#weightBox').empty();
+            $('#asset_row').empty();
             $('#comboBox').val("");
             for (i = 0; i < assetsBox.length; i++) {
-                $('#assetsBox').append("<div style='position:relative;margin-bottom:5px;width:100%;height:30px;display:flex;justify-content:center;border-bottom:1px solid #eeeeee;'><p>"
-                    + assetsBox[i] + "</p > <button id='putout_btn' name=" + assetsBox[i] +
-                    " style='position:absolute;right:5px;;width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></div>");
-                $('#weightBox').append("<div style='position:relative;margin: 10px 0;width:100%;height:30px;display:flex;justify-content:space-around;border-bottom:1px solid #eeeeee;'><p style='font-size:20px;'>"
-                + assetsBox[i] + "</p> <input  type='text' id='assetweight"+i+"' class='input_weight' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px'/></div>");
+                $('#asset_row').append("<tr><td class='numberCell'>"+assetsBox[i]+
+            "</td><td class='numberCell'><input id='assetweight"+i+"' class='input_weight' type='text' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
+            "></td><td class='numberCell'><button id='putout_btn' name=" + assetsBox[i] +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td></tr>");
             }
         } else {
             alert("종목 정보가 올바르지 않습니다");
         }
     });
     $(document).on('click', '#putout_btn', function () {
-        $('#assetsBox').empty();
-        $('#weightBox').empty();
+        $('#asset_row').empty();
         assetsBox.splice(assetsBox.indexOf($(this).attr('name')),1);
         for (i = 0; i < assetsBox.length; i++) {
-            $('#assetsBox').append("<div style='position:relative;margin-bottom:5px;width:100%;height:30px;display:flex;justify-content:center;border-bottom:1px solid #eeeeee;'><p>"
-                + assetsBox[i] + "</p > <button id='putout_btn' name=" + assetsBox[i] +
-                " style='position:absolute;right:5px;;width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></div>");
-            $('#weightBox').append("<div style='position:relative;margin: 10px 0;width:100%;height:30px;display:flex;justify-content:space-around;border-bottom:1px solid #eeeeee;'><p style='font-size:20px;'>"
-            + assetsBox[i] + "</p> <input type='text' id='assetweight"+i+"'class='input_weight' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px'/></div>");
+            $('#asset_row').append("<tr><td class='numberCell'>"+assetsBox[i]+
+            "</td><td class='numberCell'><input id='assetweight"+i+"' class='input_weight' type='text' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value="+jparse[assetsBox[i]]+
+            "></td><td class='numberCell'><button id='putout_btn' name=" + assetsBox[i] +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td></tr>");
         }
         stocknames.push($(this).attr('name'));
     });
@@ -126,10 +120,37 @@ $(document).ready(function () {
             url: '/ajax_backtest/',
             type: "POST",
             dataType: "json",
+            //
+            //,
             data : {"assetsBox[]" : assetsBox, "assetweights[]" : assetweights, "from" : $('#from').val(), 'to' : $('#to').val(),
         'rebalancing_month' : $('#rebalancing_month').val(), 'start_amount' : $('#start_amount').val(), 'strategy': $('input[name=strategy]:checked').val()},
             success: function (data) {
-                console.log(data);
+                back_Mean = data.indicator[0]['Mean'];
+                back_Std = data.indicator[0]['Std'];
+                back_Sharp_ratio = data.indicator[0]['Sharpe ratio'];
+                back_VaR = data.indicator[0]['VaR'];
+                back_MDD = data.indicator[0]['MDD'];
+                back_Gain_loss = data.indicator[0]['Gain/Loss Ratio'];
+                back_Winnig_ratio = data.indicator[0]['Winning Ratio'];
+                back_Date = data.pfo_return[0]['Date'];
+                back_Drawdown = data.pfo_return[0]['Drawdown_list'];
+                back_acc = data.pfo_return[0]['acc_return ratio'];
+                back_value = data.pfo_return[0]['final_balance'];
+                back_return = data.pfo_return[0]['mean_return'];
+
+                $('#daterange').html(" " + $('#from').val() +"~"+ $('#to').val());
+                //그래프 그리기
+                Draw_value_chart(back_Date, back_value);
+                Draw_Return_chart(back_Date, back_return);
+                Draw_MDD_chart(back_Date, back_Drawdown);
+                Draw_acc_chart(back_Date, back_acc);
+                $('#mean_return').html(back_Mean.toFixed(2));
+                $('#std').html(back_Std.toFixed(2));
+                $('#sharp').html(back_Sharp_ratio.toFixed(2));
+                $('#VaR').html(back_VaR.toFixed(2));
+                $('#MDD').html(back_MDD.toFixed(2));
+
+                $('#result_container').css('display','block');
             },
             error: function (request, status, error) {
                 console.log('실패');
@@ -139,6 +160,7 @@ $(document).ready(function () {
 
 });
 var chartReg = {};
+
 function createChart(chartdiv, charttype) {
     // Check if the chart instance exists
     maybeDisposeChart(chartdiv);
@@ -177,4 +199,237 @@ function DrawChart_change(chart, assetsBox){
         $('#opt_report_chart').empty();
     }
 
+}
+function Draw_value_chart(x, y) {
+    var value_ctx = document.getElementById("value_chart").getContext('2d');
+    window.value_chart = new Chart(value_ctx, {
+        type: 'line',
+        data: {
+            labels: x,
+            datasets: [{
+                label: '포트폴리오 가치 변화',
+                data: y,
+                borderColor: "rgba(255, 201, 14, 1)",
+                backgroundColor: "rgba(255, 201, 14, 0.5)",
+                fill: true,
+                lineTension: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: '기간'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        suggestedMin: 0,
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: '가치'
+                    }
+                }]
+            }
+        }
+    });
+
+}
+function Draw_Return_chart(x, y) {
+    var return_ctx = document.getElementById("Return_chart").getContext('2d');
+    window.value_chart = new Chart(return_ctx, {
+        type: 'line',
+        data: {
+            labels: x,
+            datasets: [{
+                label: '포트폴리오 수익률 변화',
+                data: y,
+                borderColor: "rgba(255, 201, 14, 1)",
+                backgroundColor: "rgba(255, 201, 14, 0.5)",
+                lineTension: 0,
+                fill: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: '기간'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        suggestedMin: 0,
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: '수익률'
+                    }
+                }]
+            }
+        }
+    });
+}
+function Draw_MDD_chart(x, y) {
+    var MDD_ctx = document.getElementById("MDD_chart").getContext('2d');
+    window.value_chart = new Chart(MDD_ctx, {
+        type: 'line',
+        data: {
+            labels: x,
+            datasets: [{
+                label: '포트폴리오 MDD',
+                data: y,
+                borderColor: "rgba(255, 201, 14, 1)",
+                backgroundColor: "rgba(255, 201, 14, 0.5)",
+                lineTension: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: '기간'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        suggestedMin: 0,
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: '수익률'
+                    }
+                }]
+            }
+        }
+    });
+}
+function Draw_hist_chart(x, y) {
+    var return_ctx = document.getElementById("Histogram_chart").getContext('2d');
+    window.value_chart = new Chart(return_ctx, {
+        type: 'line',
+        data: {
+            labels: x,
+            datasets: [{
+                label: '포트폴리오 수익률 변화',
+                data: y,
+                borderColor: "rgba(255, 201, 14, 1)",
+                backgroundColor: "rgba(255, 201, 14, 0.5)",
+                lineTension: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: '기간'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        suggestedMin: 0,
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: '수익률'
+                    }
+                }]
+            }
+        }
+    });
+}
+function Draw_acc_chart(x, y) {
+    var acc_ctx = document.getElementById("acc_chart").getContext('2d');
+    window.value_chart = new Chart(acc_ctx, {
+        type: 'line',
+        data: {
+            labels: x,
+            datasets: [{
+                label: '포트폴리오 누적 이익률',
+                data: y,
+                borderColor: "rgba(255, 201, 14, 1)",
+                backgroundColor: "rgba(255, 201, 14, 0.5)",
+                lineTension: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: '기간'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        suggestedMin: 0,
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: '이익률'
+                    }
+                }]
+            }
+        }
+    });
 }

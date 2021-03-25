@@ -1,6 +1,3 @@
-import pandas_datareader.data as web
-import numpy as np
-import pandas as pd
 import json
 from datetime import date
 import cvxpy as cp
@@ -11,6 +8,8 @@ from datetime import datetime
 from scipy import stats
 from scipy.stats import norm
 import pymysql
+import pandas as pd
+import numpy as np
 
 class back_test:
     
@@ -87,7 +86,7 @@ class back_test:
     # 선택한 종목의 이름과 비중, 투자기간을 input 값으로 받음       
     
     def backtest_data(input,select,weight,start_data_1, end_data_1,start_amount):
-        conn = pymysql.connect(host="localhost", user="root",password="root", db="teststocks",charset="utf8")
+        conn = pymysql.connect(host="localhost", user="root",password="su970728!", db="teststocks",charset="utf8")
         curs = conn.cursor()
 
 

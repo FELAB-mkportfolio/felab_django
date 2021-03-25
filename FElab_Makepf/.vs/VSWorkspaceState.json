@@ -9,6 +9,6 @@
     "\\FElab_app\\templates\\FElab_app",
     "\\FElab_Makepf"
   ],
-  "SelectedNode": "\\FElab_app\\views.py",
+  "SelectedNode": "\\FElab_app\\templates\\FElab_app\\portfolio_optimize.html",
   "PreviewInSolutionExplorer": false
 }
