@@ -15,15 +15,14 @@ from calendar import monthrange
 from dateutil.relativedelta import relativedelta
 
 class back_test:
-    
     # 단순 일별수익률의 평균을 *365하여 연간수익률을 산출
-    def Arithmetic_Mean_Annual(input,ret) :
+    def Arithmetic_Mean_Annual(self,ret) :
         
         month_return =  np.mean(ret)
         return (month_return*252)
 
     # 기간중 투자했을때 하락할 수 있는 비율
-    def dd(input,ret):
+    def dd(self,ret):
         cum_ret = (1 + ret).cumprod()
         max_drawdown = 0
         max_ret = 1
@@ -37,7 +36,7 @@ class back_test:
         return dd_list
     
     # 기간중 투자했을때 최고로 많이 하락할 수 있는 비율
-    def mdd(input,ret):
+    def mdd(self,ret):
         
         cum_ret = (1 + ret).cumprod()
         max_drawdown = 0
@@ -51,12 +50,12 @@ class back_test:
         return abs(max_drawdown)
 
     # 포트폴리오 수익률에서 무위험 수익률을 제한 후 이를 포트폴리오의 표준편차로 나눠 산출한 값, 즉 위험대비 얼마나 수익이 좋은지의 척도
-    def sharpe_ratio(input,ret, rf=0.008, num_of_date=365):
+    def sharpe_ratio(self,ret, rf=0.008, num_of_date=365):
         
         return ((np.mean(ret - (rf / num_of_date))) / (np.std(ret))) * np.sqrt(num_of_date)
     
     # 설정한 confidence level에 따른(95%) 확률로 발생할 수 있는 손실액의 최대 액수
-    def value_at_risk(input,ret, para_or_hist="para", confidence_level=0.95):
+    def value_at_risk(self,ret, para_or_hist="para", confidence_level=0.95):
         
         vol = np.std(ret)
         if para_or_hist == "para":
@@ -67,12 +66,12 @@ class back_test:
         return VaR
     
     # 전체 투자기간에서 상승한 ( ret > 0 ) 기간의 비율
-    def winning_rate(input,ret):
+    def winning_rate(self,ret):
         var_winning_rate = np.sum(ret > 0) / len(ret)
         return var_winning_rate    
     
     # 상승한날의 평균상승값을 하락한날의 평균하락값으로 나눈 비율
-    def profit_loss_ratio(input,ret):
+    def profit_loss_ratio(self,ret):
 
         if np.sum(ret > 0) == 0:
             var_profit_loss_ratio = 0
@@ -88,8 +87,7 @@ class back_test:
     #임시로 5가지 데이터 예시를 활용해 코드작성
     # 선택한 종목의 이름과 비중, 투자기간을 input 값으로 받음       
     
-    def backtest_data(input,select,weight,start_data_1, end_data_1,start_amount,rebalancing_month):
-        conn = pymysql.connect(host="localhost", user="root",password="root", db="teststocks",charset="utf8")
+    def backtest_data(self,select,weight,start_data_1, end_data_1,start_amount,rebalancing_month, conn):
         curs = conn.cursor()
 
 
@@ -162,7 +160,6 @@ class back_test:
         '''
 
         # 수익률 데이터와 투자비중을 곱한 하나의 데이터 생성 
-
         pfo_return = stock_return.Date
         pfo_return = pd.DataFrame(pfo_return)
         pfo_return['mean_return'] = 0
