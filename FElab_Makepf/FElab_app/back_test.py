@@ -10,6 +10,9 @@ from scipy.stats import norm
 import pymysql
 import pandas as pd
 import numpy as np
+from dateutil import rrule
+from calendar import monthrange
+from dateutil.relativedelta import relativedelta
 
 class back_test:
     
@@ -17,7 +20,7 @@ class back_test:
     def Arithmetic_Mean_Annual(input,ret) :
         
         month_return =  np.mean(ret)
-        return (month_return*365)
+        return (month_return*252)
 
     # 기간중 투자했을때 하락할 수 있는 비율
     def dd(input,ret):
@@ -85,8 +88,8 @@ class back_test:
     #임시로 5가지 데이터 예시를 활용해 코드작성
     # 선택한 종목의 이름과 비중, 투자기간을 input 값으로 받음       
     
-    def backtest_data(input,select,weight,start_data_1, end_data_1,start_amount):
-        conn = pymysql.connect(host="localhost", user="root",password="su970728!", db="teststocks",charset="utf8")
+    def backtest_data(input,select,weight,start_data_1, end_data_1,start_amount,rebalancing_month):
+        conn = pymysql.connect(host="localhost", user="root",password="root", db="teststocks",charset="utf8")
         curs = conn.cursor()
 
 
@@ -95,6 +98,8 @@ class back_test:
         # 연습용 kp005380 kp086790
         stock_num = len(a)
         # input으로 받는 assetweights 입력
+        rebal_month = int(rebalancing_month)
+        # input으로 받는 rebalancing_month를 입력
         
         b = list(map(float, weight))
         # 연습용 50 50
@@ -103,7 +108,7 @@ class back_test:
         stock_return = pd.date_range(start=start_data_1, end=end_data_1)
         stock_return = pd.DataFrame(stock_return)
         stock_return.columns = ['Date']
-
+        
 
         # 수익률로 이루어진 dataframe 만들기
         for stocklist in a:
@@ -116,6 +121,37 @@ class back_test:
         #print(stock_return)
 
         # 투자비중으로 이루어진 dataframe 만들기
+        
+        start_datetime = stock_return.iloc[0,0]
+        end_datetime = stock_return.iloc[-1,0]
+        diff_months_list = list(rrule.rrule(rrule.MONTHLY, dtstart=start_datetime, until=end_datetime))
+        month_gap = len(diff_months_list)
+        rebal_roof = month_gap//rebal_month
+        rebal_weight = pd.DataFrame()
+        
+        for i in range(rebal_roof+1):
+            # 데이터로부터 리밸런싱기간만큼 가져오기
+            filtered_df =stock_return.loc[stock_return["Date"].between(start_datetime, 
+                                                                     start_datetime + relativedelta(months=rebal_month)+relativedelta(days = -1))]
+            # 리밸런싱 기간의 누적수익률 산출
+            for j in range(stock_num):
+                filtered_df.iloc[:,j+1] = (1 + filtered_df.iloc[:,j+1]).cumprod()
+            # 해당 누적수익률에 initial 투자비중을 곱해준다 
+            for j in range(stock_num):
+                filtered_df.iloc[:,j+1] = filtered_df.iloc[:,j+1]*float(b[j])
+            # 이후 각각의 종목의 비중을 계산해서 산출한다
+            filtered_df['total_value'] = filtered_df.sum(axis=1)
+            for j in range(stock_num):
+                filtered_df.iloc[:,j+1] = filtered_df.iloc[:,j+1]/filtered_df['total_value']
+
+            rebal_weight = pd.concat([rebal_weight,filtered_df])
+            start_datetime = start_datetime + relativedelta(months=rebal_month)
+
+            #final_day = monthrange(start_datetime.year, start_datetime.month)
+
+        stock_weight = rebal_weight.iloc[:,:-1]
+        #print(stock_weight)
+        '''
         stock_weight = stock_return.Date
         stock_weight = pd.DataFrame(stock_weight)
         c = 0
@@ -123,6 +159,7 @@ class back_test:
             stock_weight[a[c]] = float(stockweight)
             c = c + 1
         #print(stock_weight)
+        '''
 
         # 수익률 데이터와 투자비중을 곱한 하나의 데이터 생성 
 
@@ -138,6 +175,8 @@ class back_test:
         pfo_return['acc_return'] = [x-1 for x in pfo_return['acc_return']]
         pfo_return['final_balance'] = float(start_amount) + float(start_amount)*pfo_return['acc_return']
         pfo_return['Drawdown_list'] = back_test.dd(input,pfo_return['mean_return'])
+        pfo_return['Date'] =  pd.to_datetime(pfo_return['Date'], format='%d/%m/%Y').dt.date
+        pfo_return['Date'] = list(map(str, pfo_return['Date']))
         #print(pfo_return)
 
         backtest_return = {

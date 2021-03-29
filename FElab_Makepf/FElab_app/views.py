@@ -13,7 +13,7 @@ from FElab_app.back_test import back_test
 db = {
         'host': "localhost",
         'user': "root",
-        'password' : "su970728!",
+        'password' : "root",
         'db_name' : "teststocks",
     }
 class web:
@@ -68,7 +68,7 @@ class web:
         #strategy = request.POST.get('strategy')
 
         backtest = back_test()
-        data = backtest.backtest_data(assetnames,assetweights,from_period,to_period,start_amount)
+        data = backtest.backtest_data(assetnames,assetweights,from_period,to_period,start_amount,rebalancing_month)
 
         return JsonResponse(data, safe=False)
 
