@@ -103,9 +103,6 @@ body {
     padding-bottom: 20px;
 
 }
-.graph_container{
-    width:100%;
-}
 #result_container{
     display:none;
 }
@@ -285,7 +282,6 @@ button[class=amcharts-input]{
 }
 .graph_container{
     height:700px;
-    display:flex;
     justify-content:center;
 }
 .bt_left{
