@@ -283,6 +283,7 @@ button[class=amcharts-input]{
 .graph_container{
     height:700px;
     justify-content:center;
+    display:flex;
 }
 .bt_left{
     width:50%;
