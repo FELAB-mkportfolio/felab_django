@@ -120,23 +120,44 @@ class c_Models:
         ret_gmv = np.dot(self.gmv_opt(), self.mu)
         ret_ms = np.dot(self.ms_opt(), self.mu)
         ret_rp = np.dot(self.rp_opt(), self.mu)
-        vol_gmv = np.sqrt(np.dot(self.gmv_opt(), np.dot(self.cov, self.gmv_opt())))
-        vol_ms = np.sqrt(np.dot(self.ms_opt(), np.dot(self.cov, self.ms_opt())))
-        vol_rp = np.sqrt(np.dot(self.rp_opt(), np.dot(self.cov, self.rp_opt())))
+        vol_gmv = np.sqrt(np.dot(self.gmv_opt().T, np.dot(self.cov, self.gmv_opt())))
+        vol_ms = np.sqrt(np.dot(self.ms_opt().T, np.dot(self.cov, self.ms_opt())))
+        vol_rp = np.sqrt(np.dot(self.rp_opt().T, np.dot(self.cov, self.rp_opt())))
+        
+        wt_gmv = self.gmv_opt().tolist()
+        wt_ms = self.ms_opt().tolist()
+        wt_rp = self.rp_opt().tolist()
+
+        weights = {'gmv': wt_gmv, "ms" : wt_ms, "rp": wt_rp}
+        
+        
+        
+        
+        
         trets = np.linspace(ret_gmv, max(self.mu), 30) # 30개 짜르기 
         tvols = []
-        for tret in trets: #이 개별 return마다 최소 risk 찾기
+        
+        efpoints = dict()
+        for i, tret in enumerate(trets): #이 개별 return마다 최소 risk 찾기
             n_assets = len(self.data.columns)
             w0 = np.ones(n_assets) / n_assets
             fun = lambda w: np.sqrt(np.dot(w.T ,np.dot(self.cov, w)))
             constraints = [{'type': 'eq', 'fun': lambda x: np.sum(x) - 1},
-                            {'type': 'ineq', 'fun': lambda x: np.dot(x, self.mu) - tret}]
-                            #{'type': 'ineq', 'fun': lambda x: x}]
+                           {'type': 'ineq', 'fun': lambda x: np.dot(x, self.mu) - tret}]
+                           #{'type': 'ineq', 'fun': lambda x: x}]
 
             minvol = minimize(fun, w0, method='SLSQP', constraints=constraints)
             tvols.append(np.sqrt(np.dot(minvol.x, np.dot(self.cov, minvol.x))))
-
+            
+            pnumber = str(i+1) + "point"
+            efpoints[pnumber] = minvol.x.tolist()
         
-        ret_vol = {"GMV": [vol_gmv, ret_gmv],"MaxSharp": [vol_ms, ret_ms],"RiskParity": [vol_rp, ret_rp], "Trets" : trets.tolist(), "Tvols": tvols}        
-        return ret_vol
+        if self.data.shape[0] <= 1:
+            error = '기간에러'
+            return error,1,1
+        else:
+            ret_vol = {"GMV": [vol_gmv, ret_gmv],"MaxSharp": [vol_ms, ret_ms],"RiskParity": [vol_rp, ret_rp], "Trets" : trets.tolist(), "Tvols": tvols}        
+            return ret_vol, json.dumps(efpoints), json.dumps(weights)
         # {"GMV": [vol_gmv, ret_gmv].tolist(), "MaxSharp": [vol_ms, ret_ms].tolist(), "RiskParity": [vol_rp, ret_rp], "Trets" : trets, "Tvols": tvols}
+
+

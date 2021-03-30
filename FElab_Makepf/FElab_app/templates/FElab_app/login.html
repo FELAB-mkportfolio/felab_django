@@ -1,0 +1,35 @@
+{% extends 'FElab_app/base.html' %}
+{% block content %}
+{% load static %}
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link href="{% static 'css/login_signup.css' %}" rel='stylesheet'>
+    <script type='text/javascript' src="{% static 'js/custom.js' %}"></script>
+</head>
+<div class='login-wrap'>
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+            <!-- Tabs Titles -->
+            <!-- Login Form -->
+            <form style='margin-top:30px;'>
+            <input type="text" id="login" class="fadeIn second" name="login" placeholder="이메일 입력하여 주세요">
+            <input type="text" id="password" class="fadeIn third" name="login" placeholder="비밀번호" autocomplete="off">
+           
+
+
+            <input type="submit" class="fadeIn fourth" value="로그인">
+            <input type="button" class="fadeIn fourth" value="회원가입" onclick='window.location="/signup"'>
+            </form>
+        
+            <!-- Remind Passowrd -->
+            <div id="formFooter">
+            <a class="underlineHover" href="#">Forgot Password?</a>
+            </div>
+        
+        </div>
+    </div>
+</div>
+    
+
+{% endblock %}

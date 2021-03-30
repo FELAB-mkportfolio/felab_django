@@ -10,4 +10,6 @@ urlpatterns = [
     path('ajax_backtest/', views.ajax_backtest, name='ajax_backtest'),
     path('portfolio_backtest/',views.portfolio_backtest, name='portfolio_backtest'),
     path('textmining/',views.textmining, name='textmining'),
+    path('signup/',views.signup, name='signup'),
+    path('login/', views.login, name='login'),
 ]

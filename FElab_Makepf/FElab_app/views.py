@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
 import json
 import pymysql
 from django.views.decorators.csrf import csrf_exempt
@@ -51,8 +52,8 @@ def ajax_portfolio_optimize_return(request):
     to_period = pd.to_datetime(request.POST.get('to'))
     strategy = request.POST.get('strategy')
     c_m = c_Models(assets,from_period,to_period,strategy,conn)
-    ret_vol = c_m.plotting()
-    data = {'ret_vol': ret_vol}
+    ret_vol, efpoints, weights = c_m.plotting()
+    data = {'ret_vol': ret_vol, 'efpoints': efpoints, "weights" : weights}
     return JsonResponse(data)
 #ajax 백테스트
 @csrf_exempt
@@ -85,3 +86,19 @@ def portfolio_backtest(request):
 def textmining(request):
     return render(request, 'FElab_app/textmining.html',{})
 #--------------------------------#
+
+#회원가입 페이지
+def signup(request):
+    if request.method == 'POST':
+        signup_form = UserCreationForm(request.POST)
+        if signup_form.is_valid():
+            signup_form.save()
+        return redirect('posts:list')
+    else:
+        signup_form = UserCreationForm()
+    
+    return render(request, 'FElab_app/signup.html', {'signup_form':signup_form})
+
+#로그인 페이지
+def login(reques):
+    return render(reques, 'FElab_app/Login.html', {})

@@ -133,17 +133,25 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "json",
                 data: {
-                    //$('#from').val()$('#to').val()
-                    "assetsBox[]": assetsBox, "from": '10/01/2010', 'to': '01/01/2021',
+                    
+                    "assetsBox[]": assetsBox, "from": $('#from').val(), 'to': $('#to').val(),
                     'strategy': $('input[name=strategy]:checked').val()
                 },
                 success: function (data) {
-                    GMV = data.ret_vol['GMV']
-                    MaxSharp = data.ret_vol['MaxSharp']
-                    RiskParity = data.ret_vol['RiskParity']
-                    Trets = data.ret_vol['Trets']
-                    Tvols = data.ret_vol['Tvols']
+                    GMV = data.ret_vol['GMV'];
+                    MaxSharp = data.ret_vol['MaxSharp'];
+                    RiskParity = data.ret_vol['RiskParity'];
+                    Trets = data.ret_vol['Trets'];
+                    Tvols = data.ret_vol['Tvols'];
+                    ef_points = data.efpoints;
+                    asset_weights = data.weights;
+                    if (asset_weights ==1){
+                        alert("입력한 기간이 짧습니다.");
+                        location.reload();
+
+                    }
                     opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols);
+                    console.log(asset_weights);
 
                 },
                 error: function (request, status, error) {
