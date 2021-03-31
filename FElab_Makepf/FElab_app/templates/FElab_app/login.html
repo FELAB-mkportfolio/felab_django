@@ -7,29 +7,23 @@
     <link href="{% static 'css/login_signup.css' %}" rel='stylesheet'>
     <script type='text/javascript' src="{% static 'js/custom.js' %}"></script>
 </head>
-<div class='login-wrap'>
-    <div class="wrapper fadeInDown">
-        <div id="formContent">
-            <!-- Tabs Titles -->
-            <!-- Login Form -->
-            <form style='margin-top:30px;'>
-            <input type="text" id="login" class="fadeIn second" name="login" placeholder="이메일 입력하여 주세요">
-            <input type="text" id="password" class="fadeIn third" name="login" placeholder="비밀번호" autocomplete="off">
-           
-
-
-            <input type="submit" class="fadeIn fourth" value="로그인">
-            <input type="button" class="fadeIn fourth" value="회원가입" onclick='window.location="/signup"'>
-            </form>
-        
-            <!-- Remind Passowrd -->
-            <div id="formFooter">
-            <a class="underlineHover" href="#">Forgot Password?</a>
+<div class='form_wrap'>
+    <h1>로그인</h1>
+    <form method='POST'>
+        <div class="form-row" style='display:flex;flex-direction: column;'>
+            <div class="form-group col-md-6">
+                <label for="inputEmail4">이메일</label>
+                <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
             </div>
-        
+            <div class="form-group col-md-6">
+                <label for="inputPassword4">비밀번호</label>
+                <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
         </div>
-    </div>
-</div>
+        <div>
+            <input type="submit" id='submit' class="btn btn-primary" value="로그인">
+        </div>
+      </form>
     
 
 {% endblock %}

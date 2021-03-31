@@ -38,6 +38,7 @@ body {
     height:700px;
     transform: translate(-50%, -50%);
 }
+
 .main-nav {
     list-style-type: none;
     display: none;

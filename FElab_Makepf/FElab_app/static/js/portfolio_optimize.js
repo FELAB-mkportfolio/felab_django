@@ -29,7 +29,6 @@ $(document).ready(function () {
             console.log('실패');
         }
     });
-    var cnt = 0;
     $('#comboBox').autocomplete({
         source: stocknames,
         select: function (event, ui) {
@@ -99,6 +98,7 @@ $(document).ready(function () {
         .datepicker({
             defaultDate: "+1w",
             changeMonth: true,
+            changeYear: true,
             numberOfMonths: 1
         })
         .on("change", function () {
@@ -107,6 +107,7 @@ $(document).ready(function () {
         to = $("#to").datepicker({
             defaultDate: "+1w",
             changeMonth: true,
+            changeYear: true,
             numberOfMonths: 1
         })
             .on("change", function () {
@@ -143,13 +144,67 @@ $(document).ready(function () {
                     RiskParity = data.ret_vol['RiskParity'];
                     Trets = data.ret_vol['Trets'];
                     Tvols = data.ret_vol['Tvols'];
-                    ef_points = data.efpoints;
-                    asset_weights = data.weights;
+                    ef_points = JSON.parse(data.efpoints);
+                    asset_weights = JSON.parse(data.weights);
                     if (asset_weights ==1){
                         alert("입력한 기간이 짧습니다.");
                         location.reload();
-
                     }
+                    
+                    var pie_backgroundColor = ['#003f5c', '#2f4b7c','#665191','#a05195', '#d45087', '#f95d6a','#ff7c43','#ffa600'];
+                    if($('input[name="strategy"]:checked').val()=='gmv'){
+                        $('#strategy_name_h2').html('Global Minimun Variance');
+                        $('#strategy_comment_span').html('GMV(전역 최소 분산) 포트폴리오는 투자자의 위험 성향이 아주 강한 경우의 포트폴리오입니다. 이러한 상황에서 투자자는 수익의 최대화보다 위험의 최소화를 우선순위로 두게 되며, 이에 따른 최적화는 가장 낮은 변동성의 포트폴리오를 구성할 수 있도록 가중치의 해를 찾습니다.');
+                        data = {
+                            datasets: [{
+                                data: asset_weights['gmv'],
+                                backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
+                            }],
+                            labels : assetsBox, 
+                        }
+                        r_array= round_array(asset_weights['gmv']);
+                        Draw_optimize_pie(data);
+                        $('#opt_report_table').empty();
+                        for (i =0; i<assetsBox.length; i++){
+                            $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                        }
+                    }
+                    else if($('input[name="strategy"]:checked').val()=='ms'){
+                        $('#strategy_name_h2').html('Maximum Sharpe Ratio');
+                        $('#strategy_comment_span').html('샤프지수는 감수한 위험 대비 달성 하게 되는 수익은 어느정도나 되는 가를 평가할 때 쓰이는 지수입니다. 즉 위험 자산에 투자함으로써 얻은 초과 수익의 정도를 나타내는 지표입니다. 이러한 샤프 지수를 최대화한 포트폴리오가 Maximum Sharpe Ratio Portfolio 입니다.');
+                        data = {
+                            datasets: [{
+                                data: asset_weights['ms'],
+                                backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
+
+                            }],
+                            labels : assetsBox, 
+                        }
+                        Draw_optimize_pie(data);
+                        r_array= round_array(asset_weights['ms']);
+                        $('#opt_report_table').empty();
+                        for (i =0; i<assetsBox.length; i++){
+                            $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                        }
+                    }
+                    else if($('input[name="strategy"]:checked').val()=='rp'){
+                        $('#strategy_name_h2').html('Risk Parity Portfolio');
+                        $('#strategy_comment_span').html('리스크 패리티 전략은 개별자산의 수익률 변동이 포트폴리오 전체 위험에 기여하는 정도를 동일하도록 구성해서 포트폴리오 전체 위험이 특정 자산의 가격 변동에 과도하게 노출되는 것을 피하기 위한 자산배분전략입니다.');
+                        data = {
+                            datasets: [{
+                                data: asset_weights['rp'],
+                                backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
+                            }],
+                            labels : assetsBox, 
+                        }
+                        Draw_optimize_pie(data);
+                        r_array= round_array(asset_weights['rp']);
+                        $('#opt_report_table').empty();
+                        for (i =0; i<assetsBox.length; i++){
+                            $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                        }
+                    }
+                    
                     opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols);
                     console.log(asset_weights);
 
@@ -161,6 +216,40 @@ $(document).ready(function () {
         }
     });
 });
+function numtofix(array){
+    r_array = []
+    for(var i=0;i<array.length;i++){
+        r_array.push(array[i].toFixed(2));
+    }
+    return r_array 
+}
+function round_array(array){
+    r_array = []
+    for(var i=0;i<array.length;i++){
+        r_array.push(Math.round(array[i]*100));
+    }
+    return r_array
+}
+function Draw_optimize_pie(data){
+    
+    var ctx_opt_weight = document.getElementById("opt_report_chart").getContext('2d');
+    window.opt_report_chart = new Chart(ctx_opt_weight, {
+        type: 'pie',
+        data : data,
+        option : {
+            responsive: true,
+            legend : true,
+            maintainAspectRatio : false,
+            animation: true,
+            pieceLabel:{
+                mode: 'label',
+                potision: 'outside',
+                fontsize: 15,
+            }
+        }
+    });
+
+}
 function pushscatter(chart, x, y, label, color, order) {
     chart.data.datasets.push({
         type: 'scatter',
@@ -181,7 +270,7 @@ function tobacktest() {
     }else{
     asset_json = {};
     for (i = 0; i < assetsBox.length; i++) {
-        asset_json[assetsBox[i]] = 0.2;
+        asset_json[assetsBox[i]] = window.opt_report_chart.data.datasets[0].data[i];
     }
     localStorage.setItem("assets_weight", JSON.stringify(asset_json));
 
@@ -189,6 +278,7 @@ function tobacktest() {
     }
 }
 function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
+    
     $('.optimize_result').css('display', 'flex');
     var Ef_ctx = document.getElementById("efficient_frontier_graph").getContext('2d');
     ef_storage = [];

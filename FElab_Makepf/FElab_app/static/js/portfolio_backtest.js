@@ -87,6 +87,7 @@ $(document).ready(function () {
         .datepicker({
             defaultDate: "+1w",
             changeMonth: true,
+            changeYear: true,
             numberOfMonths: 1
         })
         .on("change", function () {
@@ -95,6 +96,7 @@ $(document).ready(function () {
         to = $("#to").datepicker({
             defaultDate: "+1w",
             changeMonth: true,
+            changeYear: true,
             numberOfMonths: 1
         })
             .on("change", function () {
