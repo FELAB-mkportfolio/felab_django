@@ -65,13 +65,9 @@ class c_Models:
         return gmv.x
     
     def ms_opt(self):
-        #f_ret = lambda w: np.dot(w.T, self.mu)
-        #f_risk = lambda w: np.sqrt(np.dot(w.T, np.dot(self.cov, w)))
-        
         n_assets = len(self.data.columns)
         w0 = np.ones(n_assets) / n_assets
-        fun = lambda w: -(np.dot(w.T, self.mu) - 0.008 / np.sqrt(np.dot(w.T, np.dot(self.cov, w))))
-        #un = - (pf_ret / pf_risk)
+        fun = lambda w: -(np.dot(w.T, self.mu) - 0.008) / np.sqrt(np.dot(w.T, np.dot(self.cov, w)))
         bd = ((0,1),) * n_assets     
         constraints = ({'type': 'eq', 'fun': lambda x:  np.sum(x) - 1})
 
@@ -101,20 +97,14 @@ class c_Models:
         
         n_assets = len(self.data.columns)
         w0 = np.ones(n_assets) / n_assets
-        #pfo_std = lambda w: np.sqrt(np.dot(w.T, np.dot(self.cov, w)))
-        #mrc = lambda w: 1/pfo_std * (np.dot(self.cov, w))
-        #rc = lambda w: mrc * w
-        #rc = rc / rc.sum()
+        constraints = [{'type':'eq', 'fun': lambda x: np.sum(x) -1}]
+        bd = ((0,1),) * n_assets
 
-        #a = np.reshape(rc, (rc,1))
-        #differs = a - a.T
-        #fun = np.sum(np.square(differs))
-        constraints = [{'type':'eq', 'fun': lambda x: np.sum(x) -1},
-                       {'type':'ineq', 'fun': lambda x: x}]
-
-        rp = minimize(RP_objective, w0,  constraints=constraints, method='SLSQP')
+        rp = minimize(RP_objective, w0,  constraints=constraints, bounds = bd, method='SLSQP')
 
         return rp.x     #, RC(self.cov, rp.x)
+    
+    
     
     def plotting(self):
         ret_gmv = np.dot(self.gmv_opt(), self.mu)
@@ -132,8 +122,7 @@ class c_Models:
         
         
         
-        
-        
+
         trets = np.linspace(ret_gmv, max(self.mu), 30) # 30개 짜르기 
         tvols = []
         
@@ -141,12 +130,13 @@ class c_Models:
         for i, tret in enumerate(trets): #이 개별 return마다 최소 risk 찾기
             n_assets = len(self.data.columns)
             w0 = np.ones(n_assets) / n_assets
-            fun = lambda w: np.sqrt(np.dot(w.T ,np.dot(self.cov, w)))
+            fun = lambda w: np.dot(w.T ,np.dot(self.cov, w))
             constraints = [{'type': 'eq', 'fun': lambda x: np.sum(x) - 1},
                            {'type': 'ineq', 'fun': lambda x: np.dot(x, self.mu) - tret}]
                            #{'type': 'ineq', 'fun': lambda x: x}]
+            bd = ((0,1),) * n_assets
 
-            minvol = minimize(fun, w0, method='SLSQP', constraints=constraints)
+            minvol = minimize(fun, w0, method='SLSQP',bounds = bd, constraints=constraints)
             tvols.append(np.sqrt(np.dot(minvol.x, np.dot(self.cov, minvol.x))))
             
             pnumber = str(i+1) + "point"
@@ -159,5 +149,3 @@ class c_Models:
             ret_vol = {"GMV": [vol_gmv, ret_gmv],"MaxSharp": [vol_ms, ret_ms],"RiskParity": [vol_rp, ret_rp], "Trets" : trets.tolist(), "Tvols": tvols}        
             return ret_vol, json.dumps(efpoints), json.dumps(weights)
         # {"GMV": [vol_gmv, ret_gmv].tolist(), "MaxSharp": [vol_ms, ret_ms].tolist(), "RiskParity": [vol_rp, ret_rp], "Trets" : trets, "Tvols": tvols}
-
-

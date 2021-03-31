@@ -1,5 +1,7 @@
 var assetsBox = []
 var stocknames = [];
+var mystocksDB = [];
+var mystocks = [];
 $(document).ready(function () {
     
     $.ajax({
@@ -9,6 +11,7 @@ $(document).ready(function () {
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
                 stocknames.push(data[i][0]);
+                mystocksDB.push(data[i][0]);
             }
             if(localStorage.getItem("assets_weight")!=null){
                 jparse = JSON.parse(localStorage.getItem("assets_weight"))
@@ -65,8 +68,41 @@ $(document).ready(function () {
         disable : false,
         position : {my : 'right top', at: 'right bottom'},
     });
+    $('#my_comboBox').autocomplete({
+        source: mystocksDB,
+        select: function (event, ui) {
+        },
+        focus : function(event, ui){
+            return false;
+        },
+        minLength : 1,
+        autoFocus : true,
+        classes : {
+            'ui-autocomplete' : 'highlight'
+        },
+        delay : 500,
+        disable : false,
+        position : {my : 'right top', at: 'right bottom'},
+    });
 
    
+    $("#my_putin_btn").click(function () {
+        if (mystocksDB.includes($('#my_comboBox').val())) {
+            mystocks.push($('#my_comboBox').val());
+            
+            mystocksDB.splice(mystocksDB.indexOf($('#my_comboBox').val()),1);
+            $('#asset_row').empty();
+            $('#my_comboBox').val("");
+            for (i = 0; i < mystocks.length; i++) {
+                $('#asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
+            "</td><td class='numberCell'><input id='my_assetweight"+i+"' class='my_input_weight' type='text' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
+            "></td><td class='numberCell'><button id='my_putout_btn' name=" + mystocks[i] +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td></tr>");
+            }
+        } else {
+            alert("종목 정보가 올바르지 않습니다");
+        }
+    });
     $("#putin_btn").click(function () {
         if (stocknames.includes($('#comboBox').val())) {
             assetsBox.push($('#comboBox').val());
@@ -83,6 +119,7 @@ $(document).ready(function () {
             alert("종목 정보가 올바르지 않습니다");
         }
     });
+
     $(document).on('click', '#putout_btn', function () {
         $('#assetsBox').empty();
         assetsBox.splice(assetsBox.indexOf($(this).attr('name')),1);
@@ -90,6 +127,18 @@ $(document).ready(function () {
             $('#assetsBox').append("<div style='position:relative;margin-bottom:5px;width:100%;height:30px;display:flex;justify-content:center;border-bottom:1px solid #eeeeee;'><p>"
                 + assetsBox[i] + "</p > <button id='putout_btn' name=" + assetsBox[i] +
                 " style='position:absolute;right:5px;;width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></div>");
+        }
+        stocknames.push($(this).attr('name'));
+    });
+
+    $(document).on('click', '#my_putout_btn', function () {
+        $('#asset_row').empty();
+        mystocks.splice(mystocks.indexOf($(this).attr('name')),1);
+        for (i = 0; i < mystocks.length; i++) {
+            $('#asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
+            "</td><td class='numberCell'><input id='my_assetweight"+i+"' class='my_input_weight' type='text' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value="+jparse[mystocks[i]]+
+            "></td><td class='numberCell'><button id='my_putout_btn' name=" + mystocks[i] +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td></tr>");
         }
         stocknames.push($(this).attr('name'));
     });
@@ -128,7 +177,10 @@ $(document).ready(function () {
 
         if (assetsBox.length == 0) {
             alert("선택된 자산이 없습니다.");
-        } else {
+        }else if(assetsBox.length==1){
+            alert("한개의 자산으로는 최적화를 진행할 수 없습니다.");
+        }
+         else {
             $.ajax({
                 url: '/ajax_portfolio_optimize_return/',
                 type: "POST",
@@ -145,15 +197,18 @@ $(document).ready(function () {
                     Trets = data.ret_vol['Trets'];
                     Tvols = data.ret_vol['Tvols'];
                     ef_points = JSON.parse(data.efpoints);
+                    ef_points_tooltip = return_dict_items(ef_points);
                     asset_weights = JSON.parse(data.weights);
                     if (asset_weights ==1){
                         alert("입력한 기간이 짧습니다.");
                         location.reload();
                     }
-                    
+                    if(window.Efchart){
+                        window.Efchart.destroy();
+                    }
                     var pie_backgroundColor = ['#003f5c', '#2f4b7c','#665191','#a05195', '#d45087', '#f95d6a','#ff7c43','#ffa600'];
                     if($('input[name="strategy"]:checked').val()=='gmv'){
-                        $('#strategy_name_h2').html('Global Minimun Variance');
+                        $('#strategy_name_h2').html('Global Minimum Variance');
                         $('#strategy_comment_span').html('GMV(전역 최소 분산) 포트폴리오는 투자자의 위험 성향이 아주 강한 경우의 포트폴리오입니다. 이러한 상황에서 투자자는 수익의 최대화보다 위험의 최소화를 우선순위로 두게 되며, 이에 따른 최적화는 가장 낮은 변동성의 포트폴리오를 구성할 수 있도록 가중치의 해를 찾습니다.');
                         data = {
                             datasets: [{
@@ -206,16 +261,62 @@ $(document).ready(function () {
                     }
                     
                     opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols);
-                    console.log(asset_weights);
 
                 },
                 error: function (request, status, error) {
                     console.log('실패');
                 }
             });
+
         }
     });
+    $(document).on('click', '.additional_assets', function () {
+        clicked_value = $(this).attr('value');
+        clicked_text = $(this).html();
+        $("a").remove(`#${clicked_value}`);
+        $(".added_assetsBox").append("<a id='"+clicked_value+"' class='added_assets' value='"+clicked_value+"' >"+clicked_text+"</a>");
+    });
+    $(document).on('click', '.added_assets', function () {
+        clicked_value = $(this).attr('value');
+        clicked_text = $(this).html();
+        $("a").remove(`#${clicked_value}`);
+        $(".additional_assetsBox").append("<a id='"+clicked_value+"' class='additional_assets' value='"+clicked_value+"' >"+clicked_text+"</a>");
+    });
+    $('#add_portfolio').click(function (e) {
+        var targeted_popup_class = $(this).attr('data-popup-open'); 
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        e.preventDefault();
+    });
+    $('[data-popup-close]').on('click', function(e) { // 팝업 닫기 버튼 클릭시 동작하는 이벤트입니다. 
+        var targeted_popup_class = $(this).attr('data-popup-close'); 
+        $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350); 
+        e.preventDefault(); 
+    });
+    $(document).on('propertychange change keyup paste input', '.my_input_weight',function(){
+        var sum = 0
+        for (i=0;i<mystocks.length;i++){
+            sum = sum+ parseFloat($('#my_assetweight'+i).val());
+        }
+        if(sum!=1){
+            $('#save_portfolio_btn').attr("disabled", "disabled");
+            $('#save_portfolio_btn').css("background-color","#ccc");
+        }else{
+            $('#save_portfolio_btn').removeAttr("disabled");
+            $('#save_portfolio_btn').css("background-color","#8C0000");
+        }
+    });
+    $('#save_portfolio_btn').click(function(){
+        if($('.multiselect-selected-text').html()=='None selected'){
+            alert("투자하고 있는 자산을 선택하여 주세요");
+        }else if(mystocks.length==0){
+            alert("선택된 자산이 없습니다.");
+        }else{
+            
+        }
+
+    });
 });
+
 function numtofix(array){
     r_array = []
     for(var i=0;i<array.length;i++){
@@ -277,6 +378,7 @@ function tobacktest() {
     location.href = '/portfolio_backtest';
     }
 }
+    
 function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
     
     $('.optimize_result').css('display', 'flex');
@@ -310,6 +412,25 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
         options: {
             responsive: true, // Instruct chart js to respond nicely.
             maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height 
+            tooltips:{
+                displayColors:false,
+                titleFontColor:'#fff',
+                titleAlign: 'center',
+                bodyFontSize: 15,
+                bodySpacing: 2,
+                bodyFontColor: '#fff',
+                bodyAlign: 'center',
+                callbacks: {
+                    label: function(tooltipitem, data){
+                        var title = "기대수익률 : "+ tooltipitem['yLabel'].toFixed(2) + " 표준편차 : "+tooltipitem['xLabel'].toFixed(2);
+                        var body = "";
+                        for (var i=0; i<assetsBox.length; i++){
+                            body= body + assetsBox[i] + ": " + ef_points_tooltip[tooltipitem['index']][i].toFixed(2)*100 + '% \n';
+                        }
+                        return [title, "", body];
+                    }
+                }
+            }
         },
         scales: {
             yAxes: [{
@@ -363,8 +484,13 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
     pushscatter(Efchart, MaxSharp[0], MaxSharp[1], 'Max Sharp Portfolio', '#8C0000', '2');
     pushscatter(Efchart, RiskParity[0], RiskParity[1], 'Risk Parity Portfolio', '#E48257', '2')
 }
-function opt_result_report(assetsBox, ) {
 
+function return_dict_items(dict){
+    var i, arr= [];
+    for(i in dict){
+        arr.push(dict[i]);
+    }
+    return arr;
 }
 var chartReg = {};
 function createChart(chartdiv, charttype) {
