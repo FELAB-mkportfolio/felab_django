@@ -7,6 +7,11 @@ from FElab_app.opt_models import c_Models
 import pandas as pd
 from django.http import HttpResponse,JsonResponse
 from FElab_app.back_test import back_test
+import numpy as np
+import FinanceDataReader as fdr
+from datetime import datetime, timedelta
+import time
+
 
 #-*-coding:utf-8 -*-
 # Create your views here.
@@ -81,6 +86,56 @@ def portfolio_optimize(request):
 def portfolio_backtest(request):
     return render(request, 'FElab_app/portfolio_backtest.html',{})
 #--------------------------------#
+
+#DB 갱신
+def datarefresh(request):
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
+    sql = "SHOW TABLES;"
+    curs = conn.cursor()
+    curs.execute(sql)
+    datas = curs.fetchall()
+
+    for data in datas:
+        ticker = data[0]
+        sql = "SELECT Date FROM " + ticker + " ORDER BY Date DESC LIMIT 1;"
+        
+        curs = conn.cursor()
+        curs.execute(sql)
+        
+        db_lastdate = curs.fetchall()
+
+        #db 저장된 마지막 날짜
+        db_lastdate = db_lastdate[0][0]
+        #print(db_lastdate)
+        
+        #datareader로 불러온 마지막 날짜
+        newdata_date = fdr.DataReader(ticker[2:]).iloc[-1].name
+        #print(newdata_date)
+        
+        if (newdata_date)!=(db_lastdate):
+            #print("다름!")
+            
+            newdata = fdr.DataReader(ticker[2:]).loc[db_lastdate+timedelta(days=1):newdata_date+timedelta(days=1)]
+            newdata.reset_index(level=0, inplace=True)
+            
+            #newdata['Date'] = newdata['Date'].astype(str)
+            #print(newdata['Date'])
+            sql = "INSERT INTO " + ticker + " VALUES (%s,%s,%s,%s,%s,%s,%s);"
+            val = [tuple(x) for x in newdata.to_numpy()]
+            #print(val)
+            curs.executemany(sql,val)
+            conn.commit()
+        else:
+            continue
+
+
+    print("종료")    
+
+    #db 접속 종료
+    curs.close()
+    conn.close()
+
+    return JsonResponse(data, safe=False)
 
 #텍스트 마이닝 페이지
 def textmining(request):
