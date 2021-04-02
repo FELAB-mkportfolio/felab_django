@@ -52,14 +52,16 @@ def ajax_db_return(request):
 @csrf_exempt
 def ajax_portfolio_optimize_return(request):
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
-    assets= request.POST.getlist('assetsBox[]')
+    mystocks= request.POST.getlist('mystocks[]')
+    mystocks_weights = request.POST.getlist('mystocks_weights[]')
     from_period = pd.to_datetime(request.POST.get('from'))
     to_period = pd.to_datetime(request.POST.get('to'))
-    strategy = request.POST.get('strategy')
-    c_m = c_Models(assets,from_period,to_period,strategy,conn)
+    #strategy = request.POST.get('strategy')
+    c_m = c_Models(mystocks,from_period,to_period,conn)
     ret_vol, efpoints, weights = c_m.plotting()
     data = {'ret_vol': ret_vol, 'efpoints': efpoints, "weights" : weights}
     return JsonResponse(data)
+
 #ajax 백테스트
 @csrf_exempt
 def ajax_backtest(request):
@@ -71,7 +73,6 @@ def ajax_backtest(request):
     rebalancing_month = request.POST.get('rebalancing_month')
     start_amount = request.POST.get('start_amount')
     #strategy = request.POST.get('strategy')
-
     backtest = back_test()
     data = backtest.backtest_data(assetnames,assetweights,from_period,to_period,start_amount,rebalancing_month,conn)
 

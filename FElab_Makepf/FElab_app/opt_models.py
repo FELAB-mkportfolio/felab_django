@@ -6,7 +6,7 @@ from scipy.optimize import minimize
 import json
 
 class c_Models:
-    def __init__(self, assets, start, end, strategy,conn):
+    def __init__(self, assets, start, end, conn):
         self.result = None
         self.graph = None
         eon_db = conn
@@ -39,7 +39,7 @@ class c_Models:
             self.data = data
             self.mu = data.mean() * 12
             self.cov = data.cov() * 12
-            self.strategy = strategy
+            '''self.strategy = strategy
             
             if "gmv" in strategy:
                 self.result = self.gmv_opt()
@@ -51,7 +51,7 @@ class c_Models:
                 self.result = self.rp_opt()
                 #self.graph = self.efplot()
             else:
-                self.result = print("전략이 잘못 입력되었습니다. ")
+                self.result = print("전략이 잘못 입력되었습니다. ")'''
     
     def gmv_opt(self):
         n_assets = len(self.data.columns)

@@ -2,7 +2,42 @@ var assetsBox = []
 var stocknames = [];
 var mystocksDB = [];
 var mystocks = [];
+var mystocks_weights = [];
+var adjusted_assets = [];
+var adjusted_assets_weights = [];
+
 $(document).ready(function () {
+    if(localStorage.getItem("mystocks")){
+        mystocks = localStorage.getItem("mystocks").split(',');
+        mystocks_weights = localStorage.getItem("mystocks_weights").split(',');
+        from_period = localStorage.getItem("from");
+        to_period = localStorage.getItem("to");
+        investment_kinds = localStorage.getItem("investment_kinds").split(',');
+        adjusted_assets= mystocks;
+        adjusted_assets_weights= mystocks_weights;
+
+        for(i =0; i<investment_kinds.length;i++){
+            $("input:checkbox[id='"+investment_kinds[i]+"']").prop("checked", true);
+        }
+        $('#my_from').val(from_period);
+        $('#my_to').val(to_period);
+        for (i = 0; i < mystocks.length; i++) {
+            $('#asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
+        "</td><td class='numberCell'><input id='mystocks_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
+        "></td><td class='numberCell'><button id='my_putout_btn' name=" + mystocks[i] +
+        " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
+            $('#adjusted_asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
+            "</td><td class='numberCell'><input id='adjusted_assets_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
+            "></td><td class='numberCell'><button id='putout_btn' name=" + mystocks[i] +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>")
+        }
+        for(i = 0; i < mystocks.length; i++){
+            $("#mystocks_weights"+i).val(mystocks_weights[i]);
+            $("#adjusted_assets_weights"+i).val(mystocks_weights[i]);
+        }
+        
+
+    }
     
     $.ajax({
         url: '/ajax_db_return/',
@@ -21,7 +56,7 @@ $(document).ready(function () {
                     assetsBox.push(obj[i]);
                 }
                 for (i = 0; i < assetsBox.length; i++) {
-                $('#assetsBox').append("<div style='position:relative;margin: 10px 0;width:100%;height:30px;display:flex;justify-content:center;border-bottom:1px solid #eeeeee;'><p>"
+                $('#assetsBox').append("<div style='position:relative;margin: 10px 0;width:100%;height:30px;display:flex;justify-content:center;border-bottom:1px   solid #eeeeee;'><p>"
                             + assetsBox[i] + "</p > <button id='putout_btn' name=" + assetsBox[i] +
                             " style='position:absolute;right:5px;;width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></div>");
                 }
@@ -35,30 +70,10 @@ $(document).ready(function () {
     $('#comboBox').autocomplete({
         source: stocknames,
         select: function (event, ui) {
-            $.ajax({
-                url: '/ajax_db_return/',
-                type: "POST",
-                dataType: "json",
-                data: { 'stock_code': ui.item.value },
-                success: function (data) {
-                    var stockdata = [];
-                    for (var i = 0; i < data.length; i++) {
-                        stockdata.push({ 'Date': moment(data[i][0]).format('YYYY-MM-DD'), 'Open': data[i][1], 'High': data[i][2], 'Low': data[i][3], 'Close': data[i][4], 'Volume': data[i][5] })
-                    }
-                    var chartdiv = document.querySelector('#chartdiv');
-                    var charttype = am4charts.XYChart;
-                    var chart = createChart(chartdiv, charttype);
-                    stockGraph(stockdata,chart);
-                },
-                error: function (request, status, error) {
-                    console.log('실패');
-                }
-            })
         },
         focus : function(event, ui){
             return false;
         },
-
         minLength : 1,
         autoFocus : true,
         classes : {
@@ -95,9 +110,9 @@ $(document).ready(function () {
             $('#my_comboBox').val("");
             for (i = 0; i < mystocks.length; i++) {
                 $('#asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
-            "</td><td class='numberCell'><input id='my_assetweight"+i+"' class='my_input_weight' type='text' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
+            "</td><td class='numberCell'><input id='mystocks_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
             "></td><td class='numberCell'><button id='my_putout_btn' name=" + mystocks[i] +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td></tr>");
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
             }
         } else {
             alert("종목 정보가 올바르지 않습니다");
@@ -106,7 +121,6 @@ $(document).ready(function () {
     $("#putin_btn").click(function () {
         if (stocknames.includes($('#comboBox').val())) {
             assetsBox.push($('#comboBox').val());
-            
             stocknames.splice(stocknames.indexOf($('#comboBox').val()),1);
             $('#assetsBox').empty();
             $('#comboBox').val("");
@@ -116,18 +130,21 @@ $(document).ready(function () {
                     " style='position:absolute;right:5px;;width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></div>");
             }
         } else {
-            alert("종목 정보가 올바르지 않습니다");
+            
         }
     });
 
     $(document).on('click', '#putout_btn', function () {
-        $('#assetsBox').empty();
-        assetsBox.splice(assetsBox.indexOf($(this).attr('name')),1);
-        for (i = 0; i < assetsBox.length; i++) {
-            $('#assetsBox').append("<div style='position:relative;margin-bottom:5px;width:100%;height:30px;display:flex;justify-content:center;border-bottom:1px solid #eeeeee;'><p>"
-                + assetsBox[i] + "</p > <button id='putout_btn' name=" + assetsBox[i] +
-                " style='position:absolute;right:5px;;width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></div>");
+        
+        $('#adjusted_asset_row').empty();
+        adjusted_assets.splice(adjusted_assets.indexOf($(this).attr('name')),1);
+        for (i = 0; i < adjusted_assets.length; i++) {
+            $('#adjusted_asset_row').append("<tr><td class='numberCell'>"+adjusted_assets[i]+
+            "</td><td class='numberCell'><input id='adjusted_assets_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
+            "></td><td class='numberCell'><button id='putout_btn' name=" + adjusted_assets[i] +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+adjusted_assets[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>")
         }
+        $('.additional_assetsBox').append("<a id='"+$(this).attr('name')+"' class='additional_assets' value='"+$(this).attr('name')+"' >"+$(this).attr('name')+"</a>")
         stocknames.push($(this).attr('name'));
     });
 
@@ -136,32 +153,32 @@ $(document).ready(function () {
         mystocks.splice(mystocks.indexOf($(this).attr('name')),1);
         for (i = 0; i < mystocks.length; i++) {
             $('#asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
-            "</td><td class='numberCell'><input id='my_assetweight"+i+"' class='my_input_weight' type='text' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value="+jparse[mystocks[i]]+
+            "</td><td class='numberCell'><input id='mystocks_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
             "></td><td class='numberCell'><button id='my_putout_btn' name=" + mystocks[i] +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td></tr>");
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
         }
         stocknames.push($(this).attr('name'));
     });
+
+
     var dateFormat = "mm/dd/yy",
-    from = $("#from")
+    my_from = $("#my_from")
         .datepicker({
             defaultDate: "+1w",
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1
-        })
-        .on("change", function () {
-            to.datepicker("option", "minDate", getDate(this));
-        }),
-        to = $("#to").datepicker({
-            defaultDate: "+1w",
-            changeMonth: true,
-            changeYear: true,
-            numberOfMonths: 1
-        })
-            .on("change", function () {
-                from.datepicker("option", "maxDate", getDate(this));
-            });
+        }).on("change", function () {
+            my_to.datepicker("option", "minDate", getDate(this));
+    }),
+    my_to = $("#my_to").datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1
+        }).on("change", function () {
+            my_from.datepicker("option", "maxDate", getDate(this));
+    });
 
     function getDate(element) {
         var date;
@@ -174,146 +191,163 @@ $(document).ready(function () {
         return date;
     }
     $('#optimize_btn').click(function () {
-
-        if (assetsBox.length == 0) {
+        
+        if (mystocks.length == 0) {
             alert("선택된 자산이 없습니다.");
-        }else if(assetsBox.length==1){
+        }else if(mystocks.length==1){
             alert("한개의 자산으로는 최적화를 진행할 수 없습니다.");
-        }
-         else {
-            $.ajax({
-                url: '/ajax_portfolio_optimize_return/',
-                type: "POST",
-                dataType: "json",
-                data: {
-                    
-                    "assetsBox[]": assetsBox, "from": $('#from').val(), 'to': $('#to').val(),
-                    'strategy': $('input[name=strategy]:checked').val()
-                },
-                success: function (data) {
-                    GMV = data.ret_vol['GMV'];
-                    MaxSharp = data.ret_vol['MaxSharp'];
-                    RiskParity = data.ret_vol['RiskParity'];
-                    Trets = data.ret_vol['Trets'];
-                    Tvols = data.ret_vol['Tvols'];
-                    ef_points = JSON.parse(data.efpoints);
-                    ef_points_tooltip = return_dict_items(ef_points);
-                    asset_weights = JSON.parse(data.weights);
-                    if (asset_weights ==1){
-                        alert("입력한 기간이 짧습니다.");
-                        location.reload();
+        }else {
+            var sum = 0
+            for (i=0;i<mystocks.length;i++){
+                mystocks_weights.push(parseFloat($('#mystocks_weights'+i).val()));
+                sum = sum+ parseFloat($('#mystocks_weights'+i).val());
+            }
+            if(sum !=1 ){
+                alert("비중의 합이 1이 아닙니다.")
+            }else{
+                var investment_kinds = []
+                for ( var i = 0; i < $("input[name=investment_kind]:checkbox" ).length; i++) {
+                    if ($( "input[name=investment_kind]:checkbox")[i].checked == true ) {
+                        investment_kinds.push($( "input[name=investment_kind]:checkbox" )[i].value);
                     }
-                    if(window.Efchart){
-                        window.Efchart.destroy();
-                    }
-                    var pie_backgroundColor = ['#003f5c', '#2f4b7c','#665191','#a05195', '#d45087', '#f95d6a','#ff7c43','#ffa600'];
-                    if($('input[name="strategy"]:checked').val()=='gmv'){
-                        $('#strategy_name_h2').html('Global Minimum Variance');
-                        $('#strategy_comment_span').html('GMV(전역 최소 분산) 포트폴리오는 투자자의 위험 성향이 아주 강한 경우의 포트폴리오입니다. 이러한 상황에서 투자자는 수익의 최대화보다 위험의 최소화를 우선순위로 두게 되며, 이에 따른 최적화는 가장 낮은 변동성의 포트폴리오를 구성할 수 있도록 가중치의 해를 찾습니다.');
-                        data = {
-                            datasets: [{
-                                data: asset_weights['gmv'],
-                                backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
-                            }],
-                            labels : assetsBox, 
-                        }
-                        r_array= round_array(asset_weights['gmv']);
-                        Draw_optimize_pie(data);
-                        $('#opt_report_table').empty();
-                        for (i =0; i<assetsBox.length; i++){
-                            $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
-                        }
-                    }
-                    else if($('input[name="strategy"]:checked').val()=='ms'){
-                        $('#strategy_name_h2').html('Maximum Sharpe Ratio');
-                        $('#strategy_comment_span').html('샤프지수는 감수한 위험 대비 달성 하게 되는 수익은 어느정도나 되는 가를 평가할 때 쓰이는 지수입니다. 즉 위험 자산에 투자함으로써 얻은 초과 수익의 정도를 나타내는 지표입니다. 이러한 샤프 지수를 최대화한 포트폴리오가 Maximum Sharpe Ratio Portfolio 입니다.');
-                        data = {
-                            datasets: [{
-                                data: asset_weights['ms'],
-                                backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
-
-                            }],
-                            labels : assetsBox, 
-                        }
-                        Draw_optimize_pie(data);
-                        r_array= round_array(asset_weights['ms']);
-                        $('#opt_report_table').empty();
-                        for (i =0; i<assetsBox.length; i++){
-                            $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
-                        }
-                    }
-                    else if($('input[name="strategy"]:checked').val()=='rp'){
-                        $('#strategy_name_h2').html('Risk Parity Portfolio');
-                        $('#strategy_comment_span').html('리스크 패리티 전략은 개별자산의 수익률 변동이 포트폴리오 전체 위험에 기여하는 정도를 동일하도록 구성해서 포트폴리오 전체 위험이 특정 자산의 가격 변동에 과도하게 노출되는 것을 피하기 위한 자산배분전략입니다.');
-                        data = {
-                            datasets: [{
-                                data: asset_weights['rp'],
-                                backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
-                            }],
-                            labels : assetsBox, 
-                        }
-                        Draw_optimize_pie(data);
-                        r_array= round_array(asset_weights['rp']);
-                        $('#opt_report_table').empty();
-                        for (i =0; i<assetsBox.length; i++){
-                            $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
-                        }
-                    }
-                    
-                    opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols);
-
-                },
-                error: function (request, status, error) {
-                    console.log('실패');
                 }
-            });
+                localStorage.setItem("investment_kinds", investment_kinds);
+                localStorage.setItem("mystocks", mystocks);
+                localStorage.setItem("mystocks_weights", mystocks_weights);
+                localStorage.setItem("from", $('#my_from').val());
+                localStorage.setItem("to", $('#my_to').val());
+                adjusted_assets = mystocks;
+                $.ajax({
+                    url: '/ajax_portfolio_optimize_return/',
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        "mystocks[]": mystocks, "mystocks_weights[]" : mystocks_weights, "from": $('#my_from').val(), 'to': $('#my_to').val(),
+                        //"investment_kinds" : 
+                    },
+                    success: function (data) {
+                        GMV = data.ret_vol['GMV'];
+                        MaxSharp = data.ret_vol['MaxSharp'];
+                        RiskParity = data.ret_vol['RiskParity'];
+                        Trets = data.ret_vol['Trets'];
+                        Tvols = data.ret_vol['Tvols'];
+                        ef_points = JSON.parse(data.efpoints);
+                        ef_points_tooltip = return_dict_items(ef_points);
+                        asset_weights = JSON.parse(data.weights);
+                        ef_points_tooltip.push(asset_weights['gmv']);
+                        ef_points_tooltip.push(asset_weights['ms']);
+                        ef_points_tooltip.push(asset_weights['rp']);
+                        if (asset_weights ==1){
+                            alert("입력한 기간이 짧습니다.");
+                            location.reload();
+                        }
+                        if(window.Efchart){
+                            window.Efchart.destroy();
+                        }
 
+                        var pie_backgroundColor = ['#003f5c', '#2f4b7c','#665191','#a05195', '#d45087', '#f95d6a','#ff7c43','#ffa600'];
+                        if($('input[name="strategy"]:checked').val()=='gmv'){
+                            $('#strategy_name_h2').html('Global Minimum Variance');
+                            $('#strategy_comment_span').html('GMV(전역 최소 분산) 포트폴리오는 투자자의 위험 성향이 아주 강한 경우의 포트폴리오입니다. 이러한 상황에서 투자자는 수익의 최대화보다 위험의 최소화를 우선순위로 두게 되며, 이에 따른 최적화는 가장 낮은 변동성의 포트폴리오를 구성할 수 있도록 가중치의 해를 찾습니다.');
+                            data = {
+                                datasets: [{
+                                    data: asset_weights['gmv'],
+                                    backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
+                                }],
+                                labels : assetsBox, 
+                            }
+                            r_array= round_array(asset_weights['gmv']);
+                            Draw_optimize_pie(data);
+                            $('#opt_report_table').empty();
+                            for (i =0; i<assetsBox.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                            }
+                        }
+                        else if($('input[name="strategy"]:checked').val()=='ms'){
+                            $('#strategy_name_h2').html('Maximum Sharpe Ratio');
+                            $('#strategy_comment_span').html('샤프지수는 감수한 위험 대비 달성 하게 되는 수익은 어느정도나 되는 가를 평가할 때 쓰이는 지수입니다. 즉 위험 자산에 투자함으로써 얻은 초과 수익의 정도를 나타내는 지표입니다. 이러한 샤프 지수를 최대화한 포트폴리오가 Maximum Sharpe Ratio Portfolio 입니다.');
+                            data = {
+                                datasets: [{
+                                    data: asset_weights['ms'],
+                                    backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
+    
+                                }],
+                                labels : assetsBox, 
+                            }
+                            Draw_optimize_pie(data);
+                            r_array= round_array(asset_weights['ms']);
+                            $('#opt_report_table').empty();
+                            for (i =0; i<assetsBox.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                            }
+                        }
+                        else if($('input[name="strategy"]:checked').val()=='rp'){
+                            $('#strategy_name_h2').html('Risk Parity Portfolio');
+                            $('#strategy_comment_span').html('리스크 패리티 전략은 개별자산의 수익률 변동이 포트폴리오 전체 위험에 기여하는 정도를 동일하도록 구성해서 포트폴리오 전체 위험이 특정 자산의 가격 변동에 과도하게 노출되는 것을 피하기 위한 자산배분전략입니다.');
+                            data = {
+                                datasets: [{
+                                    data: asset_weights['rp'],
+                                    backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
+                                }],
+                                labels : assetsBox, 
+                            }
+                            Draw_optimize_pie(data);
+                            r_array= round_array(asset_weights['rp']);
+                            $('#opt_report_table').empty();
+                            for (i =0; i<assetsBox.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                            }
+                        }
+                        
+                        opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols);
+    
+                    },
+                    error: function (request, status, error) {
+                        console.log('실패');
+                    }
+                });
+            }
         }
     });
     $(document).on('click', '.additional_assets', function () {
         clicked_value = $(this).attr('value');
-        clicked_text = $(this).html();
+        adjusted_assets.push(clicked_value);
         $("a").remove(`#${clicked_value}`);
-        $(".added_assetsBox").append("<a id='"+clicked_value+"' class='added_assets' value='"+clicked_value+"' >"+clicked_text+"</a>");
+        $("#adjusted_asset_row").append("<tr><td class='numberCell'>"+clicked_value+
+            "</td><td class='numberCell'><input id='adjusted_assets_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
+            "></td><td class='numberCell'><button id='putout_btn' name=" + clicked_value +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;' data-text='"+clicked_value+"'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+clicked_value+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
     });
-    $(document).on('click', '.added_assets', function () {
-        clicked_value = $(this).attr('value');
-        clicked_text = $(this).html();
-        $("a").remove(`#${clicked_value}`);
-        $(".additional_assetsBox").append("<a id='"+clicked_value+"' class='additional_assets' value='"+clicked_value+"' >"+clicked_text+"</a>");
+    $(document).on('propertychange change keyup paste input', '.my_input_weight',function(){
+        
     });
-    $('#add_portfolio').click(function (e) {
+    $(document).on('click', '#showSise',function(){
         var targeted_popup_class = $(this).attr('data-popup-open'); 
         $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
-        e.preventDefault();
+        $.ajax({
+            url: '/ajax_db_return/',
+            type: "POST",
+            dataType: "json",
+            data: { 'stock_code': $(this).attr('data-stock')},
+            success: function (data) {
+                var stockdata = [];
+                for (var i = 0; i < data.length; i++) {
+                    stockdata.push({ 'Date': moment(data[i][0]).format('YYYY-MM-DD'), 'Open': data[i][1], 'High': data[i][2], 'Low': data[i][3], 'Close': data[i][4], 'Volume': data[i][5] })
+                }
+                var chartdiv = document.querySelector('#chartdiv');
+                var charttype = am4charts.XYChart;
+                var chart = createChart(chartdiv, charttype);
+                stockGraph(stockdata,chart);
+            },
+            error: function (request, status, error) {
+                console.log('실패');
+            }
+        })
     });
     $('[data-popup-close]').on('click', function(e) { // 팝업 닫기 버튼 클릭시 동작하는 이벤트입니다. 
         var targeted_popup_class = $(this).attr('data-popup-close'); 
         $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350); 
         e.preventDefault(); 
-    });
-    $(document).on('propertychange change keyup paste input', '.my_input_weight',function(){
-        var sum = 0
-        for (i=0;i<mystocks.length;i++){
-            sum = sum+ parseFloat($('#my_assetweight'+i).val());
-        }
-        if(sum!=1){
-            $('#save_portfolio_btn').attr("disabled", "disabled");
-            $('#save_portfolio_btn').css("background-color","#ccc");
-        }else{
-            $('#save_portfolio_btn').removeAttr("disabled");
-            $('#save_portfolio_btn').css("background-color","#8C0000");
-        }
-    });
-    $('#save_portfolio_btn').click(function(){
-        if($('.multiselect-selected-text').html()=='None selected'){
-            alert("투자하고 있는 자산을 선택하여 주세요");
-        }else if(mystocks.length==0){
-            alert("선택된 자산이 없습니다.");
-        }else{
-            
-        }
-
     });
 });
 
@@ -366,7 +400,7 @@ function pushscatter(chart, x, y, label, color, order) {
     window.Efchart.update();
 }
 function tobacktest() {
-    if(assetsBox.length==0){
+    /*if(stocknames.length==0){
         alert("아무런 자산을 입력하지 않았습니다.");
     }else{
     asset_json = {};
@@ -374,9 +408,8 @@ function tobacktest() {
         asset_json[assetsBox[i]] = window.opt_report_chart.data.datasets[0].data[i];
     }
     localStorage.setItem("assets_weight", JSON.stringify(asset_json));
-
+*/
     location.href = '/portfolio_backtest';
-    }
 }
     
 function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
@@ -424,9 +457,27 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
                     label: function(tooltipitem, data){
                         var title = "기대수익률 : "+ tooltipitem['yLabel'].toFixed(2) + " 표준편차 : "+tooltipitem['xLabel'].toFixed(2);
                         var body = "";
-                        for (var i=0; i<assetsBox.length; i++){
-                            body= body + assetsBox[i] + ": " + ef_points_tooltip[tooltipitem['index']][i].toFixed(2)*100 + '% \n';
+                        if(tooltipitem['datasetIndex']==0){
+                            for (var i=0; i<adjusted_assets.length; i++){
+                                body= body + adjusted_assets[i] + ": " + ef_points_tooltip[tooltipitem['index']][i].toFixed(2)*100 + '% \n';
+                            }
+                        }else if(tooltipitem['datasetIndex']==1){
+                            for (var i=0; i<adjusted_assets.length; i++){
+                                body= body + adjusted_assets[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+
+                            }
+                        }else if(tooltipitem['datasetIndex']==2){
+                            for (var i=0; i<adjusted_assets.length; i++){
+                                body= body + adjusted_assets[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+
+                            }
+                        }else if(tooltipitem['datasetIndex']==3){
+                            
+                            for (var i=0; i<adjusted_assets.length; i++){
+                                body= body + adjusted_assets[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                            }
                         }
+                        
                         return [title, "", body];
                     }
                 }
@@ -450,35 +501,6 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
                 }
             }]
         },
-        tooltips: {
-            mode: 'single',
-            displayColors: false,
-            backgroundColor: '#282721',
-            titleFontColor: '#fff',
-            titleAlign: 'center',
-            bodySpacing: 2,
-            bodyFontColor: '#fff',
-            bodyAlign: 'center',
-            callbacks: {
-                title: function (tooltipitem, data) {
-                    return data.datasets[tooltipitem[0]['datasetIndex']].label;
-                },
-                label: function (tooltipitem, data) {
-                    var label = "annual_volatility : " + tooltipitem['xLabel'];
-                    label += "  annual_return : " + tooltipitem['yLabel'];
-                    return label;
-                },
-                afterLabel: function (tooltipitem, data) {
-                    var footer = ' ';
-                    if (tooltipitem['datasetIndex'] == 0) {
-                        for (var i = 0; i < ind_names.length; i++) {
-                            footer += ind_names[i] + " : " + ind_weight[tooltipitem['index']][i] + "%\n";
-                        }
-                    }
-                    return footer;
-                }
-            }
-        }
     });
     pushscatter(Efchart, GMV[0], GMV[1], 'GMV Portfolio', '#536162', '2');
     pushscatter(Efchart, MaxSharp[0], MaxSharp[1], 'Max Sharp Portfolio', '#8C0000', '2');

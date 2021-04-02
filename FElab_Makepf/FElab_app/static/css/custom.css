@@ -259,6 +259,10 @@ label{
     overflow: hidden;
     padding-bottom: 3px;
 }
+#my_from, #my_to{
+    width: 200px;
+    height: 30px;
+}
 input[class=amcharts-input]{
     border:none;
     border-bottom: 1px solid #8C0000;
@@ -300,7 +304,9 @@ button[class=amcharts-input]{
     justify-content:center;
     display:flex;
 }
-
+.block {
+    width:33%;
+}
 .bt_left{
     width:50%;
 }
@@ -322,6 +328,9 @@ button[class=amcharts-input]{
 table {
     border-collapse: collapse;
     border-spacing: 0;
+}
+tr >.numberCell{
+    text-align: center;
 }
 thead {
     display: table-header-group;
@@ -345,6 +354,7 @@ tr {
 }
 .popup-inner { /* 열렸을 때 팝업창 크기와 색상을 지정합니다. */ 
     position:absolute; 
+    height:600px;
     width:40%;
     top:50%; 
     left:50%; 
