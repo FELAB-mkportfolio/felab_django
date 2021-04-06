@@ -1,0 +1,246 @@
+{% extends 'FElab_app/base.html' %}
+
+{% block content %}
+{% load static %}
+<head>
+    <script type='text/javascript' src="{% static 'js/portfolio_backtest.js' %}"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<div class="header" style="height:300px;position:relative;display:flex;">
+    <div style="width:30%;display:flex;justify-content:center;">
+        <image src="/static/images/user.png" style="width:200px;height:200px;top:50%;position:absolute;transform:translateY(-50%);margin-left: 30px;"></image>
+    </div>
+    <div class="User_info" style="color:white; font-family: 'Nanum Gothic', sans-serif;">
+        <div style="position:relative; top:50%;transform:translateY(-50%);">
+            <h2 style="width:100%;">USER</h2>
+            <p style="width:100%;">님의 포트폴리오</p>
+        </div>
+    </div>
+</div>
+<div style="display:flex;justify-content:center; padding:40px;background-color: white;">
+    <div class="commentBox" style="width:90%;position:relative;">
+        <span style='font-size: 40px;color:#46b3e6;'>백테스트</span>는 과거로 돌아가서 특정 투자전략을 사용했다면 어느 정도의 수익률을 벌 수 있었을지 시뮬레이션 돌려보는 과정을 뜻합니다. 예를 들어 10년 전 매달 삼성전자 주식을 10주씩 샀다면 지금쯤 수익률은 어떨까? 하는 궁금증을 해결할 수 있고
+    평소 사용해보고 싶었던 투자전략들을 과거 데이터를 활용해서 해보는 것입니다.
+    </div>
+</div>
+<div style="position:relative;display: flex;flex-direction:row;margin: 0;height:800px;background-color: #fbfbfd;">
+    <div class="bt_left">
+        <div class="backtest_step">
+            <h3 style='margin:50px 0'>자산 선택 및 배분</h3>
+            <input id="comboBox" onfocus="if(this.value == '종목 검색') { this.value = ''; }" value="종목 검색" style='background-color: #eeeeee;' />
+            <button id="putin_btn" style="width:90px;background-color:#8C0000;height:40px;bottom:0;border:none;color:white;">담기</button>
+            <div class="opt_report" style="width:100%; margin: 20px 0;height:250px;font-size:10px;">
+                <div id="opt_report_chart"></div>
+            </div>
+            <div style='width:100%; display:flex;justify-content: center;'>
+                <div id="assetsBox"style='margin-top:30px;width:60%;display:flex;flex-direction:column;'>
+                    <table class='table backtest_table'>
+                        <thead>
+                            <tr>
+                                <th class='numberCell'>자산</th>
+                                <th class='numberCell'>비중</th>
+                                <th class='numberCell'></th>
+    
+                            </tr>
+                        </thead>
+                        <tbody id='asset_row'>
+                            
+                        </tbody>
+    
+                    </table></div>
+        </div>
+        </div>
+    </div>
+    <div class="bt_right" >
+        <div class="backtest_step" style='height:70%;margin-bottom:20px;'>
+            <h3 style='margin:50px 0'>투자 기간과 전략</h3>
+            <div class='row'>
+                <div style='margin:0 30px;'>
+                    <label for="from">시작</label>
+                    <input type="text" class="input_date" id="from" name="from" autocomplete="off" style='width:200px;height:40px;'/>
+                </div>
+                <div style='margin:0 30px;'>
+                    <label for="to">종료</label>
+                    <input type="text" class="input_date" id="to" name="to" autocomplete="off"style='width:200px;height:40px;' />
+                </div>
+            </div>
+            <div class='row'>
+                <label for='rebalancing_month'>리밸런싱 주기</label>
+                <select id='rebalancing_month'>
+                    <option value='1'>1개월</option>
+                    <option value='2'>2개월</option>
+                    <option value='3'>3개월</option>
+                    <option value='4'>4개월</option>
+                    <option value='5'>5개월</option>
+                    <option value='6'>6개월</option>
+                    <option value='7'>7개월</option>
+                    <option value='8'>8개월</option>
+                    <option value='9'>9개월</option>
+                    <option value='10'>10개월</option>
+                    <option value='11'>11개월</option>
+                    <option value='12'>12개월</option>
+                </select>
+            </div>
+            <div class='row'>
+                <label for='start_amount' style="margin:0 30px;">시작 금액</label>
+                <input type='text' class='input_amount' id='start_amount' style='width:200px;height:40px;'/>
+            </div>
+            <div class='row' style="flex-direction: column;">
+                <label><input type='radio' name='strategy' value='GMV' checked />GMV 포트폴리오</label>
+                <label><input type='radio' name='strategy' value='MSR' />Maximum Sharpe ratio 포트폴리오</label>
+            </div>
+        </div>
+        <div style='display: flex;justify-content: center;background-color: #fbfbfd;'>
+            <button style='width:100%;height:60px;margin:0 30px;background-color: #8C0000;border:none;color:white;' id='backtest_btn'>백테스트 시작</button>
+        </div>
+    </div>
+    
+</div>
+
+<div id='result_container'>
+    <div class='commentBox' style='margin:100px 0px 0px 30px;padding:0; text-align: left;'>
+        <h2>백테스트 결과</h2><span>투자기간</span><span id='daterange'></span>
+    </div>
+    <div class='backtest_result'>
+        <div class='graph_block' style="width:100%;">
+            <div class='graph_title'>
+                <h2>GMV Portfolio</h2>
+            </div>
+            <div class='graph_comment'>
+                <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+                        It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
+                        It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
+            </div>
+        </div>
+        <div class="graph_container">
+            <div class="bt_left">
+                <div class='graph_block'>
+                    <div class='graph_title'>
+                        <h2>Value Chart</h2>
+                    </div>
+                    <div class='graph_comment'>
+                        <span>
+                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                            It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                            It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages
+                        </span>
+                    </div>
+                    <div class='graph_field'>
+                        <canvas id='value_chart' style="width: 100%;height: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="bt_right">
+                <div class='graph_block'>
+                    <div class='graph_title'>
+                        <h2>DrawDown Chart</h2>
+                    </div>
+                    <div class='graph_comment'>
+                        <span>
+                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                            It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                            It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages
+                        </span>
+                    </div>
+                    <div class='graph_field'>
+                        <canvas id='MDD_chart' style="width: 100%;height: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="graph_container">
+            <div class="bt_left">
+                <div class='graph_block'>
+                    <div class='graph_title'>
+                        <h2>Return Chart</h2>
+                    </div>
+                    <div class='graph_comment'>
+                        <span>
+                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                            It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                            It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages
+                        </span>
+                    </div>
+                    <div class='graph_field'>
+                        <canvas id='Return_chart' style="width: 100%;height: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class='bt_right'>
+                <div class='graph_block'>
+                    <div class='graph_title'>
+                        <h2>Cummulative Rate of Ratio</h2>
+                    </div>
+                    <div class='graph_comment'>
+                        <span>
+                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                            It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                            It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages
+                        </span>
+                    </div>
+                    <div class='graph_field'>
+                        <canvas id='acc_chart' style="width: 100%;height: 100%;"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="graph_container">
+            <div class='graph_block'>
+                <div class='graph_title'>
+                    <h2>Indicators</h2>
+                </div>
+                <div class='graph_comment'>
+                    <span>
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                        It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                        It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages
+                    </span>
+                </div>
+                <div class='graph_field' style="margin-top: 30px;">
+                    <table class='table backtest_table'>
+                        <thead>
+                            <tr>
+                                <th>성과 지표</th>
+                                <th class='numberCell'>연평균 수익률</th>
+                                <th class='numberCell'>변동성:표준편차</th>
+                                <th class='numberCell'>샤프지수</th>
+                                <th class='numberCell'>VaR</th>
+                                <th class='numberCell'>MDD</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>내 포트폴리오</td>
+                                <td class="numberCell" id="mean_return"></td>
+                                <td class="numberCell" id="std"></td>
+                                <td class="numberCell" id="sharp"></td>
+                                <td class="numberCell" id="VaR"></td>
+                                <td class="numberCell" id="MDD"></td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+ 
+</footer>
+{% endblock %}
+

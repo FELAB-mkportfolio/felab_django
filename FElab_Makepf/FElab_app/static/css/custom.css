@@ -1,0 +1,383 @@
+*{
+    margin:0px;
+    padding:0px;
+    box-sizing:border-box;
+}
+body {
+    font-family: 'Nanum Gothic', sans-serif;
+}
+.header {
+    height: 500px;
+    width: 100%;
+    background: url(/static/images/Netflix.jpg);
+    background-size: cover;
+}
+.navbar {
+    font-size: 15px;
+    background-color: white;
+    opacity: 0.7;
+    display:block;
+    height:auto;
+}
+.login-wrap{
+    width:100%; 
+    height:100%;
+    position:relative;
+    background: #fbfbfd; /* fallback for old browsers */
+    
+}
+.login-form{
+    position:absolute;
+    text-align: center;
+    border: 1px solid #eeeeee;
+    background-color: white;
+    font-family: 'AppleSDGothicNeoM';
+    left:50%;
+    top:50%;
+    width:500px;
+    height:700px;
+    transform: translate(-50%, -50%);
+}
+
+.main-nav {
+    list-style-type: none;
+    display: none;
+}
+
+.nav-links,
+.logo {
+    text-decoration: none;
+    color: black;
+}
+
+.main-nav li {
+    text-align: center;
+    margin: 15px auto;
+}
+
+.logo {
+    display: inline-block;
+    font-size: 22px;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+#js-navbar-toggle {
+    position: absolute;
+    top: 3px;
+    right: 20px;
+    cursor: pointer;
+    color: black;
+    font-size: 24px;
+}
+
+.active {
+    display: block;
+}
+
+@media screen and (min-width: 768px) {
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 0;
+        height: 50px;
+        align-items: center;
+        z-index:2;
+    }
+
+    .main-nav {
+        display: flex;
+        margin-right: 30px;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .main-nav li {
+        margin: 0;
+    }
+
+    .nav-links {
+        margin-left: 40px;
+    }
+
+    .logo {
+        margin-top: 0;
+    }
+
+    #js-navbar-toggle {
+        display: none;
+    }
+
+    .logo:hover,
+    .nav-links:hover {
+        color: #26001b;
+    }
+}
+
+.GroupWrapper{
+    width:30%;
+    height:100%;
+    padding-bottom: 20px;
+
+}
+#result_container{
+    display:none;
+}
+@font-face {
+    font-family: 'AppleSDGothicNeoB';
+    src: local('AppleSDGothicNeoB'),
+         url('../fonts/AppleSDGothicNeoB.ttf') format("truetype");
+    font-family: 'AppleSDGothicNeoM';
+    src: local('AppleSDGothicNeoM'),
+        url('../fonts/AppleSDGothicNeoM.ttf') format("truetype");
+}
+.contentsBox {
+    margin-top: 20px;
+    margin: 0 5px;
+    height: 260px;
+    border-bottom: 1px solid #8C0000;
+    background-color: white;
+    border-radius: 2px;
+    position:relative;
+    font-family: 'AppleSDGothicNeoB';
+    cursor:pointer;
+    padding-top:15px;
+    border:1px solid #eeeeee;
+}
+.contentsBox > .icon_circle {
+    border-radius: 50%;
+    width:70px;
+    height:70px;
+    position: absolute;
+    left:50%;
+    bottom:230px;
+    transform: translateX(-50%);
+    background-color: #8C0000;  
+}
+.icons {
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width: 50px;
+    height:50px;
+    color:white;
+}
+.topicBox {
+    text-align:center;
+    margin: 50px;
+}
+.topicTitle{
+    font-size: 20px;
+    font-weight: bold;
+}
+.topicBox > p{
+    font-size: 15px;
+}
+select {
+    margin-bottom: 1em;
+    padding: .25em;
+    border: 0;
+    border-bottom: 1px solid #eeeeee;
+    letter-spacing: .15em;
+    border-radius: 0;
+
+}
+.selectBox{
+    border:0px;
+}
+.searchBox{
+    margin: 0 20px;
+}
+#comboBox, #my_comboBox{
+    height:40px;
+    border:1px solid #eeeeee;
+}
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    /* add padding to account for vertical scrollbar */
+    padding-right: 20px;
+} 
+.assetsBox, .my_assetsBox{
+    text-align:center;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.commentBox{
+    border: none;
+    width : 80%;
+    text-align: center;
+    font-size: 20px;
+    margin: 50px;
+    padding: 50px;
+    color:grey;
+    font-family: 'AppleSDGothicNeoM';
+    line-height:30px;
+}
+.backtest_step{
+    height: 80%;
+    position:relative;
+    text-align: center;
+    border: 1px solid #eeeeee;
+    background-color: white;
+    margin: 50px 30px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-family: 'AppleSDGothicNeoM';
+}
+.iconBox{
+    display: flex;
+    justify-content: center;
+}
+.backtest_icon{
+    margin-top:10px;
+    width:70px;
+    height:70px;
+}
+.input_date, .input_amount{
+    width:100px;
+    border:none;
+    background-color: #eeeeee;
+}
+label{
+    font-size:20px;
+}
+.row{
+    display:flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+#chartdiv {
+    width: 100%;
+    height: 500px;
+    max-width: 100%;
+}
+#controls {
+    overflow: hidden;
+    padding-bottom: 3px;
+}
+#my_from, #my_to{
+    width: 200px;
+    height: 30px;
+}
+input[class=amcharts-input]{
+    border:none;
+    border-bottom: 1px solid #8C0000;
+    margin: 5px 0;
+}
+button[class=amcharts-input]{
+    border-radius: 5px;
+    width: 60px;
+    border:none;
+    margin: 5px 0;
+    background-color: #E4FBFF
+
+}
+.backtest_result, .optimize_result{
+    margin: 0 20px;
+    display:flex;
+    justify-content: center;
+    font-family: 'AppleSDGothicNeoM';
+}
+.backtest_result {
+    display: flex;
+    flex-direction: column;
+    font-family: 'AppleSDGothicNeoM';
+}
+.opt_task{
+    margin: 30px 5px 0 30px;
+    width:50%;
+    height:500px;
+    text-align: center;
+    padding: 0 20px;
+    border:1px solid #eeeeee;
+}
+.optimize_result{
+    margin-top:50px;
+    display:flex;
+}
+.graph_container{
+    height:700px;
+    justify-content:center;
+    display:flex;
+}
+.block {
+    width:33%;
+}
+.bt_left{
+    width:50%;
+}
+.bt_right{
+    width:50%;
+}
+.graph_block{
+    height:auto;
+    margin: 50px 10px;
+}
+.graph_block > .graph_field{
+    height:500px;
+}
+.table{
+    width:100%;
+    max-width: 100%;
+    margin-bottom:20px;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+tr >.numberCell{
+    text-align: center;
+}
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+    text-align: center;
+}
+.popup{
+    display: none; 
+    position:fixed; 
+    width: 100%; 
+    height: 100%; 
+    top:0; 
+    left:0; 
+    background:rgba(0,0,0,0.5);
+}
+.popup-inner { /* 열렸을 때 팝업창 크기와 색상을 지정합니다. */ 
+    position:absolute; 
+    height:600px;
+    width:40%;
+    top:50%; 
+    left:50%; 
+    transform:translate(-50%, -50%); 
+    padding : 10px; background:#fff; 
+}
+.popup-close{ /* 팝업창 내 닫기 버튼의 위치를 지정합니다. */ 
+    position: absolute; 
+    display: block; 
+    top:10px; 
+    right: 10px; 
+}
+#save_portfolio_btn{
+    border-radius: 5px;
+    width: 60px;
+    background-color: #8C0000;
+    height: 30px;
+    bottom: 0;
+    border: none;
+    color: white;
+}
+footer{
+    margin-top:50px;
+    height:100px;
+    background-color: #121013;
+}

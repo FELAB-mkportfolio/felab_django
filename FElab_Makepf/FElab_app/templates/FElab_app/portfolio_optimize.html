@@ -1,0 +1,204 @@
+﻿
+{% extends 'FElab_app/base.html' %}
+
+{% block content %}
+{% load static %}
+<head>
+    <script type='text/javascript' src="{% static 'js/portfolio_optimize.js' %}"></script>
+</head>
+<div class="header" style="height:300px;position:relative;display:flex;">
+    <div style="width:30%;display:flex;justify-content:center;">
+        <image src="/static/images/user.png" style="width:200px;height:200px;top:50%;position:absolute;transform:translateY(-50%);margin-left: 30px;"></image>
+    </div>
+    <div class="User_info" style="color:white; font-family: 'Nanum Gothic', sans-serif;">
+        <div style="position:relative; top:50%;transform:translateY(-50%);">
+            <h2 style="width:100%;">USER</h2>
+            <p style="width:100%;">님의 포트폴리오</p>
+        </div>
+    </div>
+</div>
+    <div style="display:flex;justify-content:center; padding:40px;background-color: white;border-bottom: 1px solid #eeeeee;margin:0 40px;">
+    <div class="commentBox" style="width:90%;position:relative;">
+        <span style='font-size: 40px;color:#46b3e6;'>포트폴리오 이론</span>은 해리 마코위츠(Harry Max Markowitz)에 의해 체계화된 이론으로, 자산을 분산투자하여 포트폴리오를 만들게 되면 분산투자 전보다 위험을 감소시킬 수 있다는 이론입니다.
+        투자자산의 가치는 그 투자로부터 기대되는 수익률이 클수록 커지며, 반면에 위험이 클수록 작아집니다. 지배 원리란 같은 위험 하에서는 기대 수익률이 높은 것이, 같은 기대수익률 하에서는 위험이 작은 것이 그렇지 않은 투자대상을 지배한다는 것입니다. 이 지배원리에 입각하여 선택되는 투자안이 <span style='font-size: 40px;color:#46b3e6;'>효율적 투자대상</span>이 됩니다.
+    </div>
+</div>
+<div>
+    <div class="form-row" style='display:flex;flex-direction: column;margin: 100px 100px;font-family: "AppleSDGothicNeoM";text-align: center;border-bottom: 1px solid #eeeeee;'>
+        <h1>내 포트폴리오</h1>
+
+            <div style='margin: 80px 0;'>
+                <label>어떤 자산에 투자하고 있나요</label>
+                <div style='text-align: center;display: flex;justify-content: center;'>
+                    <div style='display:flex;margin: 20px 30px;'><label>국내 주식</label>
+                        <input type='checkbox' name='investment_kind' id='korea_stock' class='form-control' value='korea_stock'>
+                    </div>
+                    <div style='display:flex;margin: 20px 30px;'><label>해외 주식</label>
+                        <input type='checkbox' name='investment_kind' id='abroad_stock' class='form-control' value='abroad_stock'>
+                    </div>
+                    <div style='display:flex;margin: 20px 30px;'><label>국내 ETF</label>
+                        <input type='checkbox' name='investment_kind' id='korea_ETF' class='form-control' value='korea_ETF'>
+                    </div>
+                    <div style='display:flex;margin: 20px 30px;'><label>해외 ETF</label>
+                        <input type='checkbox' name='investment_kind' id='abroad_ETF' class='form-control' value='abroad_ETF'>
+                    </div>
+                    <div style='display:flex;margin: 20px 30px;'><label>채권</label>
+                        <input type='checkbox' name='investment_kind' id='bond' class='form-control' value='bond'>
+                    </div>
+                    <div style='display:flex;margin: 20px 30px;'><label>파생상품</label>
+                        <input type='checkbox' name='investment_kind' id='option' class='form-control' value='option'>
+                    </div>
+                    <div style='display:flex;margin: 20px 30px;'><label>예금</label>
+                        <input type='checkbox' name='investment_kind' id='commodity' class='form-control' value='commodity'>
+                    </div>
+                    <div style='display:flex;margin: 20px 30px;'><label>없음</label>
+                        <input type='checkbox' name='investment_kind' id='none' class='form-control' value='none'>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label>투자기간을 입력하여 주세요</label>
+                <div style='display: flex;justify-content: center;margin: 0 0 50px 0'>
+                    <div style='margin: 20px 30px;'>
+                        <label for="from">시작</label>
+                        <input type="text" class="input_date" id="my_from" name="my_from" autocomplete="off" value='01/01/2019'>
+                    </div>
+                    <div style='margin: 20px 30px;'>
+                        <label for="to">종료</label>
+                        <input type="text" class="input_date" id="my_to" name="my_to" autocomplete="off" value='01/01/2021'>
+                    </div>
+                </div>
+            </div>
+            <div style='margin: 20px 0'>
+                <label>투자하고 계신 종목을 입력해주세요</label>
+                <div class="my_searchBox">
+                    <input id="my_comboBox" onfocus="if(this.value == '종목 검색') { this.value = ''; }" value="종목 검색" />
+                    <input type='button' id="my_putin_btn" style="border-radius:5px;width:60px;background-color:#8C0000;height:30px;bottom:0;border:none;color:white;" value='담기'></button>
+                </div>
+            </div>
+            <div style='display: flex;justify-content: center;'>
+                <div id="my_assetsBox" style='width: 50%;margin-top:50px;'>
+                    <table class='table backtest_table'>
+                        <thead>
+                            <tr>
+                                <th class='numberCell'>자산</th>
+                                <th class='numberCell'>비중</th>
+                                <th class='numberCell'></th>
+                                <th class='numberCell'></th>
+                            </tr>
+                        </thead>
+                        <tbody id='asset_row'>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style='display:flex;justify-content: center;margin: 50px 0 ;'>
+                <input type='button' id='optimize_btn' value='최적화' style='width:50%;height:60px;border-radius:5px;background-color:#8C0000;border:none;color:white;'></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="optimize_result">
+    <div class='block left'>
+        <div class='graph_title'>
+            <h2>효율적 투자선</h2>
+        </div>
+        <div class='graph_comment'>
+            <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                 when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+                 It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
+                 It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
+        </div>
+         <div class="contentsBox" style="height: 400px;cursor:default;">
+            <canvas id='efficient_frontier_graph' style="width: 100%;height: 100%;"></canvas>
+         </div>
+    </div>
+    <div class='block center'>
+        <div class='graph_title'>
+            <h2>추가할 자산 선택하기</h2>
+            <div class='graph_comment' style='height:50px;'>
+                <span></span>
+            </div>
+        </div>
+        <div>
+            <div style='margin: 20px; border-bottom: 1px solid #eeeeee;height:150px' class='additional_assetsBox'>
+                <a id='T_IT' class='additional_assets' value='T_IT' >T_IT</a>
+                <a id='T_HC' class='additional_assets' value='T_HC'>T_HC</a>
+                <a id='T_HI' class='additional_assets' value='T_HI'>T_HI</a>
+            </div>
+            <div class='added_assetsBox' style='margin: 20px;'>
+                <table class='table backtest_table'>
+                    <thead>
+                        <tr>
+                            <th class='numberCell'>자산</th>
+                            <th class='numberCell'>비중</th>
+                            <th class='numberCell'></th>
+                            <th class='numberCell'></th>
+                        </tr>
+                    </thead>
+                    <tbody id='adjusted_asset_row'>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class='block right'>
+        <div style='height:150px'>
+            <div class='graph_title'>
+                <h2 id='strategy_name_h2'></h2>
+            </div>
+            <div class='graph_comment'>
+                <span id='strategy_comment_span'></span>
+            </div>
+        </div>
+        <div class="opt_report">
+            <canvas id="opt_report_chart" style="position: relative; height:200px; width:40vw"></canvas>
+        </div>
+        <table class='table optimize_table'>
+            <thead>
+                <tr>
+                    <th>자산 배분</th>
+                    <th class='numberCell'>Allocation</th>
+                </tr>
+            </thead>
+            <tbody id='opt_report_table'>
+            </tbody>
+        </table>
+       <button onclick="tobacktest()" id="tobacktest_btn" style="border-radius:5px;width:100%;background-color:#8C0000;height:60px;margin-bottom:5px;border:none;color:white;">
+           최적 비중으로 백테스트 하기
+       </button>
+       
+    </div>
+</div>
+
+<link href="{% static 'css/login_signup.css' %}" rel='stylesheet'>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<div class="popup" data-popup="showSise"> <!-- 표출되는 팝업 입니다. --> 
+    <div class="popup-inner"> 
+        <div class="contentsBox" style="height: 500px;cursor:default;border:none;">
+            <div id="controls" style="width: 100%; overflow: hidden;">
+                <div style="float: left; margin-left: 15px;">
+                    From: <input type="text" id="fromfield" class="amcharts-input" />
+                    To: <input type="text" id="tofield" class="amcharts-input" />
+                </div>
+                <div style="float: right; margin-right: 15px;">
+                    <button id="b1m" class="amcharts-input">1m</button>
+                    <button id="b3m" class="amcharts-input">3m</button>
+                    <button id="b6m" class="amcharts-input">6m</button>
+                    <button id="b1y" class="amcharts-input">1y</button>
+                    <button id="bytd" class="amcharts-input">YTD</button>
+                    <button id="bmax" class="amcharts-input">MAX</button>
+                </div>
+            </div>
+            <div id="chartdiv"></div>
+        </div>
+        <div class="popup-contents"> 
+            <a class="popup-close" data-popup-close="showSise" href="#">X</a> <!-- 팝업 닫기 버튼입니다 -->
+        </div>
+    </div> 
+</div>
+<footer>
+
+</footer>
+{% endblock %}
