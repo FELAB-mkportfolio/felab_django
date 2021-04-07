@@ -6,26 +6,41 @@ from scipy.optimize import minimize
 import json
 
 class c_Models:
-    def __init__(self, assets, start, end, conn):
+    #Input 값으로, 자산 list, 사용자 포트폴리오 비중, 시작일, 마지막일, DB
+    def __init__(self, assets, assets_w, start, end, conn):
         self.result = None
         self.graph = None
         eon_db = conn
         cursor = eon_db.cursor(pymysql.cursors.DictCursor)
-        data = pd.DataFrame()
-        #start = datetime.datetime.strptime(start, "%m-%d-%Y")
-        #end = datetime.datetime.strptime(end, "%m-%d-%Y")
-        for asset in assets:
+        
+        sql = "SHOW TABLES;"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        total_list = [] 
+        start = datetime.datetime.strptime(start, "%Y-%m-%d")
+        end = datetime.datetime.strptime(end, "%Y-%m-%d")
+
+        for i in range(len(result)):
+            total_list.extend(list(result[i].values())) #전체 자산 리스트 
+
+        total_data = pd.DataFrame() #전체 데이터를 저장할 데이터프레임
+        # 전체 자산 data들을 가지고 온 후, 정리함
+        for asset in total_list:
             sql = "SELECT * FROM teststocks." + asset + ";"
             cursor.execute(sql)
             result = cursor.fetchall()
             result = pd.DataFrame(result)
-
             result.index = result['Date']
             result.drop(['Open','High','Low','Volume','Change','Date'],axis=1, inplace=True)
             result.rename(columns={'Close': asset}, inplace=True)
+            
+            total_data = pd.concat([total_data, result], axis=1) 
+            
+        self.total_data = total_data
 
-            result = result.loc[start:end]
-            data = pd.concat([data, result], axis=1)
+        # 사용자가 입력한 기간 및 자산군 받은 걸로 데이터프레임을 추출
+        data = total_data.loc[:assets]
+        data = data.loc[start:end]
         
         
         if data.isnull().values.any() == True: #불러온 data에 결측있으면 x
@@ -37,6 +52,7 @@ class c_Models:
             data.dropna(inplace=True) #결측치 제외(첫 row)
 
             self.data = data
+            self.assets_w = assets_w
             self.mu = data.mean() * 12
             self.cov = data.cov() * 12
             '''self.strategy = strategy
@@ -52,7 +68,7 @@ class c_Models:
                 #self.graph = self.efplot()
             else:
                 self.result = print("전략이 잘못 입력되었습니다. ")'''
-    
+    #GMV 최적화 : 제약 조건은 비중합=1, 공매도 불가능
     def gmv_opt(self):
         n_assets = len(self.data.columns)
         w0 = np.ones(n_assets) / n_assets
@@ -64,6 +80,7 @@ class c_Models:
         gmv = minimize(fun, w0, method = 'SLSQP', constraints=constraints, bounds=bd)
         return gmv.x
     
+    #Max Sharp ratio : risk free rate은 0.8%로 지정했고, 
     def ms_opt(self):
         n_assets = len(self.data.columns)
         w0 = np.ones(n_assets) / n_assets
@@ -104,7 +121,23 @@ class c_Models:
 
         return rp.x     #, RC(self.cov, rp.x)
     
-    
+
+    def recommended_asset(total_data):
+        total_n_data = total_data
+        total_n_data.dropna(axis=1, inplace=True)
+        total_n_data = total_n_data.resample('M').mean()
+        total_n_data = total_n_data.pct_change()
+        total_n_data.dropna(inplace=True)
+
+        total_mu = total_n_data.mean() * 12
+        total_std = total_n_data.std() * np.sqrt(12)
+
+        total_sr = (total_mu - 0.008 / total_std)
+
+        rec_rs = list(total_sr.sort_values(ascending=False).index)[:10] #샤프지수 상위 10개 
+        #a = total_sr.sort_values(axis=1, ascending=False) 
+
+        return rec_rs
     
     def plotting(self):
         ret_gmv = np.dot(self.gmv_opt(), self.mu)
@@ -117,9 +150,15 @@ class c_Models:
         wt_gmv = self.gmv_opt().tolist()
         wt_ms = self.ms_opt().tolist()
         wt_rp = self.rp_opt().tolist()
+        
+        user_new_ret = np.dot(self.assets_w, self.mu)
+        user_new_risk = np.sqrt(np.dot(self.assets_w, np.dot(self.mu, self.assets_w)))
 
+        
         weights = {'gmv': wt_gmv, "ms" : wt_ms, "rp": wt_rp}
         
+        rec_rs = recommended_asset()
+          
         
         
 
@@ -146,6 +185,6 @@ class c_Models:
             error = '기간에러'
             return error,1,1
         else:
-            ret_vol = {"GMV": [vol_gmv, ret_gmv],"MaxSharp": [vol_ms, ret_ms],"RiskParity": [vol_rp, ret_rp], "Trets" : trets.tolist(), "Tvols": tvols}        
+            ret_vol = {"GMV": [vol_gmv, ret_gmv],"MaxSharp": [vol_ms, ret_ms],"RiskParity": [vol_rp, ret_rp], "Trets" : trets.tolist(), "Tvols": tvols, "User" : [user_risk, user_ret], "Recommended" : rec_rs}        
             return ret_vol, json.dumps(efpoints), json.dumps(weights)
         # {"GMV": [vol_gmv, ret_gmv].tolist(), "MaxSharp": [vol_ms, ret_ms].tolist(), "RiskParity": [vol_rp, ret_rp], "Trets" : trets, "Tvols": tvols}
