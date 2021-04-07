@@ -13,6 +13,7 @@ import numpy as np
 from dateutil import rrule
 from calendar import monthrange
 from dateutil.relativedelta import relativedelta
+import FinanceDataReader as fdr
 
 class back_test:
     # 단순 일별수익률의 평균을 *365하여 연간수익률을 산출
@@ -176,6 +177,33 @@ class back_test:
         pfo_return['Date'] = list(map(str, pfo_return['Date']))
         #print(pfo_return)
 
+        # benchmark return 
+                ### 벤치마크 데이터 로드 및 전처리
+        
+        tiker_list = ['KS11','US500'] 
+        bench_list = [fdr.DataReader(ticker, start_data_1,  end_data_1)['Change'] for ticker in tiker_list]
+        bench = pd.concat(bench_list, axis=1)
+        bench.columns = ['KOSPI', 'S&P500']
+        bench['KOSPI'] = bench['KOSPI'].fillna(0)
+        bench['S&P500'] = bench['S&P500'].fillna(0)
+        #bench = bench.dropna()
+        
+        # 벤치마크 누적수익률, DD 값 
+        
+        bench['KOSPI_acc'] = [x+1 for x in bench['KOSPI']]
+        bench['KOSPI_acc'] = list(it.accumulate(bench['KOSPI_acc'], operator.mul))
+        bench['KOSPI_acc'] = [x-1 for x in bench['KOSPI_acc']]
+        bench['KOSPI_balance'] = float(start_amount) + float(start_amount)*bench['KOSPI_acc']
+        bench['KOSPI_Drawdown'] = back_test.dd(input,bench['KOSPI'])
+        bench['S&P500_acc'] = [x+1 for x in bench['S&P500']]
+        bench['S&P500_acc'] = list(it.accumulate(bench['S&P500_acc'], operator.mul))
+        bench['S&P500_acc'] = [x-1 for x in bench['S&P500_acc']]
+        bench['S&P500_balance'] = float(start_amount) + float(start_amount)*bench['S&P500_acc']
+        bench['S&P500_Drawdown'] = back_test.dd(input,bench['S&P500'])
+        bench = bench.rename_axis('Date').reset_index()
+        bench['Date'] =  pd.to_datetime(bench['Date'], format='%d/%m/%Y').dt.date
+        bench['Date'] = list(map(str, bench['Date']))
+
         backtest_return = {
             'pfo_return': [
                     {
@@ -185,7 +213,20 @@ class back_test:
                     'final_balance': list(pfo_return['final_balance']),
                     'Drawdown_list' : list(pfo_return['Drawdown_list'])
                      }
-            ],         
+            ],   
+            'bench': [
+                    {
+                    'Date': list(bench['Date']),
+                    'KOSPI_return': list(bench['KOSPI']),              
+                    'S&P500_return': list(bench['S&P500']),
+                    'KOSPI_acc_return': list(bench['KOSPI_acc']),
+                    'KOSPI_balance' : list(bench['KOSPI_balance']),                 
+                    'KOSPI_Drawdown': list(bench['KOSPI_Drawdown']),
+                    'S&P500_acc_return': list(bench['S&P500_acc']),
+                    'S&P500_balance' : list(bench['S&P500_balance']),                 
+                    'S&P500_Drawdown': list(bench['S&P500_Drawdown'])
+                     }
+            ],        
             'indicator': [
                     {
                     'Mean': back_test.Arithmetic_Mean_Annual(input,pfo_return['mean_return']),

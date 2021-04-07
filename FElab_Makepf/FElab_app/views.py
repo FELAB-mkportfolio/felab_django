@@ -19,7 +19,7 @@ import time
 db = {
         'host': "localhost",
         'user': "root",
-        'password' : "su970728!",
+        'password' : "root",
         'db_name' : "teststocks",
     }
     #홈페이지 메인
