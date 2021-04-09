@@ -6,21 +6,10 @@
 <head>
     <script type='text/javascript' src="{% static 'js/portfolio_optimize.js' %}"></script>
 </head>
-<div class="header" style="height:300px;position:relative;display:flex;">
-    <div style="width:30%;display:flex;justify-content:center;">
-        <image src="/static/images/user.png" style="width:200px;height:200px;top:50%;position:absolute;transform:translateY(-50%);margin-left: 30px;"></image>
-    </div>
-    <div class="User_info" style="color:white; font-family: 'Nanum Gothic', sans-serif;">
-        <div style="position:relative; top:50%;transform:translateY(-50%);">
-            <h2 style="width:100%;">USER</h2>
-            <p style="width:100%;">님의 포트폴리오</p>
-        </div>
-    </div>
-</div>
-    <div style="display:flex;justify-content:center; padding:40px;background-color: white;border-bottom: 1px solid #eeeeee;margin:0 40px;">
+<div style="display:flex;justify-content:center; padding:40px;background-color: white;border-bottom: 1px solid #eeeeee;margin:0 40px;">
     <div class="commentBox" style="width:90%;position:relative;">
-        <span style='font-size: 40px;color:#46b3e6;'>포트폴리오 이론</span>은 해리 마코위츠(Harry Max Markowitz)에 의해 체계화된 이론으로, 자산을 분산투자하여 포트폴리오를 만들게 되면 분산투자 전보다 위험을 감소시킬 수 있다는 이론입니다.
-        투자자산의 가치는 그 투자로부터 기대되는 수익률이 클수록 커지며, 반면에 위험이 클수록 작아집니다. 지배 원리란 같은 위험 하에서는 기대 수익률이 높은 것이, 같은 기대수익률 하에서는 위험이 작은 것이 그렇지 않은 투자대상을 지배한다는 것입니다. 이 지배원리에 입각하여 선택되는 투자안이 <span style='font-size: 40px;color:#46b3e6;'>효율적 투자대상</span>이 됩니다.
+        <span style='font-size: 40px;color:#06c;'>포트폴리오 이론</span>은 해리 마코위츠(Harry Max Markowitz)에 의해 체계화된 이론으로, 자산을 분산투자하여 포트폴리오를 만들게 되면 분산투자 전보다 위험을 감소시킬 수 있다는 이론입니다.
+        투자자산의 가치는 그 투자로부터 기대되는 수익률이 클수록 커지며, 반면에 위험이 클수록 작아집니다. 지배 원리란 같은 위험 하에서는 기대 수익률이 높은 것이, 같은 기대수익률 하에서는 위험이 작은 것이 그렇지 않은 투자대상을 지배한다는 것입니다. 이 지배원리에 입각하여 선택되는 투자안이 <span style='font-size: 40px;color:#06c;'>효율적 투자대상</span>이 됩니다.
     </div>
 </div>
 <div>
@@ -104,11 +93,7 @@
             <h2>효율적 투자선</h2>
         </div>
         <div class='graph_comment'>
-            <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                 when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
-                 It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
-                 It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
+            <span>효율적인 투자자는 같은 수익을 내는 자산이 있다면 더 낮은 위험도를 선호할 것이고, 같은 위험도를 가진 자신이 있다면 수익률이 더 높은 자산을 선호할 것입니다. 내가 가진 자산들을 어떻게 배분하느냐에 따라 수익률도 달라지고 위험도(분산)도 달라질텐데 가장 효율적으로 배분하는 포트폴리오 점들을 따라 그린 선이 효율적 투자선입니다.</span>
         </div>
          <div class="contentsBox" style="height: 500px;cursor:default;">
             <canvas id='efficient_frontier_graph' style="width: 100%;height: 100%;"></canvas>
