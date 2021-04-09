@@ -99,7 +99,7 @@
     </div>
 </div>
 <div class="optimize_result">
-    <div class='block left'>
+    <div class='bt_left'>
         <div class='graph_title'>
             <h2>효율적 투자선</h2>
         </div>
@@ -110,40 +110,11 @@
                  It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
                  It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
         </div>
-         <div class="contentsBox" style="height: 400px;cursor:default;">
+         <div class="contentsBox" style="height: 500px;cursor:default;">
             <canvas id='efficient_frontier_graph' style="width: 100%;height: 100%;"></canvas>
          </div>
     </div>
-    <div class='block center'>
-        <div class='graph_title'>
-            <h2>추가할 자산 선택하기</h2>
-            <div class='graph_comment' style='height:50px;'>
-                <span></span>
-            </div>
-        </div>
-        <div>
-            <div style='margin: 20px; border-bottom: 1px solid #eeeeee;height:150px' class='additional_assetsBox'>
-                <a id='T_IT' class='additional_assets' value='T_IT' >T_IT</a>
-                <a id='T_HC' class='additional_assets' value='T_HC'>T_HC</a>
-                <a id='T_HI' class='additional_assets' value='T_HI'>T_HI</a>
-            </div>
-            <div class='added_assetsBox' style='margin: 20px;'>
-                <table class='table backtest_table'>
-                    <thead>
-                        <tr>
-                            <th class='numberCell'>자산</th>
-                            <th class='numberCell'>비중</th>
-                            <th class='numberCell'></th>
-                            <th class='numberCell'></th>
-                        </tr>
-                    </thead>
-                    <tbody id='adjusted_asset_row'>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class='block right'>
+    <div class='bt_right'>
         <div style='height:150px'>
             <div class='graph_title'>
                 <h2 id='strategy_name_h2'></h2>
@@ -152,28 +123,72 @@
                 <span id='strategy_comment_span'></span>
             </div>
         </div>
-        <div class="opt_report">
-            <canvas id="opt_report_chart" style="position: relative; height:200px; width:40vw"></canvas>
+        <div class="opt_report" style="position: relative; height:200px;margin-bottom: 20px">
+            <canvas id="opt_report_chart" height="100%"></canvas>
         </div>
-        <table class='table optimize_table'>
-            <thead>
-                <tr>
-                    <th>자산 배분</th>
-                    <th class='numberCell'>Allocation</th>
-                </tr>
-            </thead>
-            <tbody id='opt_report_table'>
-            </tbody>
-        </table>
+        <div  style='height:120px; overflow-y: auto;overflow-x: hidden;'>
+            <table class='table optimize_table'>
+                <thead>
+                    <tr>
+                        <th>자산 배분</th>
+                        <th class='numberCell'>Allocation</th>
+                    </tr>
+                </thead>
+                <tbody id='opt_report_table'>
+                </tbody>
+            </table>
+        </div>
        <button onclick="tobacktest()" id="tobacktest_btn" style="border-radius:5px;width:100%;background-color:#8C0000;height:60px;margin-bottom:5px;border:none;color:white;">
-           최적 비중으로 백테스트 하기
+           현재 비중으로 백테스트 하기
        </button>
-       
+       <button id="add_asset_btn" style="border-radius:5px;width:100%;background-color:black;height:60px;margin-bottom:5px;border:none;color:white;">
+        새로운 자산 편입하기
+        </button>
     </div>
 </div>
-
+<div class="optimize_result">
+    <div class='bt_left'>
+        <div class='graph_title'>
+            <h2>추가할 자산 선택하기</h2>
+            <div class='graph_comment' style='height:50px;'>
+                <span></span>
+            </div>
+        </div>
+        <div style='margin: 20px; border-bottom: 1px solid #eeeeee;height:150px' class='additional_assetsBox'>
+            <a id='T_IT' class='additional_assets' value='T_IT' >T_IT</a>
+            <a id='T_HC' class='additional_assets' value='T_HC'>T_HC</a>
+            <a id='T_HI' class='additional_assets' value='T_HI'>T_HI</a>
+        </div>
+        <div class='added_assetsBox' style='margin: 20px;'>
+            <table class='table backtest_table'>
+                <thead>
+                    <tr>
+                        <th class='numberCell'>자산</th>
+                        <th class='numberCell'>비중</th>
+                        <th class='numberCell'></th>
+                        <th class='numberCell'></th>
+                    </tr>
+                </thead>
+                <tbody id='adjusted_asset_row'>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class='bt_right'>
+        <div class='graph_title'>
+            <h2>변경된 포트폴리오</h2>
+            <div class='graph_comment' style='height:50px;'>
+                <span></span>
+            </div>
+        </div>
+        <div class="contentsBox" style="height: 400px;cursor:default;">
+            <canvas id='after_efficient_frontier_graph' style="width: 100%;height: 100%;"></canvas>
+         </div>
+    </div>    
+</div>
 <link href="{% static 'css/login_signup.css' %}" rel='stylesheet'>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
 <div class="popup" data-popup="showSise"> <!-- 표출되는 팝업 입니다. --> 
     <div class="popup-inner"> 
         <div class="contentsBox" style="height: 500px;cursor:default;border:none;">

@@ -19,7 +19,7 @@ import time
 db = {
         'host': "localhost",
         'user': "root",
-        'password' : "root",
+        'password' : "su970728!",
         'db_name' : "teststocks",
     }
     #홈페이지 메인
@@ -56,11 +56,15 @@ def ajax_portfolio_optimize_return(request):
     mystocks_weights = request.POST.getlist('mystocks_weights[]')
     from_period = pd.to_datetime(request.POST.get('from'))
     to_period = pd.to_datetime(request.POST.get('to'))
-    #strategy = request.POST.get('strategy')
-    c_m = c_Models(mystocks,from_period,to_period,conn)
+    w =[]
+    for i in range(len(mystocks_weights)):
+        w.append(float(mystocks_weights[i]))
+    mystocks_weights = w
+    strategy = request.POST.get('strategy')
+    c_m = c_Models(mystocks,mystocks_weights,from_period,to_period,conn)
     ret_vol, efpoints, weights = c_m.plotting()
     data = {'ret_vol': ret_vol, 'efpoints': efpoints, "weights" : weights}
-    return JsonResponse(data)
+    return JsonResponse(data, safe=False)
 
 #ajax 백테스트
 @csrf_exempt

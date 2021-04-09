@@ -155,15 +155,11 @@ class c_Models:
         wt_rp = self.rp_opt().tolist()
         
         user_ret = np.dot(self.assets_w, self.mu)
-        user_risk = np.sqrt(np.dot(self.assets_w, np.dot(self.mu, self.assets_w)))
+        user_risk = np.sqrt(np.dot(self.assets_w, np.dot(self.cov, self.assets_w)))
 
-        
         weights = {'gmv': wt_gmv, "ms" : wt_ms, "rp": wt_rp}
         
         #rec_rs = recommended_asset()
-          
-        
-        
 
         trets = np.linspace(ret_gmv, max(self.mu), 30) # 30개 짜르기 
         tvols = []
@@ -188,7 +184,7 @@ class c_Models:
             error = '기간에러'
             return error,1,1
         else:
-            ret_vol = {"GMV": [vol_gmv, ret_gmv],"MaxSharp": [vol_ms, ret_ms],"RiskParity": [vol_rp, ret_rp], "Trets" : trets.tolist(), "Tvols": tvols, "User" : [user_risk, user_ret]} #, "Recommended" : rec_rs}        
+            ret_vol = {"GMV": [vol_gmv, ret_gmv],"MaxSharp": [vol_ms, ret_ms],"RiskParity": [vol_rp, ret_rp], "Trets" : trets.tolist(), "Tvols": tvols, "User" : [user_risk,user_ret]} #, "Recommended" : rec_rs}        
             return ret_vol, json.dumps(efpoints), json.dumps(weights)
         # {"GMV": [vol_gmv, ret_gmv].tolist(), "MaxSharp": [vol_ms, ret_ms].tolist(), "RiskParity": [vol_rp, ret_rp], "Trets" : trets, "Tvols": tvols}
 
@@ -267,10 +263,6 @@ class c2_Models(c_Models):
             
 
             weights = {'gmv': wt_gmv, "ms" : wt_ms, "rp": wt_rp}
-
-
-
-
             trets = np.linspace(ret_gmv, max(self.mu), 30) # 30개 짜르기 
             tvols = []
 
@@ -294,6 +286,11 @@ class c2_Models(c_Models):
                 error = '기간에러'
                 return error,1,1
             else:
-                ret_vol = {"GMV": [vol_gmv, ret_gmv],"MaxSharp": [vol_ms, ret_ms],"RiskParity": [vol_rp, ret_rp], "Trets" : trets.tolist(), "Tvols": tvols, "User" : [user_risk, user_ret], "N_User" : [n_user_risk, n_user_ret]}        
+
+                ret_vol['GMV'] = [vol_gmv, ret_gmv],
+                ret_vol['RiskParity'] = [vol_rp, ret_rp]
+                ret_vol['Trets'] = trets.tolist()
+                ret_vol['Tvols'] = tvols.tolist()
+                ret_vol['User'] = [user_risk, user_ret]
                 return ret_vol, json.dumps(efpoints), json.dumps(weights)
             # {"GMV": [vol_gmv, ret_gmv].tolist(), "MaxSharp": [vol_ms, ret_ms].tolist(), "RiskParity": [vol_rp, ret_rp], "Trets" : trets, "Tvols": tvols}

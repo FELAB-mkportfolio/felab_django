@@ -13,8 +13,8 @@ $(document).ready(function () {
         from_period = localStorage.getItem("from");
         to_period = localStorage.getItem("to");
         investment_kinds = localStorage.getItem("investment_kinds").split(',');
-        adjusted_assets= mystocks;
-        adjusted_assets_weights= mystocks_weights;
+        adjusted_assets= mystocks.slice();
+        adjusted_assets_weights= mystocks_weights.slice();
 
         for(i =0; i<investment_kinds.length;i++){
             $("input:checkbox[id='"+investment_kinds[i]+"']").prop("checked", true);
@@ -198,6 +198,7 @@ $(document).ready(function () {
             alert("한개의 자산으로는 최적화를 진행할 수 없습니다.");
         }else {
             var sum = 0
+            mystocks_weights= [];
             for (i=0;i<mystocks.length;i++){
                 mystocks_weights.push(parseFloat($('#mystocks_weights'+i).val()));
                 sum = sum+ parseFloat($('#mystocks_weights'+i).val());
@@ -216,7 +217,8 @@ $(document).ready(function () {
                 localStorage.setItem("mystocks_weights", mystocks_weights);
                 localStorage.setItem("from", $('#my_from').val());
                 localStorage.setItem("to", $('#my_to').val());
-                adjusted_assets = mystocks;
+                console.log(mystocks, mystocks_weights);
+                adjusted_assets = mystocks.slice();
                 $.ajax({
                     url: '/ajax_portfolio_optimize_return/',
                     type: "POST",
@@ -231,6 +233,7 @@ $(document).ready(function () {
                         RiskParity = data.ret_vol['RiskParity'];
                         Trets = data.ret_vol['Trets'];
                         Tvols = data.ret_vol['Tvols'];
+                        Userpf = data.ret_vol['User'];
                         ef_points = JSON.parse(data.efpoints);
                         ef_points_tooltip = return_dict_items(ef_points);
                         asset_weights = JSON.parse(data.weights);
@@ -245,60 +248,22 @@ $(document).ready(function () {
                             window.Efchart.destroy();
                         }
 
-                        var pie_backgroundColor = ['#003f5c', '#2f4b7c','#665191','#a05195', '#d45087', '#f95d6a','#ff7c43','#ffa600'];
-                        if($('input[name="strategy"]:checked').val()=='gmv'){
-                            $('#strategy_name_h2').html('Global Minimum Variance');
-                            $('#strategy_comment_span').html('GMV(전역 최소 분산) 포트폴리오는 투자자의 위험 성향이 아주 강한 경우의 포트폴리오입니다. 이러한 상황에서 투자자는 수익의 최대화보다 위험의 최소화를 우선순위로 두게 되며, 이에 따른 최적화는 가장 낮은 변동성의 포트폴리오를 구성할 수 있도록 가중치의 해를 찾습니다.');
-                            data = {
-                                datasets: [{
-                                    data: asset_weights['gmv'],
-                                    backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
-                                }],
-                                labels : assetsBox, 
-                            }
-                            r_array= round_array(asset_weights['gmv']);
-                            Draw_optimize_pie(data);
-                            $('#opt_report_table').empty();
-                            for (i =0; i<assetsBox.length; i++){
-                                $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
-                            }
+                        pie_backgroundColor = ['#003f5c', '#2f4b7c','#665191','#a05195', '#d45087', '#f95d6a','#ff7c43','#ffa600'];
+                        $('#strategy_name_h2').html('Global Minimum Variance');
+                        $('#strategy_comment_span').html('GMV(전역 최소 분산) 포트폴리오는 투자자의 위험 성향이 아주 강한 경우의 포트폴리오입니다. 이러한 상황에서 투자자는 수익의 최대화보다 위험의 최소화를 우선순위로 두게 되며, 이에 따른 최적화는 가장 낮은 변동성의 포트폴리오를 구성할 수 있도록 가중치의 해를 찾습니다.');
+                        data = {
+                            datasets: [{
+                                data: asset_weights['gmv'],
+                                backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                            }],
+                            labels : mystocks, 
                         }
-                        else if($('input[name="strategy"]:checked').val()=='ms'){
-                            $('#strategy_name_h2').html('Maximum Sharpe Ratio');
-                            $('#strategy_comment_span').html('샤프지수는 감수한 위험 대비 달성 하게 되는 수익은 어느정도나 되는 가를 평가할 때 쓰이는 지수입니다. 즉 위험 자산에 투자함으로써 얻은 초과 수익의 정도를 나타내는 지표입니다. 이러한 샤프 지수를 최대화한 포트폴리오가 Maximum Sharpe Ratio Portfolio 입니다.');
-                            data = {
-                                datasets: [{
-                                    data: asset_weights['ms'],
-                                    backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
-    
-                                }],
-                                labels : assetsBox, 
-                            }
-                            Draw_optimize_pie(data);
-                            r_array= round_array(asset_weights['ms']);
-                            $('#opt_report_table').empty();
-                            for (i =0; i<assetsBox.length; i++){
-                                $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
-                            }
+                        r_array= round_array(asset_weights['gmv']);
+                        Draw_optimize_pie(data);
+                        $('#opt_report_table').empty();
+                        for (i =0; i<mystocks.length; i++){
+                            $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                         }
-                        else if($('input[name="strategy"]:checked').val()=='rp'){
-                            $('#strategy_name_h2').html('Risk Parity Portfolio');
-                            $('#strategy_comment_span').html('리스크 패리티 전략은 개별자산의 수익률 변동이 포트폴리오 전체 위험에 기여하는 정도를 동일하도록 구성해서 포트폴리오 전체 위험이 특정 자산의 가격 변동에 과도하게 노출되는 것을 피하기 위한 자산배분전략입니다.');
-                            data = {
-                                datasets: [{
-                                    data: asset_weights['rp'],
-                                    backgroundColor:pie_backgroundColor.slice(0,assetsBox.length),
-                                }],
-                                labels : assetsBox, 
-                            }
-                            Draw_optimize_pie(data);
-                            r_array= round_array(asset_weights['rp']);
-                            $('#opt_report_table').empty();
-                            for (i =0; i<assetsBox.length; i++){
-                                $('#opt_report_table').append('<tr><td>'+assetsBox[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
-                            }
-                        }
-                        
                         opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols);
     
                     },
@@ -372,7 +337,7 @@ function Draw_optimize_pie(data){
         type: 'pie',
         data : data,
         option : {
-            responsive: true,
+            responsive: false,
             legend : true,
             maintainAspectRatio : false,
             animation: true,
@@ -400,15 +365,7 @@ function pushscatter(chart, x, y, label, color, order) {
     window.Efchart.update();
 }
 function tobacktest() {
-    /*if(stocknames.length==0){
-        alert("아무런 자산을 입력하지 않았습니다.");
-    }else{
-    asset_json = {};
-    for (i = 0; i < assetsBox.length; i++) {
-        asset_json[assetsBox[i]] = window.opt_report_chart.data.datasets[0].data[i];
-    }
-    localStorage.setItem("assets_weight", JSON.stringify(asset_json));
-*/
+    localStorage.setItem("adjusted_weights", window.opt_report_chart.data.datasets[0].data);
     location.href = '/portfolio_backtest';
 }
     
@@ -455,26 +412,92 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
                 bodyAlign: 'center',
                 callbacks: {
                     label: function(tooltipitem, data){
+                        if(window.opt_report_chart){
+                            window.opt_report_chart.destroy();
+                        }
                         var title = "기대수익률 : "+ tooltipitem['yLabel'].toFixed(2) + " 표준편차 : "+tooltipitem['xLabel'].toFixed(2);
                         var body = "";
+                        tooltip_weights = [];
                         if(tooltipitem['datasetIndex']==0){
-                            for (var i=0; i<adjusted_assets.length; i++){
-                                body= body + adjusted_assets[i] + ": " + ef_points_tooltip[tooltipitem['index']][i].toFixed(2)*100 + '% \n';
+                            for (var i=0; i<mystocks.length; i++){
+                                body= body + mystocks[i] + ": " + ef_points_tooltip[tooltipitem['index']][i].toFixed(2)*100 + '% \n';
+                                tooltip_weights.push(ef_points_tooltip[tooltipitem['index']][i]);
+                            }
+                            $('#strategy_name_h2').html('Ef-Line');
+                            $('#strategy_comment_span').html('');
+                            data = {
+                                datasets: [{
+                                    data: tooltip_weights,
+                                    backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                                }],
+                                labels : mystocks, 
+                            }
+                            r_array= round_array(tooltip_weights);
+                            Draw_optimize_pie(data);
+                            $('#opt_report_table').empty();
+                            for (i =0; i<mystocks.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                             }
                         }else if(tooltipitem['datasetIndex']==1){
-                            for (var i=0; i<adjusted_assets.length; i++){
-                                body= body + adjusted_assets[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
-
+                            for (var i=0; i<mystocks.length; i++){
+                                body= body + mystocks[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                                tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
                             }
+                            $('#strategy_name_h2').html('Global Minimum Variance');
+                                $('#strategy_comment_span').html('GMV(전역 최소 분산) 포트폴리오는 투자자의 위험 성향이 아주 강한 경우의 포트폴리오입니다. 이러한 상황에서 투자자는 수익의 최대화보다 위험의 최소화를 우선순위로 두게 되며, 이에 따른 최적화는 가장 낮은 변동성의 포트폴리오를 구성할 수 있도록 가중치의 해를 찾습니다.');
+                                data = {
+                                    datasets: [{
+                                        data: tooltip_weights,
+                                        backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                                    }],
+                                    labels : mystocks, 
+                                }
+                                r_array= round_array(tooltip_weights);
+                                Draw_optimize_pie(data);
+                                $('#opt_report_table').empty();
+                                for (i =0; i<mystocks.length; i++){
+                                    $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                                }
                         }else if(tooltipitem['datasetIndex']==2){
-                            for (var i=0; i<adjusted_assets.length; i++){
-                                body= body + adjusted_assets[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
-
+                            for (var i=0; i<mystocks.length; i++){
+                                body= body + mystocks[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                                tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
+                            }
+                            $('#strategy_name_h2').html('Maximum Sharpe Ratio');
+                            $('#strategy_comment_span').html('샤프지수는 감수한 위험 대비 달성 하게 되는 수익은 어느정도나 되는 가를 평가할 때 쓰이는 지수입니다. 즉 위험 자산에 투자함으로써 얻은 초과 수익의 정도를 나타내는 지표입니다. 이러한 샤프 지수를 최대화한 포트폴리오가 Maximum Sharpe Ratio Portfolio 입니다.');
+                            data = {
+                                datasets: [{
+                                    data: tooltip_weights,
+                                    backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+    
+                                }],
+                                labels : mystocks, 
+                            }
+                            Draw_optimize_pie(data);
+                            r_array= round_array(tooltip_weights);
+                            $('#opt_report_table').empty();
+                            for (i =0; i<mystocks.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                             }
                         }else if(tooltipitem['datasetIndex']==3){
-                            
-                            for (var i=0; i<adjusted_assets.length; i++){
-                                body= body + adjusted_assets[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                            for (var i=0; i<mystocks.length; i++){
+                                body= body + mystocks[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                                tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
+                            }
+                            $('#strategy_name_h2').html('Risk Parity Portfolio');
+                            $('#strategy_comment_span').html('리스크 패리티 전략은 개별자산의 수익률 변동이 포트폴리오 전체 위험에 기여하는 정도를 동일하도록 구성해서 포트폴리오 전체 위험이 특정 자산의 가격 변동에 과도하게 노출되는 것을 피하기 위한 자산배분전략입니다.');
+                            data = {
+                                datasets: [{
+                                    data: tooltip_weights,
+                                    backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                                }],
+                                labels : mystocks, 
+                            }
+                            Draw_optimize_pie(data);
+                            r_array= round_array(tooltip_weights);
+                            $('#opt_report_table').empty();
+                            for (i =0; i<mystocks.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                             }
                         }
                         
@@ -502,9 +525,10 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
             }]
         },
     });
-    pushscatter(Efchart, GMV[0], GMV[1], 'GMV Portfolio', '#536162', '2');
-    pushscatter(Efchart, MaxSharp[0], MaxSharp[1], 'Max Sharp Portfolio', '#8C0000', '2');
-    pushscatter(Efchart, RiskParity[0], RiskParity[1], 'Risk Parity Portfolio', '#E48257', '2')
+    pushscatter(Efchart, GMV[0], GMV[1], 'GMV Portfolio', '#d9534f', '2');
+    pushscatter(Efchart, MaxSharp[0], MaxSharp[1], 'Max Sharp Portfolio', '#5bc0de', '2');
+    pushscatter(Efchart, RiskParity[0], RiskParity[1], 'Risk Parity Portfolio', '#5cb85c', '2');
+    pushscatter(Efchart, Userpf[0], Userpf[1], "당신의 포트폴리오","#428bca", "2");
 }
 
 function return_dict_items(dict){
