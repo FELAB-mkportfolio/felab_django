@@ -87,7 +87,7 @@
         </div>
     </div>
 </div>
-<div class="optimize_result">
+<div class="optimize_result" id='optimize_result'>
     <div class='bt_left'>
         <div class='graph_title'>
             <h2>효율적 투자선</h2>
@@ -131,7 +131,7 @@
         </button>
     </div>
 </div>
-<div class="optimize_result">
+<div class="optimize_result" id='add_block'>
     <div class='bt_left'>
         <div class='graph_title'>
             <h2>추가할 자산 선택하기</h2>
@@ -139,12 +139,14 @@
                 <span></span>
             </div>
         </div>
-        <div style='margin: 20px; border-bottom: 1px solid #eeeeee;height:150px' class='additional_assetsBox'>
-            <a id='T_IT' class='additional_assets' value='T_IT' >T_IT</a>
-            <a id='T_HC' class='additional_assets' value='T_HC'>T_HC</a>
-            <a id='T_HI' class='additional_assets' value='T_HI'>T_HI</a>
+        <div style='margin: 20px 0;display:flex;'>
+            <label>추가하고 싶은 종목을 입력해주세요</label>
+            <div class="searchBox">
+                <input id="comboBox" onfocus="if(this.value == '종목 검색') { this.value = ''; }" value="종목 검색" />
+                <input type='button' id="putin_btn" style="border-radius:5px;width:60px;background-color:#8C0000;height:30px;bottom:0;border:none;color:white;" value='담기'></button>
+            </div>
         </div>
-        <div class='added_assetsBox' style='margin: 20px;'>
+        <div class='added_assetsBox' style='margin: 20px;height:275px; overflow-y: auto;overflow-x: hidden;'>
             <table class='table backtest_table'>
                 <thead>
                     <tr>
@@ -157,6 +159,9 @@
                 <tbody id='adjusted_asset_row'>
                 </tbody>
             </table>
+        </div>
+        <div style='display:flex;justify-content: center;'>
+            <button id='change_btn' style="border-radius:5px;width:100%;background-color:#8C0000;height:50px;bottom:0;border:none;color:white;">반영하기</button>
         </div>
     </div>
     <div class='bt_right'>
@@ -171,7 +176,6 @@
          </div>
     </div>    
 </div>
-<link href="{% static 'css/login_signup.css' %}" rel='stylesheet'>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 
 <div class="popup" data-popup="showSise"> <!-- 표출되는 팝업 입니다. --> 

@@ -1,17 +1,22 @@
 var mystocksDB = [];
 var mystocks = [];
+var stocknames= [];
 var mystocks_weights = [];
-var adjusted_assets = [];
+var adjusted_assets_names = [];
+var adjusted_assets_codes = [];
 var adjusted_assets_weights = [];
-
+var mystocks_names=[];
+var mystocks_codes=[];
 $(document).ready(function () {
-    if(localStorage.getItem("mystocks")){
-        mystocks = localStorage.getItem("mystocks").split(',');
+    if(localStorage.getItem("mystocks_codes")){
+        mystocks_names = localStorage.getItem("mystocks_names").split(',');
+        mystocks_codes = localStorage.getItem("mystocks_codes").split(',');
         mystocks_weights = localStorage.getItem("mystocks_weights").split(',');
         from_period = localStorage.getItem("from");
         to_period = localStorage.getItem("to");
         investment_kinds = localStorage.getItem("investment_kinds").split(',');
-        adjusted_assets= mystocks.slice();
+        adjusted_assets_codes= mystocks_codes.slice();
+        adjusted_assets_names= mystocks_names.slice();
         adjusted_assets_weights= mystocks_weights.slice();
 
         for(i =0; i<investment_kinds.length;i++){
@@ -19,40 +24,34 @@ $(document).ready(function () {
         }
         $('#my_from').val(from_period);
         $('#my_to').val(to_period);
-        for (i = 0; i < mystocks.length; i++) {
-            $('#asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
-        "</td><td class='numberCell'><input id='mystocks_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
-        "></td><td class='numberCell'><button id='my_putout_btn' name=" + mystocks[i] +
-        " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
-            $('#adjusted_asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
-            "</td><td class='numberCell'><input id='adjusted_assets_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
-            "></td><td class='numberCell'><button id='putout_btn' name=" + mystocks[i] +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>")
-        }
-        for(i = 0; i < mystocks.length; i++){
-            $("#mystocks_weights"+i).val(mystocks_weights[i]);
-            $("#adjusted_assets_weights"+i).val(mystocks_weights[i]);
-        }
-        
+        for (i = 0; i < mystocks_names.length; i++) {
+            $('#asset_row').append("<tr eq= "+i+"><td class='numberCell'>"+mystocks_names[i]+
+        "</td><td class='numberCell'><input id='mystocks_weights"+i+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value='"+Number(mystocks_weights[i])+
+        "'></td><td class='numberCell'><button id='my_putout_btn' eq= "+i+" kor-name="+mystocks_names[i]+" name=" + mystocks_codes[i] +
+        " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks_codes[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
 
+            $('#adjusted_asset_row').append("<tr eq= "+i+"><td class='numberCell'>"+mystocks_names[i]+
+            "</td><td class='numberCell'><input id='adjusted_assets_weights"+i+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value='"+Number(mystocks_weights[i])+"'></td><td class='numberCell'><button id='putout_btn' eq= "+i+" kor-name="+mystocks_names[i]+" name=" + mystocks_codes[i] +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks_codes[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>")
+        }
     }
     
     $.ajax({
-        url: '/ajax_db_return/',
+        url: '/ajax_stockname_return/',
         type: "POST",
         dataType: "json",
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
-                mystocksDB.push(data[i][0]);
+                mystocksDB.push(data[i].split(' ')[0]);
+                stocknames.push(data[i]);
             }
-            console.log(mystocksDB);
         },
         error: function (request, status, error) {
             console.log('실패');
         }
     });
     $('#my_comboBox').autocomplete({
-        source: mystocksDB,
+        source: stocknames,
         select: function (event, ui) {
         },
         focus : function(event, ui){
@@ -63,24 +62,34 @@ $(document).ready(function () {
         classes : {
             'ui-autocomplete' : 'highlight'
         },
+        open: function(event, ui) {
+            $(this).autocomplete("widget").css({
+                "width": 300
+            });
+        },
         delay : 500,
         disable : false,
-        position : {my : 'right top', at: 'right bottom'},
+        position : {my : 'center top', at: 'center bottom', collision: "None Flip"},
     });
 
    
     $("#my_putin_btn").click(function () {
-        if (mystocksDB.includes($('#my_comboBox').val())) {
-            mystocks.push($('#my_comboBox').val());
-            
-            mystocksDB.splice(mystocksDB.indexOf($('#my_comboBox').val()),1);
-            $('#asset_row').empty();
-            $('#my_comboBox').val("");
-            for (i = 0; i < mystocks.length; i++) {
-                $('#asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
-            "</td><td class='numberCell'><input id='mystocks_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
-            "></td><td class='numberCell'><button id='my_putout_btn' name=" + mystocks[i] +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
+        if (mystocksDB.includes($('#my_comboBox').val().split(' ')[0])) {
+            code = "kp"+$('#my_comboBox').val().split(' ')[0];
+            stockname = $('#my_comboBox').val().split(' ').slice(1,).join(' ');
+            if(mystocks_names.includes(stockname)){
+                alert("이미 포트폴리오에 담겨 있는 종목입니다");
+                
+            }else{
+                mystocks_names.push(stockname);
+                mystocks_codes.push(code);
+                add_eq = $('#asset_row tr')['length'];
+                
+                stocknames.splice(stocknames.indexOf($('#my_comboBox').val()),1);
+                $('#my_comboBox').val("");
+                $('#asset_row').append("<tr eq= "+Number(add_eq)+"><td class='numberCell'>"+stockname+
+            "</td><td class='numberCell'><input id='mystocks_weights"+Number(add_eq)+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='my_putout_btn' eq= "+Number(add_eq)+"kor-name="+mystocks_names[i]+" name=" + code +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+code+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
             }
         } else {
             alert("종목 정보가 올바르지 않습니다");
@@ -88,15 +97,14 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '#my_putout_btn', function () {
-        $('#asset_row').empty();
-        mystocks.splice(mystocks.indexOf($(this).attr('name')),1);
-        for (i = 0; i < mystocks.length; i++) {
-            $('#asset_row').append("<tr><td class='numberCell'>"+mystocks[i]+
-            "</td><td class='numberCell'><input id='mystocks_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
-            "></td><td class='numberCell'><button id='my_putout_btn' name=" + mystocks[i] +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
+        mystocks_codes.splice(mystocks_codes.indexOf($(this).attr('name')),1);
+        mystocks_names.splice(mystocks_names.indexOf($(this).attr('kor-name')),1);
+        $("#asset_row tr[eq="+$(this).attr('eq')+"]").remove();
+        for (i=0;i<mystocks.length;i++){
+            $('#asset_row tr').eq(i).attr('eq',i);
+            $('#asset_row tr[eq='+i+'] td button').attr('eq',i);
+            $('#asset_row tr[eq='+i+'] td input').attr('id','mystocks_weights'+i);
         }
-        mystocksDB.push($(this).attr('name'));
     });
 
 
@@ -131,14 +139,14 @@ $(document).ready(function () {
     }
     $('#optimize_btn').click(function () {
         
-        if (mystocks.length == 0) {
+        if (mystocks_codes.length == 0) {
             alert("선택된 자산이 없습니다.");
-        }else if(mystocks.length==1){
+        }else if(mystocks_codes.length==1){
             alert("한개의 자산으로는 최적화를 진행할 수 없습니다.");
         }else {
             var sum = 0
             mystocks_weights= [];
-            for (i=0;i<mystocks.length;i++){
+            for (i=0;i<mystocks_codes.length;i++){
                 mystocks_weights.push(parseFloat($('#mystocks_weights'+i).val()));
                 sum = sum+ parseFloat($('#mystocks_weights'+i).val());
             }
@@ -152,18 +160,19 @@ $(document).ready(function () {
                     }
                 }
                 localStorage.setItem("investment_kinds", investment_kinds);
-                localStorage.setItem("mystocks", mystocks);
+                localStorage.setItem("mystocks_codes", mystocks_codes);
                 localStorage.setItem("mystocks_weights", mystocks_weights);
                 localStorage.setItem("from", $('#my_from').val());
                 localStorage.setItem("to", $('#my_to').val());
-                console.log(mystocks, mystocks_weights);
-                adjusted_assets = mystocks.slice();
+                localStorage.setItem("mystocks_names",mystocks_names);
+                adjusted_assets_codes = mystocks_codes.slice();
+                adjusted_assets_names = mystocks_names.slice();
                 $.ajax({
                     url: '/ajax_portfolio_optimize_return/',
                     type: "POST",
                     dataType: "json",
                     data: {
-                        "mystocks[]": mystocks, "mystocks_weights[]" : mystocks_weights, "from": $('#my_from').val(), 'to': $('#my_to').val(),
+                        "mystocks[]": mystocks_codes, "mystocks_weights[]" : mystocks_weights, "from": $('#my_from').val(), 'to': $('#my_to').val(),
                         //"investment_kinds" : 
                     },
                     success: function (data) {
@@ -194,17 +203,18 @@ $(document).ready(function () {
                         data = {
                             datasets: [{
                                 data: asset_weights['gmv'],
-                                backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                                backgroundColor:pie_backgroundColor.slice(0,mystocks_codes.length),
                             }],
                             labels : mystocks, 
                         }
                         r_array= round_array(asset_weights['gmv']);
                         Draw_optimize_pie(data);
                         $('#opt_report_table').empty();
-                        for (i =0; i<mystocks.length; i++){
-                            $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                        for (i =0; i<mystocks_codes.length; i++){
+                            $('#opt_report_table').append('<tr><td>'+mystocks_names[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                         }
-                        opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols);
+                        $('#optimize_result').css('display', 'flex');
+                        opt_result(mystocks_names, GMV, MaxSharp, RiskParity, Trets, Tvols,ef_points_tooltip);
     
                     },
                     error: function (request, status, error) {
@@ -214,17 +224,111 @@ $(document).ready(function () {
             }
         }
     });
-    $(document).on('click', '.additional_assets', function () {
-        clicked_value = $(this).attr('value');
-        adjusted_assets.push(clicked_value);
-        $("a").remove(`#${clicked_value}`);
-        $("#adjusted_asset_row").append("<tr><td class='numberCell'>"+clicked_value+
-            "</td><td class='numberCell'><input id='adjusted_assets_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
-            "></td><td class='numberCell'><button id='putout_btn' name=" + clicked_value +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;' data-text='"+clicked_value+"'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+clicked_value+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
+
+    $('#comboBox').autocomplete({
+        source: stocknames,
+        select: function (event, ui) {
+        },
+        focus : function(event, ui){
+            return false;
+        },
+        minLength : 1,
+        autoFocus : true,
+        classes : {
+            'ui-autocomplete' : 'highlight'
+        },
+        open: function(event, ui) {
+            $(this).autocomplete("widget").css({
+                "width": 300
+            });
+        },
+        delay : 500,
+        disable : false,
+        position : {my : 'center top', at: 'center bottom', collision: "None Flip"},
     });
-    $(document).on('propertychange change keyup paste input', '.my_input_weight',function(){
-        
+
+   
+    $("#putin_btn").click(function () {
+        if (mystocksDB.includes($('#comboBox').val().split(' ')[0])) {
+            var code = "kp"+$('#comboBox').val().split(' ')[0];
+            var stockname = $('#comboBox').val().split(' ').slice(1,).join(' ');
+            if(adjusted_assets_codes.includes(code)){
+                alert("이미 담겨 있습니다");
+            }else{
+                adjusted_assets_names.push(stockname);
+                adjusted_assets_codes.push(code);
+                var add_eq = $('#adjusted_asset_row tr')['length'];
+                $('#comboBox').val("");
+                $('#adjusted_asset_row').append("<tr eq= "+Number(add_eq)+"><td class='numberCell'>"+stockname+
+            "</td><td class='numberCell'><input id='adjusted_assets_weights"+Number(add_eq)+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='my_putout_btn' eq= "+Number(add_eq)+"kor-name="+adjusted_assets_names[i]+" name=" + code +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+code+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
+                
+            }
+            
+        } else {
+            alert("종목 정보가 올바르지 않습니다");
+        }
+    });
+
+    $(document).on('click', '#putout_btn', function () {
+        adjusted_assets_codes.splice(adjusted_assets_codes.indexOf($(this).attr('name')),1);
+        adjusted_assets_names.splice(adjusted_assets_names.indexOf($(this).attr('kor-name')),1);
+        $("#adjusted_asset_row tr[eq="+$(this).attr('eq')+"]").remove();
+        mystocksDB.push($(this).attr('name'));
+        for (i=0;i<adjusted_assets_codes.length;i++){
+            $('#adjusted_asset_row tr').eq(i).attr('eq',i);
+            $('#adjusted_asset_row tr[eq='+i+'] td button').attr('eq',i);
+            $('#adjusted_asset_row tr[eq='+i+'] td input').attr('id','adjusted_assets_weights'+i);
+        }
+    });
+    $('#add_asset_btn').click(function(){
+        $('#add_block').css('display', "flex");
+    });
+
+    $('#change_btn').click(function(){
+        var ad_sum = 0
+        adjusted_assets_weights= [];
+        for (i=0;i<adjusted_assets_codes.length;i++){
+            adjusted_assets_weights.push(parseFloat($('#adjusted_assets_weights'+i).val()));
+            ad_sum = ad_sum+ parseFloat($('#adjusted_assets_weights'+i).val());
+        }
+        if(ad_sum !=1 ){
+            alert("비중의 합이 1이 아닙니다.")
+        }else{
+            $.ajax({
+                url: '/ajax_portfolio_optimize_return/',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "mystocks[]": adjusted_assets_codes, "mystocks_weights[]" : adjusted_assets_weights, "from": $('#my_from').val(), 'to': $('#my_to').val(),
+                    //"investment_kinds" : 
+                },
+                success: function (data) {
+                    var adjusted_GMV = data.ret_vol['GMV'];
+                    var adjusted_MaxSharp = data.ret_vol['MaxSharp'];
+                    var adjusted_RiskParity = data.ret_vol['RiskParity'];
+                    var adjusted_Trets = data.ret_vol['Trets'];
+                    var adjusted_Tvols = data.ret_vol['Tvols'];
+                    adjusted_Userpf = data.ret_vol['User'];
+                    var adjusted_ef_points = JSON.parse(data.efpoints);
+                    var adjusted_ef_points_tooltip = return_dict_items(adjusted_ef_points);
+                    var adjusted_asset_weights = JSON.parse(data.weights);
+                    adjusted_ef_points_tooltip.push(adjusted_asset_weights['gmv']);
+                    adjusted_ef_points_tooltip.push(adjusted_asset_weights['ms']);
+                    adjusted_ef_points_tooltip.push(adjusted_asset_weights['rp']);
+                    adjusted_ef_points_tooltip.push(adjusted_assets_weights);
+                    if (adjusted_asset_weights ==1){
+                        alert("입력한 기간이 짧습니다.");
+                        location.reload();
+                    }
+                    if(window.adjusted_Efchart){
+                        window.adjusted_Efchart.destroy();
+                    }
+                    $('.optimize_result').css('display', 'flex');
+                    opt_result_change(adjusted_assets_names, adjusted_GMV, adjusted_MaxSharp, adjusted_RiskParity, adjusted_Trets, adjusted_Tvols,adjusted_ef_points_tooltip);
+                }
+            });
+        }
     });
     $(document).on('click', '#showSise',function(){
         var targeted_popup_class = $(this).attr('data-popup-open'); 
@@ -302,17 +406,15 @@ function pushscatter(chart, x, y, label, color, order) {
         pointHoverRadius: 8,
         order: order,
     });
-    window.Efchart.update();
+    chart.update();
 }
 function tobacktest() {
     localStorage.setItem("adjusted_weights", window.opt_report_chart.data.datasets[0].data);
     location.href = '/portfolio_backtest';
 }
     
-function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
-    
-    $('.optimize_result').css('display', 'flex');
-    var Ef_ctx = document.getElementById("efficient_frontier_graph").getContext('2d');
+function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols,ef_points_tooltip) {
+    var Ef_ctx = document.getElementById("efficient_frontier_graph").getContext('2d'); 
     ef_storage = [];
     
     for (var i = 0; i < Trets.length; i++) {
@@ -359,8 +461,8 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
                         var body = "";
                         tooltip_weights = [];
                         if(tooltipitem['datasetIndex']==0){
-                            for (var i=0; i<mystocks.length; i++){
-                                body= body + mystocks[i] + ": " + ef_points_tooltip[tooltipitem['index']][i].toFixed(2)*100 + '% \n';
+                            for (var i=0; i<mystocks_names.length; i++){
+                                body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['index']][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['index']][i]);
                             }
                             $('#strategy_name_h2').html('Ef-Line');
@@ -368,19 +470,19 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
                             data = {
                                 datasets: [{
                                     data: tooltip_weights,
-                                    backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                                    backgroundColor:pie_backgroundColor.slice(0,mystocks_names.length),
                                 }],
-                                labels : mystocks, 
+                                labels : mystocks_names, 
                             }
                             r_array= round_array(tooltip_weights);
                             Draw_optimize_pie(data);
                             $('#opt_report_table').empty();
-                            for (i =0; i<mystocks.length; i++){
-                                $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                            for (i =0; i<mystocks_names.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+mystocks_names[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                             }
                         }else if(tooltipitem['datasetIndex']==1){
-                            for (var i=0; i<mystocks.length; i++){
-                                body= body + mystocks[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                            for (var i=0; i<mystocks_names.length; i++){
+                                body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
                             }
                             $('#strategy_name_h2').html('Global Minimum Variance');
@@ -388,19 +490,19 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
                                 data = {
                                     datasets: [{
                                         data: tooltip_weights,
-                                        backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                                        backgroundColor:pie_backgroundColor.slice(0,mystocks_names.length),
                                     }],
-                                    labels : mystocks, 
+                                    labels : mystocks_names, 
                                 }
                                 r_array= round_array(tooltip_weights);
                                 Draw_optimize_pie(data);
                                 $('#opt_report_table').empty();
-                                for (i =0; i<mystocks.length; i++){
-                                    $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                                for (i =0; i<mystocks_names.length; i++){
+                                    $('#opt_report_table').append('<tr><td>'+mystocks_names[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                                 }
                         }else if(tooltipitem['datasetIndex']==2){
-                            for (var i=0; i<mystocks.length; i++){
-                                body= body + mystocks[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                            for (var i=0; i<mystocks_names.length; i++){
+                                body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
                             }
                             $('#strategy_name_h2').html('Maximum Sharpe Ratio');
@@ -408,20 +510,20 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
                             data = {
                                 datasets: [{
                                     data: tooltip_weights,
-                                    backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                                    backgroundColor:pie_backgroundColor.slice(0,mystocks_names.length),
     
                                 }],
-                                labels : mystocks, 
+                                labels : mystocks_names, 
                             }
                             Draw_optimize_pie(data);
                             r_array= round_array(tooltip_weights);
                             $('#opt_report_table').empty();
-                            for (i =0; i<mystocks.length; i++){
-                                $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                            for (i =0; i<mystocks_names.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+mystocks_names[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                             }
                         }else if(tooltipitem['datasetIndex']==3){
-                            for (var i=0; i<mystocks.length; i++){
-                                body= body + mystocks[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                            for (var i=0; i<mystocks_names.length; i++){
+                                body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
                             }
                             $('#strategy_name_h2').html('Risk Parity Portfolio');
@@ -429,19 +531,19 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
                             data = {
                                 datasets: [{
                                     data: tooltip_weights,
-                                    backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                                    backgroundColor:pie_backgroundColor.slice(0,mystocks_names.length),
                                 }],
-                                labels : mystocks, 
+                                labels : mystocks_names, 
                             }
                             Draw_optimize_pie(data);
                             r_array= round_array(tooltip_weights);
                             $('#opt_report_table').empty();
-                            for (i =0; i<mystocks.length; i++){
-                                $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                            for (i =0; i<mystocks_names.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+mystocks_names[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                             }
                         }else if(tooltipitem['datasetIndex']==4){
-                            for (var i=0; i<mystocks.length; i++){
-                                body= body + mystocks[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                            for (var i=0; i<mystocks_names.length; i++){
+                                body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
                             }
                             $('#strategy_name_h2').html('내 포트폴리오');
@@ -449,15 +551,15 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
                             data = {
                                 datasets: [{
                                     data: tooltip_weights,
-                                    backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                                    backgroundColor:pie_backgroundColor.slice(0,mystocks_names.length),
                                 }],
-                                labels : mystocks, 
+                                labels : mystocks_names, 
                             }
                             Draw_optimize_pie(data);
                             r_array= round_array(tooltip_weights);
                             $('#opt_report_table').empty();
-                            for (i =0; i<mystocks.length; i++){
-                                $('#opt_report_table').append('<tr><td>'+mystocks[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
+                            for (i =0; i<mystocks_names.length; i++){
+                                $('#opt_report_table').append('<tr><td>'+mystocks_names[i]+'</td><td class="numberCell">'+r_array[i]+'%</td></tr>');
                             }
                         }
                         
@@ -489,6 +591,107 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols) {
     pushscatter(Efchart, MaxSharp[0], MaxSharp[1], 'Max Sharp Portfolio', '#5bc0de', '2');
     pushscatter(Efchart, RiskParity[0], RiskParity[1], 'Risk Parity Portfolio', '#5cb85c', '2');
     pushscatter(Efchart, Userpf[0], Userpf[1], "내 포트폴리오","#428bca", "2");
+}
+function opt_result_change(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols,ef_points_tooltip){
+    var adjusted_Ef_ctx = document.getElementById("after_efficient_frontier_graph").getContext('2d');
+    adjusted_ef_storage = [];
+    
+    for (var i = 0; i < Trets.length; i++) {
+        x = Number(Tvols[i]);
+        y = Number(Trets[i]);
+        var json = { x: x, y: y };
+        adjusted_ef_storage.push(json);
+    }
+
+    window.adjusted_Efchart = new Chart(adjusted_Ef_ctx, {
+        type: 'scatter',
+        data: {
+            datasets : [{
+                label : '효율적 투자선',
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data : adjusted_ef_storage,
+                showLine : true,
+                fill : false,
+                order : 1,
+            }],
+        },
+        options: {
+            responsive: true, // Instruct chart js to respond nicely.
+            maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height 
+            tooltips:{
+                displayColors:false,
+                titleFontColor:'#fff',
+                titleAlign: 'center',
+                bodyFontSize: 15,
+                bodySpacing: 2,
+                bodyFontColor: '#fff',
+                bodyAlign: 'center',
+                callbacks: {
+                    label: function(tooltipitem, data){
+                        console.log(tooltipitem);
+                        var title = "기대수익률 : "+ tooltipitem['yLabel'].toFixed(2) + " 표준편차 : "+tooltipitem['xLabel'].toFixed(2);
+                        var body = "";
+                        adjusted_tooltip_weights = [];
+                        if(tooltipitem['datasetIndex']==0){
+                            for (var i=0; i<adjusted_assets_names.length; i++){
+                                body= body + adjusted_assets_names[i] + ": " + ef_points_tooltip[tooltipitem['index']][i].toFixed(2)*100 + '% \n';
+                                adjusted_tooltip_weights.push(ef_points_tooltip[tooltipitem['index']][i]);
+                            }
+                        }else if(tooltipitem['datasetIndex']==1){
+                            for (var i=0; i<adjusted_assets_names.length; i++){
+                                body= body + adjusted_assets_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                                adjusted_tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
+                            }
+                        }else if(tooltipitem['datasetIndex']==2){
+                            for (var i=0; i<adjusted_assets_names.length; i++){
+                                body= body + adjusted_assets_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                                adjusted_tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
+                            }
+                        }else if(tooltipitem['datasetIndex']==3){
+                            for (var i=0; i<adjusted_assets_names.length; i++){
+                                body= body + adjusted_assets_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                                adjusted_tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
+                            }
+                        }else if(tooltipitem['datasetIndex']==4){
+                            for (var i=0; i<adjusted_assets_names.length; i++){
+                                body= body + adjusted_assets_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
+                                adjusted_tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
+                            }
+                        }
+                        return [title, "", body];
+                    }
+                }
+            }
+        },
+        scales: {
+            yAxes: [{
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Annual Return',
+                    fontStyle: 'bold',
+                    fontSize: '15',
+                }
+            }],
+            xAxes: [{
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Annual Volatility',
+                    fontStyle: 'bold',
+                    fontSize: '15',
+                }
+            }]
+        },
+    });
+    pushscatter(adjusted_Efchart, GMV[0], GMV[1], 'GMV Portfolio', '#d9534f', '2');
+    pushscatter(adjusted_Efchart, MaxSharp[0], MaxSharp[1], 'Max Sharp Portfolio', '#5bc0de', '2');
+    pushscatter(adjusted_Efchart, RiskParity[0], RiskParity[1], 'Risk Parity Portfolio', '#5cb85c', '2');
+    pushscatter(adjusted_Efchart, adjusted_Userpf[0], adjusted_Userpf[1], "내 포트폴리오","#428bca", "2");
+
 }
 
 function return_dict_items(dict){

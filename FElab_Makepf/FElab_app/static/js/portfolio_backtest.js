@@ -1,12 +1,16 @@
+var mystocksDB = [];
+var mystocks = [];
+var stocknames= [];
+var mystocks_weights = [];
 $(document).ready(function () {
-    var stocknames = [];
     $.ajax({
-        url: '/ajax_db_return/',
+        url: '/ajax_stockname_return/',
         type: "POST",
         dataType: "json",
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
-                stocknames.push(data[i][0]);
+                mystocksDB.push(data[i].split(' ')[0]);
+                stocknames.push(data[i]);
             }
         },
         error: function (request, status, error) {
@@ -27,21 +31,22 @@ $(document).ready(function () {
         },
         delay : 500,
         disable : false,
-        position : {my : 'right top', at: 'right bottom'},
+        position : {my : 'center top', at: 'center bottom', collision: "None Flip"},
     });
-    if (localStorage.getItem('mystocks_weights')!=null){
-        mystocks = localStorage.getItem("mystocks").split(',');
+    if (localStorage.getItem('mystocks_weights')){
+        mystocks_names = localStorage.getItem("mystocks_names").split(',');
+        mystocks_codes = localStorage.getItem("mystocks_codes").split(',');
         mystocks_weights = localStorage.getItem("mystocks_weights").split(',');
         my_from = localStorage.getItem("from");
         my_to = localStorage.getItem("to");
-        for(i=0; i<mystocks.length;i++){
-            stocknames.splice(stocknames.indexOf(mystocks[i]),1);
+        for(i=0; i<mystocks_codes.length;i++){
+            mystocksDB.splice(mystocksDB.indexOf(mystocks_codes[i]),1);
         }
-        for (i = 0; i < mystocks.length; i++) {
-            $('#asset_row').append("<tr eq= "+i+"><td class='numberCell'>"+mystocks[i]+
-            "</td><td class='numberCell'><input id='assetweight"+i+"' class='input_weight' type='text' style='text-align:right;width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value="+Number(mystocks_weights[i]).toFixed(2)*100+
-            ">%</td><td class='numberCell'><button id='putout_btn'  eq= "+i+" name=" + mystocks[i] +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td></tr>");
+        for (i = 0; i < mystocks_names.length; i++) {
+            $('#asset_row').append("<tr eq= "+i+"><td class='numberCell'>"+mystocks_names[i]+
+        "</td><td class='numberCell'><input id='mystocks_weights"+i+"' class='input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px;text-align:center;' value='"+Number(mystocks_weights[i])+
+        "'></td><td class='numberCell'><button id='putout_btn' eq= "+i+" kor-name="+mystocks_names[i]+" name=" + mystocks_codes[i] +
+        " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks_codes[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
         }
         $('#from').val(my_from);
         $('#to').val(my_to);
@@ -49,49 +54,60 @@ $(document).ready(function () {
         data = {
             datasets: [{
                 data: mystocks_weights,
-                backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                backgroundColor:pie_backgroundColor.slice(0,mystocks_names.length),
             }],
-            labels : mystocks, 
+            labels : mystocks_names, 
         }
         Draw_optimize_pie(data);
-    }else{
-        $('chartdiv').empty();
     }
     
     $("#putin_btn").click(function () {
-        if (stocknames.includes($('#comboBox').val())) {
-            mystocks.push($('#comboBox').val());
-            stocknames.splice(stocknames.indexOf($('#comboBox').val()),1);
-            $('#asset_row').append("<tr><td class='numberCell'>"+$('#comboBox').val()+
-            "</td><td class='numberCell'><input id='assetweight"+i+"' class='input_weight' type='text' style='text-align:right;width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=>%</td><td class='numberCell'><button id='putout_btn'  eq= "+$('#asset_row')[0].rows.length+" name=" + $('#comboBox').val() +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td></tr>");
+        if (mystocksDB.includes($('#comboBox').val().split(' ')[0])) {
+            code = "kp"+$('#comboBox').val().split(' ')[0];
+            stockname = $('#comboBox').val().split(' ').slice(1,).join(' ');
+            mystocks_names.push(stockname);
+            mystocks_codes.push(code);
+
+            add_eq = $('#asset_row tr')['length'];
+            mystocksDB.splice(mystocksDB.indexOf(code),1);
+            $('#asset_row').append("<tr eq= "+Number(add_eq)+"><td class='numberCell'>"+stockname+
+        "</td><td class='numberCell'><input id='mystocks_weights"+Number(add_eq)+"' class='input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='putout_btn' eq= "+Number(add_eq)+"kor-name="+mystocks_names[i]+" name=" + code +
+        " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+code+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
             $('#comboBox').val("");
         } else {
             alert("종목 정보가 올바르지 않습니다");
         }
     });
     $(document).on('click', '#putout_btn', function () {
-        $('#asset_row tr').eq($(this).attr('eq')).remove();
-        mystocks.splice(mystocks.indexOf($(this).attr('name')),1);
+        mystocks_codes.splice(mystocks_codes.indexOf($(this).attr('name')),1);
+        mystocks_names.splice(mystocks_names.indexOf($(this).attr('kor-name')),1);
+        $("#asset_row tr[eq="+$(this).attr('eq')+"]").remove();
+        mystocksDB.push($(this).attr('name'));
+        for (i=0;i<mystocks_names.length;i++){
+            $('#asset_row tr').eq(i).attr('eq',i);
+            $('#asset_row tr[eq='+i+'] td button').attr('eq',i);
+            $('#asset_row tr[eq='+i+'] td input').attr('id','mystocks_weights'+i);
+        }
         
-        stocknames.push($(this).attr('name'));
+        mystocksDB.push($(this).attr('name'));
     });
     $(document).on('change', '.input_weight',function(){
         sum = 0
         mystocks_weights=[];
-        for(i=0;i<mystocks.length;i++){
-            sum = sum+$('#assetweight'+i).val()/100
-            mystocks_weights.push($('#assetweight'+i).val()/100);
+        for(i=0;i<mystocks_names.length;i++){
+            sum = sum+Number($('#mystocks_weights'+i).val())
+            mystocks_weights.push(Number($('#mystocks_weights'+i).val()));
         }
         if(sum!=1){
+
         }else{
             window.opt_report_chart.destroy();
             data = {
                 datasets: [{
                     data: mystocks_weights,
-                    backgroundColor:pie_backgroundColor.slice(0,mystocks.length),
+                    backgroundColor:pie_backgroundColor.slice(0,mystocks_names.length),
                 }],
-                labels : mystocks, 
+                labels : mystocks_names, 
             }
             Draw_optimize_pie(data);
         }
@@ -126,13 +142,41 @@ $(document).ready(function () {
 
         return date;
     }
+    $(document).on('click', '#showSise',function(){
+        var targeted_popup_class = $(this).attr('data-popup-open'); 
+        $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+        $.ajax({
+            url: '/ajax_db_return/',
+            type: "POST",
+            dataType: "json",
+            data: { 'stock_code': $(this).attr('data-stock')},
+            success: function (data) {
+                var stockdata = [];
+                for (var i = 0; i < data.length; i++) {
+                    stockdata.push({ 'Date': moment(data[i][0]).format('YYYY-MM-DD'), 'Open': data[i][1], 'High': data[i][2], 'Low': data[i][3], 'Close': data[i][4], 'Volume': data[i][5] })
+                }
+                var chartdiv = document.querySelector('#chartdiv');
+                var charttype = am4charts.XYChart;
+                var chart = createChart(chartdiv, charttype);
+                stockGraph(stockdata,chart);
+            },
+            error: function (request, status, error) {
+                console.log('실패');
+            }
+        })
+    });
+    $('[data-popup-close]').on('click', function(e) { // 팝업 닫기 버튼 클릭시 동작하는 이벤트입니다. 
+        var targeted_popup_class = $(this).attr('data-popup-close'); 
+        $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350); 
+        e.preventDefault(); 
+    });
     
     $('#backtest_btn').click(function() {
         sum = 0
         mystocks_weights=[];
-        for(i=0;i<mystocks.length;i++){
-            sum = sum+$('#assetweight'+i).val()/100
-            mystocks_weights.push($('#assetweight'+i).val()/100);
+        for(i=0;i<mystocks_codes.length;i++){
+            sum = sum+Number($('#mystocks_weights'+i).val());
+            mystocks_weights.push(Number($('#mystocks_weights'+i).val()));
         }
         if(sum!=1){
             alert("비중의 합이 1이 아닙니다.");
@@ -143,7 +187,7 @@ $(document).ready(function () {
                 dataType: "json",
                 //
                 //,
-                data : {"assetsBox[]" : mystocks, "assetweights[]" : mystocks_weights, "from" : $('#from').val(), 'to' : $('#to').val(),
+                data : {"assetsBox[]" : mystocks_codes, "assetweights[]" : mystocks_weights, "from" : $('#from').val(), 'to' : $('#to').val(),
             'rebalancing_month' : $('#rebalancing_month').val(), 'start_amount' : $('#start_amount').val(), 'strategy': $('input[name=strategy]:checked').val()},
                 success: function (data) {
                     console.log(data.indicator);
@@ -463,3 +507,220 @@ function Draw_hist_chart(x, y) {
         }
     });
 }
+var chartReg = {};
+function createChart(chartdiv, charttype) {
+    // Check if the chart instance exists
+    maybeDisposeChart(chartdiv);
+
+    // Create new chart
+    chartReg[chartdiv] = am4core.create(chartdiv, charttype);
+    return chartReg[chartdiv];
+}
+function maybeDisposeChart(chartdiv){
+    if (chartReg[chartdiv]) {
+        chartReg[chartdiv].dispose();
+        delete chartReg[chartdiv];
+    }
+}
+function stockGraph(stockdata,chart) {
+    am4core.ready(function () {
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        //chart = am4core.create("chartdiv", am4charts.XYChart);
+
+        chart.padding(0, 15, 0, 15);
+
+        // Load data
+        chart.data = stockdata;
+
+        // the following line makes value axes to be arranged vertically.
+        chart.leftAxesContainer.layout = "vertical";
+
+        // uncomment this line if you want to change order of axes
+        //chart.bottomAxesContainer.reverseOrder = true;
+
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.renderer.grid.template.location = 0;
+        dateAxis.renderer.ticks.template.length = 8;
+        dateAxis.renderer.ticks.template.strokeOpacity = 0.1;
+        dateAxis.renderer.grid.template.disabled = true;
+        dateAxis.renderer.ticks.template.disabled = false;
+        dateAxis.renderer.ticks.template.strokeOpacity = 0.2;
+        dateAxis.renderer.minLabelPosition = 0.01;
+        dateAxis.renderer.maxLabelPosition = 0.99;
+        dateAxis.keepSelection = true;
+        dateAxis.minHeight = 30;
+
+        dateAxis.groupData = true;
+        dateAxis.minZoomCount = 5;
+
+        // these two lines makes the axis to be initially zoomed-in
+        // dateAxis.start = 0.7;
+        // dateAxis.keepSelection = true;
+
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.tooltip.disabled = true;
+        valueAxis.zIndex = 1;
+        valueAxis.renderer.baseGrid.disabled = true;
+        // height of axis
+        valueAxis.height = am4core.percent(65);
+
+        valueAxis.renderer.gridContainer.background.fill = am4core.color("#000000");
+        valueAxis.renderer.gridContainer.background.fillOpacity = 0.05;
+        valueAxis.renderer.inside = true;
+        valueAxis.renderer.labels.template.verticalCenter = "bottom";
+        valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
+
+        //valueAxis.renderer.maxLabelPosition = 0.95;
+        valueAxis.renderer.fontSize = "0.8em"
+
+        var series = chart.series.push(new am4charts.CandlestickSeries());
+        series.dataFields.dateX = "Date";
+        series.dataFields.openValueY = "Open";
+        series.dataFields.valueY = "Close";
+        series.dataFields.lowValueY = "Low";
+        series.dataFields.highValueY = "High";
+        series.clustered = false;
+        series.tooltipText = "open: {openValueY.value}\nlow: {lowValueY.value}\nhigh: {highValueY.value}\nclose: {valueY.value}";
+        series.name = "MSFT";
+        series.defaultState.transitionDuration = 0;
+
+        var valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis2.tooltip.disabled = true;
+        // height of axis
+        valueAxis2.height = am4core.percent(35);
+        valueAxis2.zIndex = 3
+        // this makes gap between panels
+        valueAxis2.marginTop = 30;
+        valueAxis2.renderer.baseGrid.disabled = true;
+        valueAxis2.renderer.inside = true;
+        valueAxis2.renderer.labels.template.verticalCenter = "bottom";
+        valueAxis2.renderer.labels.template.padding(2, 2, 2, 2);
+        //valueAxis.renderer.maxLabelPosition = 0.95;
+        valueAxis2.renderer.fontSize = "0.8em"
+
+        valueAxis2.renderer.gridContainer.background.fill = am4core.color("#000000");
+        valueAxis2.renderer.gridContainer.background.fillOpacity = 0.05;
+
+        var series2 = chart.series.push(new am4charts.ColumnSeries());
+        series2.dataFields.dateX = "Date";
+        series2.clustered = false;
+        series2.dataFields.valueY = "Volume";
+        series2.yAxis = valueAxis2;
+        series2.tooltipText = "{valueY.value}";
+        series2.name = "Series 2";
+        // volume should be summed
+        series2.groupFields.valueY = "sum";
+        series2.defaultState.transitionDuration = 0;
+
+        chart.cursor = new am4charts.XYCursor();
+
+        var scrollbarX = new am4charts.XYChartScrollbar();
+
+        var sbSeries = chart.series.push(new am4charts.LineSeries());
+        sbSeries.dataFields.valueY = "Close";
+        sbSeries.dataFields.dateX = "Date";
+        scrollbarX.series.push(sbSeries);
+        sbSeries.disabled = true;
+        scrollbarX.marginBottom = 20;
+        chart.scrollbarX = scrollbarX;
+        scrollbarX.scrollbarChart.xAxes.getIndex(0).minHeight = undefined;
+        /**
+         * Set up external controls
+         */
+
+        // Date format to be used in input fields
+        var inputFieldFormat = "yyyy-MM-dd";
+
+        document.getElementById("b1m").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.add(date, "month", -1);
+            zoomToDates(date);
+        });
+
+        document.getElementById("b3m").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.add(date, "month", -3);
+            zoomToDates(date);
+        });
+
+        document.getElementById("b6m").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.add(date, "month", -6);
+            zoomToDates(date);
+        });
+
+        document.getElementById("b1y").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.add(date, "year", -1);
+            zoomToDates(date);
+        });
+
+        document.getElementById("bytd").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.round(date, "year", 1);
+            zoomToDates(date);
+        });
+
+        document.getElementById("bmax").addEventListener("click", function () {
+            var min = dateAxis.groupMin["day1"];
+            var date = new Date(min);
+            zoomToDates(date);
+        });
+
+        dateAxis.events.on("selectionextremeschanged", function () {
+            updateFields();
+        });
+
+        dateAxis.events.on("extremeschanged", updateFields);
+
+        function updateFields() {
+            var minZoomed = dateAxis.minZoomed + am4core.time.getDuration(dateAxis.mainBaseInterval.timeUnit, dateAxis.mainBaseInterval.count) * 0.5;
+            document.getElementById("fromfield").value = chart.dateFormatter.format(minZoomed, inputFieldFormat);
+            document.getElementById("tofield").value = chart.dateFormatter.format(new Date(dateAxis.maxZoomed), inputFieldFormat);
+        }
+
+        document.getElementById("fromfield").addEventListener("keyup", updateZoom);
+        document.getElementById("tofield").addEventListener("keyup", updateZoom);
+
+        var zoomTimeout;
+        function updateZoom() {
+            if (zoomTimeout) {
+                clearTimeout(zoomTimeout);
+            }
+            zoomTimeout = setTimeout(function () {
+                var start = document.getElementById("fromfield").value;
+                var end = document.getElementById("tofield").value;
+                if ((start.length < inputFieldFormat.length) || (end.length < inputFieldFormat.length)) {
+                    return;
+                }
+                var startDate = chart.dateFormatter.parse(start, inputFieldFormat);
+                var endDate = chart.dateFormatter.parse(end, inputFieldFormat);
+
+                if (startDate && endDate) {
+                    dateAxis.zoomToDates(startDate, endDate);
+                }
+            }, 500);
+        }
+
+        function zoomToDates(date) {
+            var min = dateAxis.groupMin["day1"];
+            var max = dateAxis.groupMax["day1"];
+            dateAxis.keepSelection = true;
+            //dateAxis.start = (date.getTime() - min)/(max - min);
+            //dateAxis.end = 1;
+
+            dateAxis.zoom({ start: (date.getTime() - min) / (max - min), end: 1 });
+        }
+
+
+    }); // end am4core.ready()
+}
+

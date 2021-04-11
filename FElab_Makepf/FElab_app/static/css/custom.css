@@ -4,7 +4,7 @@
     box-sizing:border-box;
 }
 body {
-    font-family: 'Nanum Gothic', sans-serif;
+    font-family: 'AppleSDGothicNeoM';
 }
 .header {
     height: 500px;
@@ -205,8 +205,9 @@ select {
     /* add padding to account for vertical scrollbar */
     padding-right: 20px;
 } 
-.assetsBox, .my_assetsBox{
+#my_assetsBox{
     text-align:center;
+    height:230px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -281,15 +282,19 @@ button[class=amcharts-input]{
 
 }
 .backtest_result, .optimize_result{
-    margin: 0 20px;
-    display:flex;
+    margin: 50px 20px;
+    display:none;
     justify-content: center;
     font-family: 'AppleSDGothicNeoM';
 }
 .backtest_result {
     display: flex;
+    margin-top: 0;
     flex-direction: column;
     font-family: 'AppleSDGothicNeoM';
+}
+.optimize_result{
+    display: none;
 }
 .opt_task{
     margin: 30px 5px 0 30px;
@@ -298,10 +303,6 @@ button[class=amcharts-input]{
     text-align: center;
     padding: 0 20px;
     border:1px solid #eeeeee;
-}
-.optimize_result{
-    margin-top:50px;
-    display:flex;
 }
 .graph_container{
     height:700px;

@@ -27,18 +27,31 @@ def home(request):
     return render(request, 'FElab_app/home.html',{})
 #-------------------------------#
 
+@csrf_exempt
+def ajax_stockname_return(request):
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
+    sql = "SELECT * FROM codename;"
+        
+
+    #sql문 실행/ 데이터 받기
+    curs = conn.cursor()
+    curs.execute(sql)
+    data = curs.fetchall()
+
+    #db 접속 종료
+    curs.close()
+    conn.close()
+    stock_arr = []
+    for i in range(len(data)):
+        stock_arr.append(data[i][1]+' '+data[i][2])
+
+    return JsonResponse(stock_arr, safe=False)
 #ajax 통신 (디비 내용 json으로 response)
 @csrf_exempt
 def ajax_db_return(request):
     
-    #종목코드를 입력받으면 시세를 반환하고 아무것도 없으면 단순 종목 이름들만 반환한다.
-    if 'stock_code' in request.POST:
-        conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
-        sql = "SELECT * FROM "+ request.POST['stock_code']+";"
-    else:
-        conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
-        sql = "SELECT * FROM codename"
-        
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
+    sql = "SELECT * FROM "+ request.POST['stock_code']+";"
 
     #sql문 실행/ 데이터 받기
     curs = conn.cursor()
