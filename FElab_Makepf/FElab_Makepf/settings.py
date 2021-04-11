@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'FElab_Makepf.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'teststocks',
+        'NAME': 'krmarket',
         'USER' : 'root',
         'PASSWORD' : 'su970728!',
         'HOST' : 'localhost',

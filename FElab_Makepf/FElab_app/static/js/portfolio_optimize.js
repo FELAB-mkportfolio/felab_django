@@ -1,5 +1,3 @@
-var assetsBox = []
-var stocknames = [];
 var mystocksDB = [];
 var mystocks = [];
 var mystocks_weights = [];
@@ -45,43 +43,13 @@ $(document).ready(function () {
         dataType: "json",
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
-                stocknames.push(data[i][0]);
                 mystocksDB.push(data[i][0]);
             }
-            if(localStorage.getItem("assets_weight")!=null){
-                jparse = JSON.parse(localStorage.getItem("assets_weight"))
-                obj = Object.keys(jparse);
-                for(i=0; i<obj.length;i++){
-                    stocknames.splice(stocknames.indexOf(obj[i]),1);
-                    assetsBox.push(obj[i]);
-                }
-                for (i = 0; i < assetsBox.length; i++) {
-                $('#assetsBox').append("<div style='position:relative;margin: 10px 0;width:100%;height:30px;display:flex;justify-content:center;border-bottom:1px   solid #eeeeee;'><p>"
-                            + assetsBox[i] + "</p > <button id='putout_btn' name=" + assetsBox[i] +
-                            " style='position:absolute;right:5px;;width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></div>");
-                }
-            }
-
+            console.log(mystocksDB);
         },
         error: function (request, status, error) {
             console.log('실패');
         }
-    });
-    $('#comboBox').autocomplete({
-        source: stocknames,
-        select: function (event, ui) {
-        },
-        focus : function(event, ui){
-            return false;
-        },
-        minLength : 1,
-        autoFocus : true,
-        classes : {
-            'ui-autocomplete' : 'highlight'
-        },
-        delay : 500,
-        disable : false,
-        position : {my : 'right top', at: 'right bottom'},
     });
     $('#my_comboBox').autocomplete({
         source: mystocksDB,
@@ -118,35 +86,6 @@ $(document).ready(function () {
             alert("종목 정보가 올바르지 않습니다");
         }
     });
-    $("#putin_btn").click(function () {
-        if (stocknames.includes($('#comboBox').val())) {
-            assetsBox.push($('#comboBox').val());
-            stocknames.splice(stocknames.indexOf($('#comboBox').val()),1);
-            $('#assetsBox').empty();
-            $('#comboBox').val("");
-            for (i = 0; i < assetsBox.length; i++) {
-                $('#assetsBox').append("<div style='position:relative;margin-bottom:5px;width:100%;height:30px;display:flex;justify-content:center;border-bottom:1px solid #eeeeee;'><p>"
-                    + assetsBox[i] + "</p > <button id='putout_btn' name=" + assetsBox[i] +
-                    " style='position:absolute;right:5px;;width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></div>");
-            }
-        } else {
-            
-        }
-    });
-
-    $(document).on('click', '#putout_btn', function () {
-        
-        $('#adjusted_asset_row').empty();
-        adjusted_assets.splice(adjusted_assets.indexOf($(this).attr('name')),1);
-        for (i = 0; i < adjusted_assets.length; i++) {
-            $('#adjusted_asset_row').append("<tr><td class='numberCell'>"+adjusted_assets[i]+
-            "</td><td class='numberCell'><input id='adjusted_assets_weights"+i+"' class='my_input_weight' value='0', type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''"+
-            "></td><td class='numberCell'><button id='putout_btn' name=" + adjusted_assets[i] +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+adjusted_assets[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>")
-        }
-        $('.additional_assetsBox').append("<a id='"+$(this).attr('name')+"' class='additional_assets' value='"+$(this).attr('name')+"' >"+$(this).attr('name')+"</a>")
-        stocknames.push($(this).attr('name'));
-    });
 
     $(document).on('click', '#my_putout_btn', function () {
         $('#asset_row').empty();
@@ -157,7 +96,7 @@ $(document).ready(function () {
             "></td><td class='numberCell'><button id='my_putout_btn' name=" + mystocks[i] +
             " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
         }
-        stocknames.push($(this).attr('name'));
+        mystocksDB.push($(this).attr('name'));
     });
 
 
