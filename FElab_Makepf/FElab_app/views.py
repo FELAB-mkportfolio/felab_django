@@ -11,6 +11,9 @@ import numpy as np
 import FinanceDataReader as fdr
 from datetime import datetime, timedelta
 import time
+import requests
+from io import BytesIO
+
 
 
 #-*-coding:utf-8 -*-
@@ -95,12 +98,18 @@ def portfolio_backtest(request):
 
 #업데이트되는 주식 코드, 종목명 테이블에 저장, db이름은 krcodename, table이름은 codename
 def kospi_stocks_codenamesave(data):
+    etfcodename = pd.DataFrame({'Code':['139260','139220','139290','139270','227550','227560','139250','139230','139240','227540','243880','243890','315270','139280'],
+                             'Name':['TIGER 200 IT', 'TIGER 200 건설','TIGER 200 경기소비재','TIGER 200 금융','TIGER 200 산업재','TIGER 200 생활소비재'
+                                     ,'TIGER 200 에너지화학','TIGER 200 중공업','TIGER 200 철강소재','TIGER 200 헬스케어'
+                                    ,'TIGER 200 IT레버리지','TIGER 200 에너지화학레버리지','TIGER 200 커뮤니티케이션서비스','TIGER 200 경기방어']})
     tmp = pd.DataFrame(list(data.items()),columns=['Code', 'Name'])
+    tmp = tmp.append(etfcodename)
+    display(tmp)
     #engine = create_engine("mysql+mysqldb://root:1102@localhost:3306/krStockCodeName", encoding='utf-8')
     connection_string = f"{'root'}:{'1102'}@localhost:3306/{'krcodename'}?charset=utf8" 
     engine = create_engine(f'mysql://{connection_string}')
     conn = engine.connect()
-    tmp.to_sql(name='codename', con=conn, if_exists='append')
+    tmp.to_sql(name='codename', con=conn, if_exists='replace')
 
 
 #DB 갱신
@@ -128,7 +137,7 @@ def datarefresh(request):
         #datareader로 불러온 마지막 날짜
         newdata_date = fdr.DataReader(ticker[2:]).iloc[-1].name
         #print(newdata_date)
-        
+
         if (newdata_date)!=(db_lastdate):
             print(ticker)
             newdata = fdr.DataReader(ticker[2:]).loc[db_lastdate+timedelta(days=1):newdata_date+timedelta(days=1)]
@@ -143,18 +152,17 @@ def datarefresh(request):
         else:
             #continue
             break
-     
+
 
     #새롭게 상장된 주식이 있는지 체크, ETF는 TIGER만 이용하므로 체크하지 않음
-    #ETF 티커 ['37550k', '02826k', '36328k', '33637l', '00806k', '26490k', '28513k', '33626k', '33626l', '00680k', '35320k', '00088k', '18064k', '00104k', '00279k', '00781k', '03473k', '00499k']
-    
+
     etflist = ['139260','139220','139290','139270','227550','227560','139250','139230','139240','227540','243880','243890','315270','139280']
     current_stocks=list(kospi_stocks().keys())
     current_stocks.sort()
-    
+
     #currentstock 티커 맨 마지막 k가 대문자임을 확인
     current_stocks = [i.lower() for i in current_stocks]
-    
+
     db_stocklist.sort()
     newstocks = list(set(db_stocklist)-set(current_stocks)-set(etflist)) 
     print(newstocks)
@@ -177,7 +185,9 @@ def datarefresh(request):
         kospi_stocks_codenamesave(kospi_stocks())
         curs.close()
         conn.close()
-        return  
+        return    
+
+
 
 #텍스트 마이닝 페이지
 def textmining(request):
