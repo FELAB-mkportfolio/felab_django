@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import time
 import requests
 from io import BytesIO
+from sqlalchemy import create_engine 
 
 
 
@@ -95,9 +96,10 @@ def ajax_backtest(request):
     to_period = request.POST.get('to')
     rebalancing_month = request.POST.get('rebalancing_month')
     start_amount = request.POST.get('start_amount')
+    interval = request.POST.get('interval')
     #strategy = request.POST.get('strategy')
     backtest = back_test()
-    data = backtest.backtest_data(assetnames,assetweights,from_period,to_period,start_amount,rebalancing_month,conn)
+    data = backtest.backtest_data(assetnames,assetweights,from_period,to_period,start_amount,rebalancing_month,conn,interval)
 
     return JsonResponse(data, safe=False)
 
@@ -120,7 +122,7 @@ def kospi_stocks_codenamesave(data):
                                     ,'TIGER 200 IT레버리지','TIGER 200 에너지화학레버리지','TIGER 200 커뮤니티케이션서비스','TIGER 200 경기방어']})
     tmp = pd.DataFrame(list(data.items()),columns=['Code', 'Name'])
     tmp = tmp.append(etfcodename)
-    display(tmp)
+
     #engine = create_engine("mysql+mysqldb://root:1102@localhost:3306/krStockCodeName", encoding='utf-8')
     connection_string = f"{'root'}:{'1102'}@localhost:3306/{'krcodename'}?charset=utf8" 
     engine = create_engine(f'mysql://{connection_string}')

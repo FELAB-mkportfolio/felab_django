@@ -170,8 +170,9 @@ $(document).ready(function () {
         $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350); 
         e.preventDefault(); 
     });
-    
+    cl_cnt = 0
     $('#backtest_btn').click(function() {
+        
         sum = 0
         mystocks_weights=[];
         for(i=0;i<mystocks_codes.length;i++){
@@ -188,7 +189,8 @@ $(document).ready(function () {
                 //
                 //,
                 data : {"assetsBox[]" : mystocks_codes, "assetweights[]" : mystocks_weights, "from" : $('#from').val(), 'to' : $('#to').val(),
-            'rebalancing_month' : $('#rebalancing_month').val(), 'start_amount' : $('#start_amount').val(), 'strategy': $('input[name=strategy]:checked').val()},
+            'rebalancing_month' : $('#rebalancing_month').val(), 'start_amount' : $('#start_amount').val(), 'strategy': $('input[name=strategy]:checked').val(),
+            "interval": $("input[name='interval']:checked").val()},
                 success: function (data) {
                     console.log(data.indicator);
                     back_Mean = data.indicator[0]['Mean'];
@@ -213,6 +215,13 @@ $(document).ready(function () {
 
                     $('#daterange').html(" " + $('#from').val() +"~"+ $('#to').val());
                     //그래프 그리기
+                    if(cl_cnt>=1){
+                        window.value_chart.destroy();
+                        window.return_chart.destroy();
+                        window.mdd_chart.destroy();
+                    }
+                    cl_cnt = cl_cnt+1;
+
                     Draw_value_chart(back_Date, back_value,KOSPI_balance, SP500_balance);
                     Draw_Return_chart(back_Date, back_return,KOSPI_return, SP500_return);
                     Draw_MDD_chart(back_Date, back_Drawdown,KOSPI_drawdown,SP500_drawdown);
@@ -325,7 +334,7 @@ function Draw_value_chart(x, y,y_kospi, y_SP) {
 }
 function Draw_Return_chart(x, y, y_kospi, y_SP) {
     var return_ctx = document.getElementById("Return_chart").getContext('2d');
-    window.value_chart = new Chart(return_ctx, {
+    window.return_chart = new Chart(return_ctx, {
         type: 'line',
         data: {
             labels: x,
@@ -394,7 +403,7 @@ function Draw_Return_chart(x, y, y_kospi, y_SP) {
 }
 function Draw_MDD_chart(x, y, y_kospi,y_SP) {
     var MDD_ctx = document.getElementById("MDD_chart").getContext('2d');
-    window.value_chart = new Chart(MDD_ctx, {
+    window.mdd_chart = new Chart(MDD_ctx, {
         type: 'line',
         data: {
             labels: x,
@@ -463,7 +472,7 @@ function Draw_MDD_chart(x, y, y_kospi,y_SP) {
 }
 function Draw_hist_chart(x, y) {
     var return_ctx = document.getElementById("Histogram_chart").getContext('2d');
-    window.value_chart = new Chart(return_ctx, {
+    window.hist_chart = new Chart(return_ctx, {
         type: 'line',
         data: {
             labels: x,

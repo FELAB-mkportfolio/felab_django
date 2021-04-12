@@ -90,8 +90,6 @@ class back_test:
     
     def backtest_data(self,select,weight,start_data_1, end_data_1,start_amount,rebalancing_month, conn, interval):
         curs = conn.cursor()
-
-
         # input으로 받는 assetnames 입력
         a = select
         # 연습용 kp005380 kp086790
@@ -99,7 +97,6 @@ class back_test:
         # input으로 받는 assetweights 입력
         rebal_month = int(rebalancing_month)
         # input으로 받는 rebalancing_month를 입력
-        interval = inverval
         # 나타내는 데이터 간격을 표시  
         b = list(map(float, weight))
         # 연습용 50 50

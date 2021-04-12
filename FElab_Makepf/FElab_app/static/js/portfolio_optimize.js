@@ -88,7 +88,7 @@ $(document).ready(function () {
                 stocknames.splice(stocknames.indexOf($('#my_comboBox').val()),1);
                 $('#my_comboBox').val("");
                 $('#asset_row').append("<tr eq= "+Number(add_eq)+"><td class='numberCell'>"+stockname+
-            "</td><td class='numberCell'><input id='mystocks_weights"+Number(add_eq)+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='my_putout_btn' eq= "+Number(add_eq)+"kor-name="+mystocks_names[i]+" name=" + code +
+            "</td><td class='numberCell'><input id='mystocks_weights"+Number(add_eq)+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='my_putout_btn' eq= "+Number(add_eq)+"kor-name="+stockname+" name=" + code +
             " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+code+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
             }
         } else {
@@ -205,7 +205,7 @@ $(document).ready(function () {
                                 data: asset_weights['gmv'],
                                 backgroundColor:pie_backgroundColor.slice(0,mystocks_codes.length),
                             }],
-                            labels : mystocks, 
+                            labels : mystocks_names, 
                         }
                         r_array= round_array(asset_weights['gmv']);
                         Draw_optimize_pie(data);
@@ -380,6 +380,7 @@ function Draw_optimize_pie(data){
     window.opt_report_chart = new Chart(ctx_opt_weight, {
         type: 'pie',
         data : data,
+        label: mystocks_names,
         option : {
             responsive: false,
             legend : true,

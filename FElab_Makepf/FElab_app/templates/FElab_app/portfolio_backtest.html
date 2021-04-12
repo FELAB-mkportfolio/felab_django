@@ -75,6 +75,14 @@
                 <label for='start_amount' style="margin:0 30px;">시작 금액</label>
                 <input type='text' class='input_amount' id='start_amount' style='width:200px;height:40px;'/>
             </div>
+            <div class='row'>
+                <label style="margin:0 30px;">수익률 주기</label>
+                <div>
+                    <label>월 별 <input type='radio' name='interval' value='monthly' checked></label>
+                    <label>주 별 <input type='radio' name='interval' value='weekly'></label>
+                    <label>일 별 <input type='radio' name='interval' value='daily'></label>
+                </div>
+            </div>
             
         </div>
         <div style='display: flex;justify-content: center;background-color: #fbfbfd;'>
@@ -89,18 +97,7 @@
         <h2>백테스트 결과</h2><span>투자기간</span><span id='daterange'></span>
     </div>
     <div class='backtest_result'>
-        <div class='graph_block' style="width:100%;">
-            <div class='graph_title'>
-                <h2>GMV Portfolio</h2>
-            </div>
-            <div class='graph_comment'>
-                <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                        when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
-                        It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. 
-                        It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages</span>
-            </div>
-        </div>
+        
         <div class="graph_container">
             <div class="bt_left">
                 <div class='graph_block'>
@@ -109,11 +106,7 @@
                     </div>
                     <div class='graph_comment'>
                         <span>
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                            It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-                            It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages
+                            입력한 투자 금액 만큼 설정하신 포트폴리오에 투자하면 투자 기간 동안 그 가치가 어떻게 변하는지 확인할 수 있는 그래프입니다. 
                         </span>
                     </div>
                     <div class='graph_field'>
@@ -128,11 +121,8 @@
                     </div>
                     <div class='graph_comment'>
                         <span>
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                            It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-                            It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages
+                            DrawDown은 투자 기간 동안 포트폴리오가 고점에서 저점까지 떨어진 비율을 의미합니다. 즉, 수익률에 초점을 두는 것이 아니라 얼만큼 내 포트폴리오의 수익률이 떨어지는지 확인할 수 있는 지표입니다.
+                            깊게 떨어지면 떨어질수록 리스크에 취약하다는 뜻이기도 합니다.
                         </span>
                     </div>
                     <div class='graph_field'>
