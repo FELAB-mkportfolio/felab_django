@@ -88,7 +88,7 @@ class back_test:
     #임시로 5가지 데이터 예시를 활용해 코드작성
     # 선택한 종목의 이름과 비중, 투자기간을 input 값으로 받음       
     
-    def backtest_data(self,select,weight,start_data_1, end_data_1,start_amount,rebalancing_month, conn):
+    def backtest_data(self,select,weight,start_data_1, end_data_1,start_amount,rebalancing_month, conn, interval):
         curs = conn.cursor()
 
 
@@ -99,7 +99,8 @@ class back_test:
         # input으로 받는 assetweights 입력
         rebal_month = int(rebalancing_month)
         # input으로 받는 rebalancing_month를 입력
-        
+        interval = inverval
+        # 나타내는 데이터 간격을 표시  
         b = list(map(float, weight))
         # 연습용 50 50
 
@@ -160,6 +161,7 @@ class back_test:
         #print(stock_weight)
         '''
 
+
         # 수익률 데이터와 투자비중을 곱한 하나의 데이터 생성 
         pfo_return = stock_return.Date
         pfo_return = pd.DataFrame(pfo_return)
@@ -173,12 +175,9 @@ class back_test:
         pfo_return['acc_return'] = [x-1 for x in pfo_return['acc_return']]
         pfo_return['final_balance'] = float(start_amount) + float(start_amount)*pfo_return['acc_return']
         pfo_return['Drawdown_list'] = back_test.dd(input,pfo_return['mean_return'])
-        pfo_return['Date'] =  pd.to_datetime(pfo_return['Date'], format='%d/%m/%Y').dt.date
-        pfo_return['Date'] = list(map(str, pfo_return['Date']))
-        #print(pfo_return)
+        pfo_return = pfo_return.set_index('Date') 
 
-        # benchmark return 
-                ### 벤치마크 데이터 로드 및 전처리
+        ### 벤치마크 데이터 로드 및 전처리
         
         tiker_list = ['KS11','US500'] 
         bench_list = [fdr.DataReader(ticker, start_data_1,  end_data_1)['Change'] for ticker in tiker_list]
@@ -200,45 +199,263 @@ class back_test:
         bench['S&P500_acc'] = [x-1 for x in bench['S&P500_acc']]
         bench['S&P500_balance'] = float(start_amount) + float(start_amount)*bench['S&P500_acc']
         bench['S&P500_Drawdown'] = back_test.dd(input,bench['S&P500'])
-        bench = bench.rename_axis('Date').reset_index()
-        bench['Date'] =  pd.to_datetime(bench['Date'], format='%d/%m/%Y').dt.date
-        bench['Date'] = list(map(str, bench['Date']))
+        
+        if interval == 'monthly' :
+            
+            pfo_return_interval = pfo_return.resample('M').last()
+            pfo_return_first = pd.DataFrame(pfo_return.iloc[0]).transpose()
+            pfo_return_interval = pd.concat([pfo_return_first, pfo_return_interval])
+            pfo_return_interval['mean_return'] = pfo_return_interval['final_balance'].pct_change()
+            pfo_return_interval = pfo_return_interval.dropna()
+            print(pfo_return_interval)
+            
+            # 월별 간격으로 만들어주기, 여기서는 return과 value만 monthly로 산출함 나머지값은 daily
+            bench_interval = bench.resample('M').last()
+            #bench_ex['KOSPI'] = bench_ex['final_balance'].pct_change()
+            bench_first = pd.DataFrame(bench.iloc[0]).transpose()
+            bench_interval = pd.concat([bench_first, bench_interval])
+            bench_interval['KOSPI'] = bench_interval['KOSPI_balance'].pct_change()
+            bench_interval['S&P500'] = bench_interval['S&P500_balance'].pct_change()
+            bench_interval = bench_interval.dropna()
+            print(bench_interval)
+            
+            # 날짜타입 열로 만들기 및 str 타입으로 전처리 
+            pfo_return = pfo_return.rename_axis('Date').reset_index()
+            pfo_return['Date'] =  pd.to_datetime(pfo_return['Date'], format='%d/%m/%Y').dt.date
+            pfo_return['Date'] = list(map(str, pfo_return['Date']))
+            
+            pfo_return_interval = pfo_return_interval.rename_axis('Date').reset_index()
+            pfo_return_interval['Date'] =  pd.to_datetime(pfo_return_interval['Date'], format='%d/%m/%Y').dt.date
+            pfo_return_interval['Date'] = list(map(str, pfo_return_interval['Date']))
+            
+            bench = bench.rename_axis('Date').reset_index()
+            bench['Date'] =  pd.to_datetime(bench['Date'], format='%d/%m/%Y').dt.date
+            bench['Date'] = list(map(str, bench['Date']))        
+           
+            bench_interval = bench_interval.rename_axis('Date').reset_index()
+            bench_interval['Date'] =  pd.to_datetime(bench_interval['Date'], format='%d/%m/%Y').dt.date
+            bench_interval['Date'] = list(map(str, bench_interval['Date']))       
+            
+            backtest_return = {
+                 'pfo_return': [
+                         {
+                         'Date': list(pfo_return_interval['Date']),
+                         'mean_return': list(pfo_return_interval['mean_return']),                 
+                         'acc_return ratio': list(pfo_return_interval['acc_return']),
+                         'final_balance': list(pfo_return_interval['final_balance']),
+                         'Drawdown_list' : list(pfo_return_interval['Drawdown_list'])
+                          }
+                 ],         
+                 'bench': [
+                         {
+                         'Date': list(bench_interval['Date']),
+                         'KOSPI_return': list(bench_interval['KOSPI']),              
+                         'S&P500_return': list(bench_interval['S&P500']),
+                         'KOSPI_acc_return': list(bench_interval['KOSPI_acc']),
+                         'KOSPI_balance' : list(bench_interval['KOSPI_balance']),                 
+                         'KOSPI_Drawdown': list(bench_interval['KOSPI_Drawdown']),
+                         'S&P500_acc_return': list(bench_interval['S&P500_acc']),
+                         'S&P500_balance' : list(bench_interval['S&P500_balance']),                 
+                         'S&P500_Drawdown': list(bench_interval['S&P500_Drawdown'])
+                          }
+                 ],    
+                 'indicator': [
+                         {
+                         'Mean': back_test.Arithmetic_Mean_Annual(input,pfo_return['mean_return']),
+                         'Std': pfo_return['mean_return'].std() * np.sqrt(365),                 
+                         'Sharpe ratio': back_test.sharpe_ratio(input,pfo_return['mean_return']),
+                         'VaR': back_test.value_at_risk(input,pfo_return['mean_return']),
+                         'MDD': back_test.mdd(input,pfo_return['mean_return']),
+                         'Winning ratio': back_test.winning_rate(input,pfo_return['mean_return']),
+                         'Gain/Loss Ratio': back_test.profit_loss_ratio(input,pfo_return['mean_return'])
+                          }
+                 ],    
+                 'KOSPI_indicator': [
+                         {
+                         'Mean': back_test.Arithmetic_Mean_Annual(input,bench['KOSPI']),
+                         'Std': bench['KOSPI'].std() * np.sqrt(365),                 
+                         'Sharpe ratio': back_test.sharpe_ratio(input,bench['KOSPI']),
+                         'VaR': back_test.value_at_risk(input,bench['KOSPI']),
+                         'MDD': back_test.mdd(input,bench['KOSPI']),
+                         'Winning ratio': back_test.winning_rate(input,bench['KOSPI']),
+                         'Gain/Loss Ratio': back_test.profit_loss_ratio(input,bench['KOSPI'])
+                          }
+                 ],    
+                 'S&P500_indicator': [
+                         {
+                         'Mean': back_test.Arithmetic_Mean_Annual(input,bench['S&P500']),
+                         'Std': bench['S&P500'].std() * np.sqrt(365),                 
+                         'Sharpe ratio': back_test.sharpe_ratio(input,bench['S&P500']),
+                        'VaR': back_test.value_at_risk(input,bench['S&P500']),
+                         'MDD': back_test.mdd(input,bench['S&P500']),
+                         'Winning ratio': back_test.winning_rate(input,bench['S&P500']),
+                         'Gain/Loss Ratio': back_test.profit_loss_ratio(input,bench['S&P500'])
+                          }
+                 ]
+             }  
+            
+        elif interval == 'weekly' :
+            
+            pfo_return_interval = pfo_return.resample('W').last()
+            pfo_return_first = pd.DataFrame(pfo_return.iloc[0]).transpose()
+            pfo_return_interval = pd.concat([pfo_return_first, pfo_return_interval])
+            pfo_return_interval['mean_return'] = pfo_return_interval['final_balance'].pct_change()
+            pfo_return_interval = pfo_return_interval.dropna()
+            print(pfo_return_interval)
+            
+            bench_interval = bench.resample('W').last()
+            #bench_ex['KOSPI'] = bench_ex['final_balance'].pct_change()
+            bench_first = pd.DataFrame(bench.iloc[0]).transpose()
+            bench_interval = pd.concat([bench_first, bench_interval])
+            bench_interval['KOSPI'] = bench_interval['KOSPI_balance'].pct_change()
+            bench_interval['S&P500'] = bench_interval['S&P500_balance'].pct_change()
+            bench_interval = bench_interval.dropna()
+            print(bench_interval)
+            
+            # 날짜타입 열로 만들기 및 str 타입으로 전처리 
+            pfo_return = pfo_return.rename_axis('Date').reset_index()
+            pfo_return['Date'] =  pd.to_datetime(pfo_return['Date'], format='%d/%m/%Y').dt.date
+            pfo_return['Date'] = list(map(str, pfo_return['Date']))
+            
+            pfo_return_interval = pfo_return_interval.rename_axis('Date').reset_index()
+            pfo_return_interval['Date'] =  pd.to_datetime(pfo_return_interval['Date'], format='%d/%m/%Y').dt.date
+            pfo_return_interval['Date'] = list(map(str, pfo_return_interval['Date']))
+            
+            bench = bench.rename_axis('Date').reset_index()
+            bench['Date'] =  pd.to_datetime(bench['Date'], format='%d/%m/%Y').dt.date
+            bench['Date'] = list(map(str, bench['Date']))        
+           
+            bench_interval = bench_interval.rename_axis('Date').reset_index()
+            bench_interval['Date'] =  pd.to_datetime(bench_interval['Date'], format='%d/%m/%Y').dt.date
+            bench_interval['Date'] = list(map(str, bench_interval['Date']))     
+            
+            backtest_return = {
+                 'pfo_return': [
+                         {
+                         'Date': list(pfo_return_interval['Date']),
+                         'mean_return': list(pfo_return_interval['mean_return']),                 
+                         'acc_return ratio': list(pfo_return_interval['acc_return']),
+                         'final_balance': list(pfo_return_interval['final_balance']),
+                         'Drawdown_list' : list(pfo_return_interval['Drawdown_list'])
+                          }
+                 ],         
+                 'bench': [
+                         {
+                         'Date': list(bench_interval['Date']),
+                         'KOSPI_return': list(bench_interval['KOSPI']),              
+                         'S&P500_return': list(bench_interval['S&P500']),
+                         'KOSPI_acc_return': list(bench_interval['KOSPI_acc']),
+                         'KOSPI_balance' : list(bench_interval['KOSPI_balance']),                 
+                         'KOSPI_Drawdown': list(bench_interval['KOSPI_Drawdown']),
+                         'S&P500_acc_return': list(bench_interval['S&P500_acc']),
+                         'S&P500_balance' : list(bench_interval['S&P500_balance']),                 
+                         'S&P500_Drawdown': list(bench_interval['S&P500_Drawdown'])
+                          }
+                 ],   
+                 'indicator': [
+                         {
+                         'Mean': back_test.Arithmetic_Mean_Annual(input,pfo_return['mean_return']),
+                         'Std': pfo_return['mean_return'].std() * np.sqrt(365),                 
+                         'Sharpe ratio': back_test.sharpe_ratio(input,pfo_return['mean_return']),
+                         'VaR': back_test.value_at_risk(input,pfo_return['mean_return']),
+                         'MDD': back_test.mdd(input,pfo_return['mean_return']),
+                         'Winning ratio': back_test.winning_rate(input,pfo_return['mean_return']),
+                         'Gain/Loss Ratio': back_test.profit_loss_ratio(input,pfo_return['mean_return'])
+                          }
+                 ],    
+                 'KOSPI_indicator': [
+                         {
+                         'Mean': back_test.Arithmetic_Mean_Annual(input,bench['KOSPI']),
+                         'Std': bench['KOSPI'].std() * np.sqrt(365),                 
+                         'Sharpe ratio': back_test.sharpe_ratio(input,bench['KOSPI']),
+                         'VaR': back_test.value_at_risk(input,bench['KOSPI']),
+                         'MDD': back_test.mdd(input,bench['KOSPI']),
+                         'Winning ratio': back_test.winning_rate(input,bench['KOSPI']),
+                         'Gain/Loss Ratio': back_test.profit_loss_ratio(input,bench['KOSPI'])
+                          }
+                 ],    
+                 'S&P500_indicator': [
+                         {
+                         'Mean': back_test.Arithmetic_Mean_Annual(input,bench['S&P500']),
+                         'Std': bench['S&P500'].std() * np.sqrt(365),                 
+                         'Sharpe ratio': back_test.sharpe_ratio(input,bench['S&P500']),
+                        'VaR': back_test.value_at_risk(input,bench['S&P500']),
+                         'MDD': back_test.mdd(input,bench['S&P500']),
+                         'Winning ratio': back_test.winning_rate(input,bench['S&P500']),
+                         'Gain/Loss Ratio': back_test.profit_loss_ratio(input,bench['S&P500'])
+                          }
+                 ]
+             }  
 
-        backtest_return = {
-            'pfo_return': [
-                    {
-                    'Date': list(pfo_return['Date']),
-                    'mean_return': list(pfo_return['mean_return']),                 
-                    'acc_return ratio': list(pfo_return['acc_return']),
-                    'final_balance': list(pfo_return['final_balance']),
-                    'Drawdown_list' : list(pfo_return['Drawdown_list'])
-                     }
-            ],   
-            'bench': [
-                    {
-                    'Date': list(bench['Date']),
-                    'KOSPI_return': list(bench['KOSPI']),              
-                    'S&P500_return': list(bench['S&P500']),
-                    'KOSPI_acc_return': list(bench['KOSPI_acc']),
-                    'KOSPI_balance' : list(bench['KOSPI_balance']),                 
-                    'KOSPI_Drawdown': list(bench['KOSPI_Drawdown']),
-                    'S&P500_acc_return': list(bench['S&P500_acc']),
-                    'S&P500_balance' : list(bench['S&P500_balance']),                 
-                    'S&P500_Drawdown': list(bench['S&P500_Drawdown'])
-                     }
-            ],        
-            'indicator': [
-                    {
-                    'Mean': back_test.Arithmetic_Mean_Annual(input,pfo_return['mean_return']),
-                    'Std': pfo_return['mean_return'].std() * np.sqrt(365),                 
-                    'Sharpe ratio': back_test.sharpe_ratio(input,pfo_return['mean_return']),
-                   'VaR': back_test.value_at_risk(input,pfo_return['mean_return']),
-                    'MDD': back_test.mdd(input,pfo_return['mean_return']),
-                    'Winning ratio': back_test.winning_rate(input,pfo_return['mean_return']),
-                    'Gain/Loss Ratio': back_test.profit_loss_ratio(input,pfo_return['mean_return'])
-                     }
-            ]
-        }  
+
+            
+        else :
+            # 날짜타입 열로 만들기 및 str 타입으로 전처리 
+            pfo_return = pfo_return.rename_axis('Date').reset_index()
+            pfo_return['Date'] =  pd.to_datetime(pfo_return['Date'], format='%d/%m/%Y').dt.date
+            pfo_return['Date'] = list(map(str, pfo_return['Date']))
+            
+            bench = bench.rename_axis('Date').reset_index()
+            bench['Date'] =  pd.to_datetime(bench['Date'], format='%d/%m/%Y').dt.date
+            bench['Date'] = list(map(str, bench['Date']))
+            backtest_return = {
+                 'pfo_return': [
+                         {
+                         'Date': list(pfo_return['Date']),
+                         'mean_return': list(pfo_return['mean_return']),                 
+                         'acc_return ratio': list(pfo_return['acc_return']),
+                         'final_balance': list(pfo_return['final_balance']),
+                         'Drawdown_list' : list(pfo_return['Drawdown_list'])
+                          }
+                 ],         
+                 'bench': [
+                         {
+                         'Date': list(bench['Date']),
+                         'KOSPI_return': list(bench['KOSPI']),              
+                         'S&P500_return': list(bench['S&P500']),
+                         'KOSPI_acc_return': list(bench['KOSPI_acc']),
+                         'KOSPI_balance' : list(bench['KOSPI_balance']),                 
+                         'KOSPI_Drawdown': list(bench['KOSPI_Drawdown']),
+                         'S&P500_acc_return': list(bench['S&P500_acc']),
+                         'S&P500_balance' : list(bench['S&P500_balance']),                 
+                         'S&P500_Drawdown': list(bench['S&P500_Drawdown'])
+                          }
+                 ],    
+                 'indicator': [
+                         {
+                         'Mean': back_test.Arithmetic_Mean_Annual(input,pfo_return['mean_return']),
+                         'Std': pfo_return['mean_return'].std() * np.sqrt(365),                 
+                         'Sharpe ratio': back_test.sharpe_ratio(input,pfo_return['mean_return']),
+                         'VaR': back_test.value_at_risk(input,pfo_return['mean_return']),
+                         'MDD': back_test.mdd(input,pfo_return['mean_return']),
+                         'Winning ratio': back_test.winning_rate(input,pfo_return['mean_return']),
+                         'Gain/Loss Ratio': back_test.profit_loss_ratio(input,pfo_return['mean_return'])
+                          }
+                 ],    
+                 'KOSPI_indicator': [
+                         {
+                         'Mean': back_test.Arithmetic_Mean_Annual(input,bench['KOSPI']),
+                         'Std': bench['KOSPI'].std() * np.sqrt(365),                 
+                         'Sharpe ratio': back_test.sharpe_ratio(input,bench['KOSPI']),
+                         'VaR': back_test.value_at_risk(input,bench['KOSPI']),
+                         'MDD': back_test.mdd(input,bench['KOSPI']),
+                         'Winning ratio': back_test.winning_rate(input,bench['KOSPI']),
+                         'Gain/Loss Ratio': back_test.profit_loss_ratio(input,bench['KOSPI'])
+                          }
+                 ],    
+                 'S&P500_indicator': [
+                         {
+                         'Mean': back_test.Arithmetic_Mean_Annual(input,bench['S&P500']),
+                         'Std': bench['S&P500'].std() * np.sqrt(365),                 
+                         'Sharpe ratio': back_test.sharpe_ratio(input,bench['S&P500']),
+                        'VaR': back_test.value_at_risk(input,bench['S&P500']),
+                         'MDD': back_test.mdd(input,bench['S&P500']),
+                         'Winning ratio': back_test.winning_rate(input,bench['S&P500']),
+                         'Gain/Loss Ratio': back_test.profit_loss_ratio(input,bench['S&P500'])
+                          }
+                 ]
+             }  
+
         
         
         
