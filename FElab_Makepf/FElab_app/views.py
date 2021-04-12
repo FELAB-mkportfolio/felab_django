@@ -81,6 +81,7 @@ def ajax_backtest(request):
     start_amount = request.POST.get('start_amount')
     #strategy = request.POST.get('strategy')
     backtest = back_test()
+
     data = backtest.backtest_data(assetnames,assetweights,from_period,to_period,start_amount,rebalancing_month,conn)
 
     return JsonResponse(data, safe=False)
@@ -96,6 +97,43 @@ def portfolio_backtest(request):
 #--------------------------------#
 
 
+#KRX에서 현시점에서 거래되고 있는 국내 주식 데이터 불러오기
+def kospi_stocks():
+    gen_req_url = 'http://data.krx.co.kr/comm/fileDn/GenerateOTP/generate.cmd'
+    
+    down_data = {
+    'mktId': 'STK',
+    'share': '1',
+    'csvxls_isNo': 'false',
+    'name': 'fileDown',
+    'url': 'dbms/MDC/STAT/standard/MDCSTAT01901'
+    }
+    
+    headers = {
+        'Referer': 'http://data.krx.co.kr/contents/MDC/MDI/mdiLoader',
+        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36' #generate.cmd에서 찾아서 입력하세요
+    }
+
+    r = requests.get(gen_req_url, down_data, headers=headers)
+    gen_req_url = 'http://data.krx.co.kr/comm/fileDn/download_excel/download.cmd'
+    form_data = {
+        'code': r.content
+    }
+    r = requests.post(gen_req_url, form_data, headers=headers)
+    df = pd.read_excel(BytesIO(r.content),encoding = 'utf-8')
+    #file_name = 'basic_'+ str(tdate)
+    #df.to_excel(path+file_name, index=False, index_label=None)
+    #print('KRX crawling completed :', tdate)
+    kospi_df = df.iloc[:,1:3]
+    kospi_df=kospi_df.rename(columns={"단축코드":"Code","한글 종목명":"Name"})
+    kospi_df = kospi_df.set_index("Code")
+    kospi_stocklist = {}
+    for code in kospi_df.index:
+        kospi_stocklist[code] = kospi_df.loc[code].Name.replace("보통주","")
+    return kospi_stocklist
+
+    
 #업데이트되는 주식 코드, 종목명 테이블에 저장, db이름은 krcodename, table이름은 codename
 def kospi_stocks_codenamesave(data):
     etfcodename = pd.DataFrame({'Code':['139260','139220','139290','139270','227550','227560','139250','139230','139240','227540','243880','243890','315270','139280'],
