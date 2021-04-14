@@ -158,6 +158,10 @@ body {
     transform: translateX(-50%);
     background-color: #8C0000;  
 }
+input[name='investment_kind']{
+    width: 30px;
+    height: 30px;
+}
 .icons {
     position:absolute;
     left:50%;
@@ -185,7 +189,6 @@ select {
     border-bottom: 1px solid #eeeeee;
     letter-spacing: .15em;
     border-radius: 0;
-
 }
 .selectBox{
     border:0px;

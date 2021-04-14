@@ -20,28 +20,28 @@
                 <label>어떤 자산에 투자하고 있나요</label>
                 <div style='text-align: center;display: flex;justify-content: center;'>
                     <div style='display:flex;margin: 20px 30px;'><label>국내 주식</label>
-                        <input type='checkbox' name='investment_kind' id='korea_stock' class='form-control' value='korea_stock'>
+                        <input type='checkbox' name='investment_kind' id='korea_stock' value='korea_stock' style='margin: 0 0 0 5px;'>
                     </div>
                     <div style='display:flex;margin: 20px 30px;'><label>해외 주식</label>
-                        <input type='checkbox' name='investment_kind' id='abroad_stock' class='form-control' value='abroad_stock'>
+                        <input type='checkbox' name='investment_kind' id='abroad_stock' value='abroad_stock' style='margin: 0 0 0 5px;'>
                     </div>
                     <div style='display:flex;margin: 20px 30px;'><label>국내 ETF</label>
-                        <input type='checkbox' name='investment_kind' id='korea_ETF' class='form-control' value='korea_ETF'>
+                        <input type='checkbox' name='investment_kind' id='korea_ETF' value='korea_ETF' style='margin: 0 0 0 5px;'>
                     </div>
                     <div style='display:flex;margin: 20px 30px;'><label>해외 ETF</label>
-                        <input type='checkbox' name='investment_kind' id='abroad_ETF' class='form-control' value='abroad_ETF'>
+                        <input type='checkbox' name='investment_kind' id='abroad_ETF' value='abroad_ETF' style='margin: 0 0 0 5px;'>
                     </div>
                     <div style='display:flex;margin: 20px 30px;'><label>채권</label>
-                        <input type='checkbox' name='investment_kind' id='bond' class='form-control' value='bond'>
+                        <input type='checkbox' name='investment_kind' id='bond' value='bond' style='margin: 0 0 0 5px;'>
                     </div>
                     <div style='display:flex;margin: 20px 30px;'><label>파생상품</label>
-                        <input type='checkbox' name='investment_kind' id='option' class='form-control' value='option'>
+                        <input type='checkbox' name='investment_kind' id='option' value='option' style='margin: 0 0 0 5px;'>
                     </div>
                     <div style='display:flex;margin: 20px 30px;'><label>예금</label>
-                        <input type='checkbox' name='investment_kind' id='commodity' class='form-control' value='commodity'>
+                        <input type='checkbox' name='investment_kind' id='commodity' value='commodity' style='margin: 0 0 0 5px;'>
                     </div>
                     <div style='display:flex;margin: 20px 30px;'><label>없음</label>
-                        <input type='checkbox' name='investment_kind' id='none' class='form-control' value='none'>
+                        <input type='checkbox' name='investment_kind' id='none' value='none' style='margin: 0 0 0 5px;'>
                     </div>
                 </div>
             </div>
@@ -93,10 +93,13 @@
             <h2>효율적 투자선</h2>
         </div>
         <div class='graph_comment'>
-            <span>효율적인 투자자는 같은 수익을 내는 자산이 있다면 더 낮은 위험도를 선호할 것이고, 같은 위험도를 가진 자신이 있다면 수익률이 더 높은 자산을 선호할 것입니다. 내가 가진 자산들을 어떻게 배분하느냐에 따라 수익률도 달라지고 위험도(분산)도 달라질텐데 가장 효율적으로 배분하는 포트폴리오 점들을 따라 그린 선이 효율적 투자선입니다.</span>
+            <span style='font-size: 15px;'>효율적인 투자자는 같은 수익을 내는 자산이 있다면 더 낮은 위험도를 선호할 것이고, 같은 위험도를 가진 자신이 있다면 수익률이 더 높은 자산을 선호할 것입니다. 내가 가진 자산들을 어떻게 배분하느냐에 따라 수익률도 달라지고 위험도(분산)도 달라질텐데 가장 효율적으로 배분하는 포트폴리오 점들을 따라 그린 선이 효율적 투자선입니다.</span>
         </div>
          <div class="contentsBox" style="height: 500px;cursor:default;">
             <canvas id='efficient_frontier_graph' style="width: 100%;height: 100%;"></canvas>
+         </div>
+         <div>
+             <h2 style='font-size: 20px;color:#cccccc;'>좌표 위에 커서를 올리시면 배분 비중과 수익률, 표준편차를 확인할 수 있습니다. 표준편차는 변동하는 정도(리스크)를 나타냅니다.</h2>
          </div>
     </div>
     <div class='bt_right'>
@@ -105,13 +108,13 @@
                 <h2 id='strategy_name_h2'></h2>
             </div>
             <div class='graph_comment'>
-                <span id='strategy_comment_span'></span>
+                <span id='strategy_comment_span' style='font-size: 15px;'></span>
             </div>
         </div>
-        <div class="opt_report" style="height:200px;margin-bottom: 20px">
-            <canvas id="opt_report_chart" height='80%'></canvas>
+        <div class="opt_report" style="margin-bottom: 20px">
+            <canvas id="opt_report_chart" height="90vh" width="300"></canvas>
         </div>
-        <div  style='height:120px; overflow-y: auto;overflow-x: hidden;'>
+        <div  style='height:200px; overflow-y: auto;overflow-x: hidden;'>
             <table class='table optimize_table'>
                 <thead>
                     <tr>
@@ -123,15 +126,17 @@
                 </tbody>
             </table>
         </div>
-       <button onclick="tobacktest()" id="tobacktest_btn" style="border-radius:5px;width:100%;background-color:#8C0000;height:60px;margin-bottom:5px;border:none;color:white;">
-           현재 비중으로 백테스트 하기
-       </button>
-       <button id="add_asset_btn" style="border-radius:5px;width:100%;background-color:black;height:60px;margin-bottom:5px;border:none;color:white;">
-        새로운 자산 편입하기
-        </button>
+        <div style="display: flex;justify-content: center;">
+            <button onclick="tobacktest()" id="tobacktest_btn" style="border-radius:5px;background-color:#8C0000;height:40px;padding:5px 10px 5px 10px;margin:0 10px 5px 10px;border:none;color:white;">
+            현재 비중으로 백테스트 하기
+            </button>
+            <button id="add_asset_btn" style="border-radius:5px;background-color:black;height:40px;margin:0 10px 5px 10px;padding:5px 10px 5px 10px;border:none;color:white;">
+            새로운 자산 편입하기
+            </button>
+        </div>
     </div>
 </div>
-<div class="optimize_result" id='add_block'>
+<div class="optimize_result" id='add_block' style="margin-top:150px;">
     <div class='bt_left'>
         <div class='graph_title'>
             <h2>추가할 자산 선택하기</h2>

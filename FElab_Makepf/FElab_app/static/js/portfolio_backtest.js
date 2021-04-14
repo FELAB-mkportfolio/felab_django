@@ -36,7 +36,7 @@ $(document).ready(function () {
     if (localStorage.getItem('mystocks_weights')){
         mystocks_names = localStorage.getItem("mystocks_names").split(',');
         mystocks_codes = localStorage.getItem("mystocks_codes").split(',');
-        mystocks_weights = localStorage.getItem("mystocks_weights").split(',');
+        mystocks_weights = localStorage.getItem("adjusted_weights").split(',');
         my_from = localStorage.getItem("from");
         my_to = localStorage.getItem("to");
         for(i=0; i<mystocks_codes.length;i++){

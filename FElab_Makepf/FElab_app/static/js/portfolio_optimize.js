@@ -7,6 +7,8 @@ var adjusted_assets_codes = [];
 var adjusted_assets_weights = [];
 var mystocks_names=[];
 var mystocks_codes=[];
+var original_ctx = "";
+var after_ctx = "";
 $(document).ready(function () {
     if(localStorage.getItem("mystocks_codes")){
         mystocks_names = localStorage.getItem("mystocks_names").split(',');
@@ -15,9 +17,7 @@ $(document).ready(function () {
         from_period = localStorage.getItem("from");
         to_period = localStorage.getItem("to");
         investment_kinds = localStorage.getItem("investment_kinds").split(',');
-        adjusted_assets_codes= mystocks_codes.slice();
-        adjusted_assets_names= mystocks_names.slice();
-        adjusted_assets_weights= mystocks_weights.slice();
+        
 
         for(i =0; i<investment_kinds.length;i++){
             $("input:checkbox[id='"+investment_kinds[i]+"']").prop("checked", true);
@@ -28,13 +28,9 @@ $(document).ready(function () {
             $('#asset_row').append("<tr eq= "+i+"><td class='numberCell'>"+mystocks_names[i]+
         "</td><td class='numberCell'><input id='mystocks_weights"+i+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value='"+Number(mystocks_weights[i])+
         "'></td><td class='numberCell'><button id='my_putout_btn' eq= "+i+" kor-name="+mystocks_names[i]+" name=" + mystocks_codes[i] +
-        " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks_codes[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
-
-            $('#adjusted_asset_row').append("<tr eq= "+i+"><td class='numberCell'>"+mystocks_names[i]+
-            "</td><td class='numberCell'><input id='adjusted_assets_weights"+i+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value='"+Number(mystocks_weights[i])+"'></td><td class='numberCell'><button id='putout_btn' eq= "+i+" kor-name="+mystocks_names[i]+" name=" + mystocks_codes[i] +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks_codes[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>")
-        }
+        " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+mystocks_codes[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");        
     }
+}   
     
     $.ajax({
         url: '/ajax_stockname_return/',
@@ -88,8 +84,8 @@ $(document).ready(function () {
                 stocknames.splice(stocknames.indexOf($('#my_comboBox').val()),1);
                 $('#my_comboBox').val("");
                 $('#asset_row').append("<tr eq= "+Number(add_eq)+"><td class='numberCell'>"+stockname+
-            "</td><td class='numberCell'><input id='mystocks_weights"+Number(add_eq)+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='my_putout_btn' eq= "+Number(add_eq)+"kor-name="+stockname+" name=" + code +
-            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+code+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
+            "</td><td class='numberCell'><input id='mystocks_weights"+Number(add_eq)+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='my_putout_btn' eq= '"+Number(add_eq)+"' kor-name='"+stockname+"' name='" + code +
+            "' style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+code+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
             }
         } else {
             alert("종목 정보가 올바르지 않습니다");
@@ -100,7 +96,7 @@ $(document).ready(function () {
         mystocks_codes.splice(mystocks_codes.indexOf($(this).attr('name')),1);
         mystocks_names.splice(mystocks_names.indexOf($(this).attr('kor-name')),1);
         $("#asset_row tr[eq="+$(this).attr('eq')+"]").remove();
-        for (i=0;i<mystocks.length;i++){
+        for (i=0;i<mystocks_codes.length;i++){
             $('#asset_row tr').eq(i).attr('eq',i);
             $('#asset_row tr[eq='+i+'] td button').attr('eq',i);
             $('#asset_row tr[eq='+i+'] td input').attr('id','mystocks_weights'+i);
@@ -138,7 +134,6 @@ $(document).ready(function () {
         return date;
     }
     $('#optimize_btn').click(function () {
-        
         if (mystocks_codes.length == 0) {
             alert("선택된 자산이 없습니다.");
         }else if(mystocks_codes.length==1){
@@ -165,8 +160,7 @@ $(document).ready(function () {
                 localStorage.setItem("from", $('#my_from').val());
                 localStorage.setItem("to", $('#my_to').val());
                 localStorage.setItem("mystocks_names",mystocks_names);
-                adjusted_assets_codes = mystocks_codes.slice();
-                adjusted_assets_names = mystocks_names.slice();
+
                 $.ajax({
                     url: '/ajax_portfolio_optimize_return/',
                     type: "POST",
@@ -283,10 +277,20 @@ $(document).ready(function () {
     });
     $('#add_asset_btn').click(function(){
         $('#add_block').css('display', "flex");
+        adjusted_assets_weights= mystocks_weights.slice();
+        adjusted_assets_codes= mystocks_codes.slice();
+        adjusted_assets_names= mystocks_names.slice();
+        $('#adjusted_asset_row').empty();
+        for(i =0; i<adjusted_assets_codes.length; i++){
+        $('#adjusted_asset_row').append("<tr eq= "+i+"><td class='numberCell'>"+adjusted_assets_names[i]+
+            "</td><td class='numberCell'><input id='adjusted_assets_weights"+i+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value='"+Number(adjusted_assets_weights[i])+"'></td><td class='numberCell'><button id='putout_btn' eq= "+i+" kor-name="+mystocks_names[i]+" name=" + mystocks_codes[i] +
+            " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+adjusted_assets_codes[i]+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>")
+        }
     });
 
     $('#change_btn').click(function(){
         var ad_sum = 0
+
         adjusted_assets_weights= [];
         for (i=0;i<adjusted_assets_codes.length;i++){
             adjusted_assets_weights.push(parseFloat($('#adjusted_assets_weights'+i).val()));
@@ -320,9 +324,6 @@ $(document).ready(function () {
                     if (adjusted_asset_weights ==1){
                         alert("입력한 기간이 짧습니다.");
                         location.reload();
-                    }
-                    if(window.adjusted_Efchart){
-                        window.adjusted_Efchart.destroy();
                     }
                     $('.optimize_result').css('display', 'flex');
                     opt_result_change(adjusted_assets_names, adjusted_GMV, adjusted_MaxSharp, adjusted_RiskParity, adjusted_Trets, adjusted_Tvols,adjusted_ef_points_tooltip);
@@ -375,8 +376,11 @@ function round_array(array){
     return r_array
 }
 function Draw_optimize_pie(data){
-    
+    if(original_ctx !=""){
+        window.opt_report_chart.destroy();
+    }
     var ctx_opt_weight = document.getElementById("opt_report_chart").getContext('2d');
+    original_ctx= ctx_opt_weight;
     window.opt_report_chart = new Chart(ctx_opt_weight, {
         type: 'pie',
         data : data,
@@ -596,6 +600,11 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols,ef_points
 function opt_result_change(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols,ef_points_tooltip){
     var adjusted_Ef_ctx = document.getElementById("after_efficient_frontier_graph").getContext('2d');
     adjusted_ef_storage = [];
+    if(after_ctx != ""){
+        window.adjusted_Efchart.destroy();
+    }
+    after_ctx = adjusted_Ef_ctx;
+
     
     for (var i = 0; i < Trets.length; i++) {
         x = Number(Tvols[i]);
