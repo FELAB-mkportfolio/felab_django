@@ -36,7 +36,6 @@ def ajax_stockname_return(request):
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
     sql = "SELECT * FROM codename;"
         
-
     #sql문 실행/ 데이터 받기
     curs = conn.cursor()
     curs.execute(sql)

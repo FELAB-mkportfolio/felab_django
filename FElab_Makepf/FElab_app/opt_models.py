@@ -27,7 +27,7 @@ class c_Models:
         data = pd.DataFrame()
         # 전체 자산 data들을 가지고 온 후, 정리함
         for asset in assets: #total_list:
-            sql = "SELECT * FROM teststocks." + asset + ";"
+            sql = "SELECT * FROM krmarket." + asset + ";"
             cursor.execute(sql)
             result = cursor.fetchall()
             result = pd.DataFrame(result)

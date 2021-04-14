@@ -204,7 +204,6 @@ class back_test:
             pfo_return_interval = pd.concat([pfo_return_first, pfo_return_interval])
             pfo_return_interval['mean_return'] = pfo_return_interval['final_balance'].pct_change()
             pfo_return_interval = pfo_return_interval.dropna()
-            print(pfo_return_interval)
             
             # 월별 간격으로 만들어주기, 여기서는 return과 value만 monthly로 산출함 나머지값은 daily
             bench_interval = bench.resample('M').last()
@@ -214,7 +213,6 @@ class back_test:
             bench_interval['KOSPI'] = bench_interval['KOSPI_balance'].pct_change()
             bench_interval['S&P500'] = bench_interval['S&P500_balance'].pct_change()
             bench_interval = bench_interval.dropna()
-            print(bench_interval)
             
             # 날짜타입 열로 만들기 및 str 타입으로 전처리 
             pfo_return = pfo_return.rename_axis('Date').reset_index()
@@ -298,7 +296,6 @@ class back_test:
             pfo_return_interval = pd.concat([pfo_return_first, pfo_return_interval])
             pfo_return_interval['mean_return'] = pfo_return_interval['final_balance'].pct_change()
             pfo_return_interval = pfo_return_interval.dropna()
-            print(pfo_return_interval)
             
             bench_interval = bench.resample('W').last()
             #bench_ex['KOSPI'] = bench_ex['final_balance'].pct_change()
@@ -307,7 +304,6 @@ class back_test:
             bench_interval['KOSPI'] = bench_interval['KOSPI_balance'].pct_change()
             bench_interval['S&P500'] = bench_interval['S&P500_balance'].pct_change()
             bench_interval = bench_interval.dropna()
-            print(bench_interval)
             
             # 날짜타입 열로 만들기 및 str 타입으로 전처리 
             pfo_return = pfo_return.rename_axis('Date').reset_index()
