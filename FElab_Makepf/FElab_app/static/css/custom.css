@@ -36,10 +36,19 @@ body {
     height:700px;
     transform: translate(-50%, -50%);
 }
-
+.category{
+    margin: 30px 20px 30px 20px;
+    color: #cccccc;
+}
+.clicked{
+    color: #007bff;
+}
 .main-nav {
     list-style-type: none;
     display: none;
+}
+.news{
+    color: #626262;
 }
 
 .nav-links,
@@ -310,6 +319,14 @@ button[class=amcharts-input]{
 .graph_container{
     height:700px;
     justify-content:center;
+    display:flex;
+}
+#word-cloud{
+    height: 300px;
+    width: 50%;
+    margin: 0 auto;
+}
+.news_container{
     display:flex;
 }
 .block {
