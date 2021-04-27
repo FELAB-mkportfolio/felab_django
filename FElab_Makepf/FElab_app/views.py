@@ -15,10 +15,11 @@ import requests
 from io import BytesIO
 from sqlalchemy import create_engine 
 import re
+from eunjeon import Mecab
+
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
-from eunjeon import Mecab
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from . import load

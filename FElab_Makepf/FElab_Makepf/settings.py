@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'FElab_app',
+    'djangobower',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +125,11 @@ USE_TZ = True
 import os
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFLIES_FINDERS = [
+    'djangobower.finders.BowerFinder'
+]
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '../')
+BOWER_INSTALLED_APPS= [
+    'jquery',
+    'jqcloud2'
+]
