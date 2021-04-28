@@ -10,6 +10,7 @@ urlpatterns = [
     path('ajax_news_return/', views.ajax_news_return, name='ajax_news_return'),
     path('ajax_stockname_return/', views.ajax_stockname_return, name='ajax_stockname_return'),
     path('ajax_backtest/', views.ajax_backtest, name='ajax_backtest'),
+    path('ajax_macro_return/', views.ajax_macro_return, name='ajax_macro_return'),
     path('portfolio_backtest/',views.portfolio_backtest, name='portfolio_backtest'),
     path('textmining/',views.textmining, name='textmining'),
     path('signup/',views.signup, name='signup'),

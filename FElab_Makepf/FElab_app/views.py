@@ -293,6 +293,15 @@ def ajax_news_return(request):
     data = {'news' : news, 'LSTM_sent' : score_avg, 'words_list': counter.most_common(20)}
     return JsonResponse(data, safe=False)
 
+@csrf_exempt
+def ajax_macro_return(request):
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
+    sql = "SELECT *,DATE_FORMAT(Date,'%Y-%m') Year FROM macro_economics GROUP BY Year;"
+    curs = conn.cursor()
+    curs.execute(sql)
+    data = curs.fetchall()
+    return JsonResponse(data, safe=False)
+
 #텍스트 마이닝 페이지
 def textmining(request):
     return render(request, 'FElab_app/textmining.html',{})

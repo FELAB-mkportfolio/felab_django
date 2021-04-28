@@ -19,23 +19,36 @@
 </div>
 <div class="news_container">
     <div class="bt_left">
-        <div style='margin: 50px; text-align: center;' >
+        <div style='margin: 50px; text-align: center;height:50px;' >
             Bi-LSTM 과 BERT 모델을 사용하여 뉴스에서 나온 텍스트 데이터와 코스피 종가 데이터를 연결 등등
         </div>
-        <h3 style='text-align: center;margin: 50px;'>수집된 뉴스</h3>
-        <span style='text-align: center;margin: 50px;' id="now_date"></span>
+        <h3 style='text-align: center;padding: 50px;margin:0 20px;border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc;'>수집된 뉴스</h3>
+        <div style='text-align: right;padding:20px 20px;font:italic bold;'>
         <span>네이버 뉴스 API</span:>
-
-        <div class='news_wrap' style="display: flex;justify-content: center;font-size:15px;height:300px;">
-            <div id="news_board" style='overflow-y: auto;overflow-x:hidden;'>
+        <span style='text-align: right;margin: 50px 0;' id="now_date"></span>
+        </div>
+        <div class='news_wrap' style="margin:10px 20px;font-size:15px;height:350px;">
+            <div id="news_board" style='overflow-y: auto;overflow-x:hidden;width:100%;height:100%;'>
 
             </div>
         </div>
     </div>
     <div class="bt_right">
+        <div style='height:50px;margin: 50px;'>
+        </div>
         <div id="wordcloud"></div>
-        <div id="model_result"></div>
+        <div id="model_result" style='border:1px solid #cccccc; border-radius: 10px;padding: 50px;font-size: 25px'></div>
     </div>    
 </div>
+<div>
+    <div class="graph">
+        <canvas id='macro_graph1'></canvas>
+        <canvas id='macro_graph2'></canvas>
+        <canvas id='macro_graph3'></canvas>
+    </div>
+</div>
+<footer>
+
+</footer>
 
 {% endblock %}
