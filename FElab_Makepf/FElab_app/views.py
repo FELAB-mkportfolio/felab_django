@@ -251,9 +251,29 @@ def datarefresh(request):
         curs.close()
         conn.close()
         return
-#뉴스 수집 후 반환    
+#뉴스 수집 후 반환 
 @csrf_exempt
 def ajax_news_return(request):
+    keyword= str(request.POST.get('keyword'))
+    c_id = "tYIGVa4i5v4xErQcG01z"
+    c_pwd = "FZJ0DeaGzu"
+    search_word = keyword #검색어
+    encode_type = 'json' #출력 방식 json 또는 xml
+    max_display = 100 #출력 뉴스 수
+    sort = 'date' #결과값의 정렬기준 시간순 date, 관련도 순 sim
+    start = 1 # 출력 위치
+    url = f"https://openapi.naver.com/v1/search/news.{encode_type}?query={search_word}&display={str(int(max_display))}&start={str(int(start))}&sort={sort}"
+    headers = {
+        'X-Naver-Client-Id' : c_id,
+        'X-Naver-Client-Secret' : c_pwd,
+    }
+    r = requests.get(url, headers=headers)
+    news = r.json()
+    data = {'news' : news}
+    return JsonResponse(data, safe=False)
+@csrf_exempt
+def ajax_news_analysis(request):
+    news_data = json.loads(request.POST.get('news_data', ''))
     mecab= Mecab()
     tokenizer = Tokenizer()
     def sentiment_predict(new_sentence):
@@ -266,37 +286,21 @@ def ajax_news_return(request):
         pad_new = pad_sequences(encoded, maxlen = max_len) # 패딩
         score = float(loaded_model.predict(pad_new)) # 예측
         return score * 100
-
-    c_id = "tYIGVa4i5v4xErQcG01z"
-    c_pwd = "FZJ0DeaGzu"
-    search_word = '증시' #검색어
-    encode_type = 'json' #출력 방식 json 또는 xml
-    max_display = 100 #출력 뉴스 수
-    sort = 'date' #결과값의 정렬기준 시간순 date, 관련도 순 sim
-    start = 1 # 출력 위치
-    url = f"https://openapi.naver.com/v1/search/news.{encode_type}?query={search_word}&display={str(int(max_display))}&start={str(int(start))}&sort={sort}"
-    headers = {
-        'X-Naver-Client-Id' : c_id,
-        'X-Naver-Client-Secret' : c_pwd,
-    }
-    r = requests.get(url, headers=headers)
-    news = r.json()
     score= []
     words_list = []
-    for i in range(len(news['items'])):
-        title = news['items'][i]['title']
+    for i in range(len(news_data['items'])):
+        title = news_data['items'][i]['title']
         words_list.extend(mecab.nouns(title))
         score.append(sentiment_predict(title))
-    score_avg = sum(score)/len(news['items'])
+    score_avg = sum(score)/len(news_data['items'])
     counter = collections.Counter(words_list)
-    
-    data = {'news' : news, 'LSTM_sent' : score_avg, 'words_list': counter.most_common(20)}
+    data = {'LSTM_sent' : score_avg, 'words_list' : counter.most_common(30)}
     return JsonResponse(data, safe=False)
 
 @csrf_exempt
 def ajax_macro_return(request):
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
-    sql = "SELECT *,DATE_FORMAT(Date,'%Y-%m') Year FROM macro_economics GROUP BY Year;"
+    sql = "SELECT *,DATE_FORMAT(Date,'%Y') Year FROM macro_economics GROUP BY Year;"
     curs = conn.cursor()
     curs.execute(sql)
     data = curs.fetchall()

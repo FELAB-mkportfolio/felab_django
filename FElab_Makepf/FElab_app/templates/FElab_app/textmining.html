@@ -13,42 +13,49 @@
         <span style='font-size: 40px;color:#06c;'>텍스트마이닝</span>은 비정형 데이터 및 반정형 데이터에 대하여 자연어 처리 기술과 문서 처리 기술을 적용하여 유용한 정보를 추출, 가공하는 목적으로 하는 기술입니다.
     </div>
 </div>
-<div style='display:flex; justify-content: center;'>
-    <a class="category clicked" href="#">뉴스 분석</a>
-    <a class="category" href="#">기업 분석</a>
-</div>
-<div class="news_container">
-    <div class="bt_left">
-        <div style='margin: 50px; text-align: center;height:50px;' >
-            Bi-LSTM 과 BERT 모델을 사용하여 뉴스에서 나온 텍스트 데이터와 코스피 종가 데이터를 연결 등등
-        </div>
-        <h3 style='text-align: center;padding: 50px;margin:0 20px;border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc;'>수집된 뉴스</h3>
-        <div style='text-align: right;padding:20px 20px;font:italic bold;'>
-        <span>네이버 뉴스 API</span:>
-        <span style='text-align: right;margin: 50px 0;' id="now_date"></span>
-        </div>
-        <div class='news_wrap' style="margin:10px 20px;font-size:15px;height:350px;">
-            <div id="news_board" style='overflow-y: auto;overflow-x:hidden;width:100%;height:100%;'>
+<div style="background-color: #fbfbfb;">
+    <div style='display:flex; justify-content: center;'>
+        <a class="category clicked" href="#">시장 분석</a>
+        <a class="category" href="#">기업 분석</a>
+    </div>
+    <div class="news_container">
+        <div class="bt_left" style='width:90%;margin-right:0;'>
+            <div class='backtest_step' style='overflow-y: hidden;'>
+                <h3 style='text-align: center;padding: 50px 50px 10px 50px;margin:30px 20px;color:#454F5D;'>뉴스 검색</h3>
+                <div style='height:40px;'>
+                    <input id="comboBox" onfocus="if(this.value == '키워드 검색(EX.증시)') { this.value = ''; }" value="키워드 검색(EX.증시)" style='text-align:right;background-color: #eeeeee;width:50%;height:100%;' />
+                    <button id="search_btn" style="width:50px;background-color:#007BFF;height:100%;border:none;color:white;">Go</button>
+                    <button id='analysis_btn' style='width:100px;background-color: #121013;color:white;height:100%;border:none;'>분석하기</button>
+                </div>
+                <div style='text-align: right;padding:20px 20px;font:italic bold;'>
+                <span>네이버 뉴스 API</span:>
+                <span style='text-align: right;margin: 50px 0;' id="now_date"></span><br>
+                <span style='font-size: 13px;color:#cccccc'>최대 100건 수집이 가능합니다.</span>
+                </div>
+                <div class='news_wrap' style="margin:10px 20px;font-size:15px;height:350px;overflow-y: auto;overflow-x: hidden;">
+                    <div id="news_board">
 
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="bt_right" style='width:0%;'>
+            <div class="backtest_step" style='margin-left:0;'>
+                <div id="wordcloud" style='margin:30px 20px;'></div>
+                <div id="model_result"></div>
+            </div>
+        </div>    
     </div>
-    <div class="bt_right">
-        <div style='height:50px;margin: 50px;'>
+    <div>
+        <div class="graph_container" style='width:100%;'>
+            <div style='width:30%;height: 300px;'><canvas id='macro_graph1'></canvas></div>
+            <div style='width:30%;height: 300px;'><canvas id='macro_graph2'></canvas></div>
+            <div style='width:30%;height: 300px;'><canvas id='macro_graph3'></canvas></div>
         </div>
-        <div id="wordcloud"></div>
-        <div id="model_result" style='border:1px solid #cccccc; border-radius: 10px;padding: 50px;font-size: 25px'></div>
-    </div>    
-</div>
-<div>
-    <div class="graph">
-        <canvas id='macro_graph1'></canvas>
-        <canvas id='macro_graph2'></canvas>
-        <canvas id='macro_graph3'></canvas>
     </div>
 </div>
 <footer>
-
+{{ data }}
 </footer>
 
 {% endblock %}
