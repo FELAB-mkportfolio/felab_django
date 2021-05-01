@@ -3,6 +3,8 @@ var mystocks = [];
 var stocknames= [];
 var mystocks_weights = [];
 $(document).ready(function () {
+    $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
+    $('.nav-links').css("color","black");
     $.ajax({
         url: '/ajax_stockname_return/',
         type: "POST",

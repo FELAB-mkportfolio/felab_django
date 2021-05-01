@@ -2,47 +2,55 @@
 
 {% block content %}
 <div class="header">
-    <div style="color:white;position:absolute;top:35vh;left: 20px; text-shadow: 1px 0.5px 0.5px gray;font-family: 'Nanum Gothic', sans-serif;">
-        <h2>자산배분 기법을 활용한 투자분석 프로그램</h2>
-        <p style="color:lightgrey">경희대학교 산업경영공학과 김장호 교수님 학부연구팀 개발</p>
+    <div style="position:absolute;text-shadow: 1px 0.5px 0.5px gray;font-family: 'Nanum Gothic', sans-serif;width:100%;">
+        <div id='header_section' style='margin-top:60px;display:flex;justify-content: center;width:100%;flex-direction: column;text-align: center;color:white'>
+            <h3>자산배분 기법을 활용한 투자분석 프로그램</h3>
+            <p style="color:lightgrey">경희대학교 산업경영공학과 금융공학 연구실 학부연구팀 개발</p>
+        </div>
+    </div>
 </div>
-</div>
-<div style="align-items: center;display:flex;justify-content:space-between;margin: 0 30px; padding-top:80px;">
-    <div class="GroupWrapper">
-        <div class="contentsBox" style="box-shadow: 2px 2px 2px 2px gray;" title="Click to start" onclick="location.href ='/portfolio_optimize'">
-            <div class="icon_circle">
-                <image src="static/images/pie-chart.png" class="icons"></image>
-            </div>
-            <div class="topicBox">
-                <h3 class="topicTitle">포트폴리오 최적화</h3>
-                <p>코스피에 상장된 종목들과 ETF, Index 등을 조합하여 최적의 포트폴리오 비중을 산출해줍니다.</p>
-            </div>
+<section class='content'>
+    <div class='wrap'>
+        <section class='portfolio_optimize'>
+            <article class='main' style='overflow:hidden;'>
+                <h2 class="topicTitle">포트폴리오 최적화</h2>
+                <p style='color:#cccccc;font-size:20px;'>내가 투자하고 있는 자산들로 최적의 포트폴리오를 구성해보세요.</p>
+                <div id='first_section' onclick="location.href='/portfolio_optimize'">
+                    <a href="/portfolio_optimize">바로가기</a>
+                </div>
+            </article>
+        </section>
+    </div>
+</section>
+<section class='content'>
+    <div class='wrap'>
+        <section class='portfolio_optimize'>
+            <article class='main' style='overflow:hidden;text-align: right;'>
+                <h2 class="topicTitle">포트폴리오 백테스트</h2>
+                <p style='color:#cccccc;font-size:20px;'>내 자산들 혹은 투자하고 싶은 자산들의 과거 기간동안 성과를 확인해보세요</p>
+                <div id='second_section' onclick="location.href='/portfolio_backtest'">
+                    <a style='color:#FA8800' href="/portfolio_backtest">바로가기</a>
+                </div>
+            </article>
+        </section>
+        
+    </div>
+</section>
+<section class='content'>
+    <div class='wrap'>
+        <section class='portfolio_optimize'>
+            <article class='main' style='overflow:hidden;'>
+                <h2 class="topicTitle">금융 데이터 머신러닝</h2>
+                <p style='color:#cccccc;font-size:20px;'>시장과 기업에 관련된 뉴스 정보를 수집하고 분석한 정보를 확인해보세요</p>
+                <div id='third_section' onclick="location.href='/textmining'">
+                    <a style='color:#831919' href="/textmining">바로가기</a>
+                </div>
+            </article>
+        </section>
+        
+    </div>
+</section>
 
-        </div>
-    </div>
-    <div class="GroupWrapper">
-        <div class="contentsBox" style="box-shadow: 2px 2px 2px 2px gray;" title="Click to start" onclick="location.href ='/portfolio_backtest'">
-            <div class="icon_circle">
-                <image src="static/images/trend.png" class="icons"></image>
-            </div>
-            <div class="topicBox">
-                <h3 class="topicTitle">포트폴리오 백테스트</h3>
-                <p>원하는 투자 기간 동안 최적 비중으로 혹은 사용자가 원하는 비중으로 리밸런싱을 할 경우 포트폴리오 성과를 보여줍니다.</p>
-            </div>
-        </div>
-    </div>
-    <div class="GroupWrapper">
-        <div class="contentsBox" style="box-shadow: 2px 2px 2px 2px gray;" title="Click to start" onclick="location.href ='/textmining'">
-            <div class="icon_circle">
-                <image src="static/images/big-data.png" class="icons"></image>
-            </div>
-            <div class="topicBox">
-                <h3 class="topicTitle">금융/경제 텍스트마이닝</h3>
-                <p>금융시장에서 화두가 되고 있는 종목 혹은 섹터가 무엇인지, 어떤 키워드가 뉴스에 많이 등장하는지 보여줍니다.</p>
-            </div>
-        </div>
-    </div>
-</div>
 <footer>
 
 </footer>

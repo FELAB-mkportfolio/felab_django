@@ -17,14 +17,14 @@
     <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script type='text/javascript' src="{% static 'js/custom.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/jquery-ui.min.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     
 </head>
 <body>
     <!-- navigation bar-->
-    <nav class="navbar" style='position:fixed;'>
-        <image src="/static/images/outline_menu_black_24dp.png" id="js-navbar-toggle"></image>
-        <a href="#" class="logo"></a>
+    <nav class="navbar" style='font-size: 15px; display:block;height:auto;z-index: 1;position:absolute;right:0;'>
+        <image src="/static/images/menu.png" id="js-navbar-toggle"></image>
         <ul class="main-nav" id="js-menu">
             <li>
                 <a href="/" class="nav-links">Home</a>

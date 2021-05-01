@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
+    $('.nav-links').css("color","black");
     let today = new Date();  
     $('#now_date').text("기준일 " + today.getFullYear()+"/"+(Number(today.getMonth())+1)+"/"+today.getDate());
     $('.category').click(function(){

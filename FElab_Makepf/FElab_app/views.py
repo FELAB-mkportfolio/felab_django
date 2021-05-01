@@ -76,7 +76,6 @@ def ajax_db_return(request):
     conn.close()
 
     return JsonResponse(data, safe=False)
-
 #포트폴리오 최적화 한 것을 ajax로 통신
 @csrf_exempt
 def ajax_portfolio_optimize_return(request):
@@ -94,7 +93,8 @@ def ajax_portfolio_optimize_return(request):
     ret_vol, efpoints, weights = c_m.plotting()
     data = {'ret_vol': ret_vol, 'efpoints': efpoints, "weights" : weights}
     return JsonResponse(data, safe=False)
-
+    
+#포트폴리오 최적화 한 것을 ajax로 통신
 #ajax 백테스트
 @csrf_exempt
 def ajax_backtest(request):
@@ -117,7 +117,21 @@ def ajax_backtest(request):
 def portfolio_optimize(request):
     return render(request, 'FElab_app/portfolio_optimize.html',{})
 #--------------------------------#
-
+def portfolio_optimize_result(request):
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
+    mystocks= request.POST.getlist('mystocks[]')
+    mystocks_weights = request.POST.getlist('mystocks_weights[]')
+    from_period = pd.to_datetime(request.POST.get('my_from'))
+    to_period = pd.to_datetime(request.POST.get('my_to'))
+    w =[]
+    for i in range(len(mystocks_weights)):
+        w.append(float(mystocks_weights[i]))
+    mystocks_weights = w
+    strategy = request.POST.get('strategy')
+    c_m = c_Models(mystocks,mystocks_weights,from_period,to_period,conn)
+    ret_vol, efpoints, weights = c_m.plotting()
+    data = {'ret_vol': ret_vol, 'efpoints': efpoints, "weights" : weights}
+    return render(request, 'FElab_app/portfolio_optimize_result.html',context={'data':json.dumps(data)})
 #포트폴리오 백테스트 페이지
 def portfolio_backtest(request):
     return render(request, 'FElab_app/portfolio_backtest.html',{})
