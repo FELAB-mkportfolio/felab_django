@@ -266,11 +266,21 @@ function pushscatter(chart, x, y, label, color, order) {
     });
     chart.update();
 }
-function tobacktest() {
-    localStorage.setItem("adjusted_weights", window.opt_report_chart.data.datasets[0].data);
-    location.href = '/portfolio_backtest';
+function ad_tobacktest(){
+    adjusted_weights = [];
+    for (var i=0;i<adjusted_assets_codes.length;i++){
+        adjusted_weights.push(Number($('#adjusted_assets_weights'+i).val()));
+    }
+    localStorage.setItem("adjusted_weights", adjusted_weights);
+    localStorage.setItem("adjusted_codes", adjusted_assets_codes);
+    localStorage.setItem("adjusted_names", adjusted_assets_names);
+    location.href='/portfolio_backtest';
 }
+function tobacktest() {
+    localStorage.removeItem("adjusted_weights");
+    location.href = '/portfolio_backtest';
     
+}
 function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols,ef_points_tooltip) {
     var Ef_ctx = document.getElementById("efficient_frontier_graph").getContext('2d'); 
     ef_storage = [];

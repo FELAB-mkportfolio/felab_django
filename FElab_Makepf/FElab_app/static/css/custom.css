@@ -239,14 +239,10 @@ select {
     line-height:30px;
 }
 .backtest_step{
-    height: 80%;
     position:relative;
     text-align: center;
-    border: 1px solid #eeeeee;
     background-color: white;
     margin: 50px 30px;
-    overflow-y: auto;
-    overflow-x: hidden;
     font-family: 'AppleSDGothicNeoM';
 }
 .iconBox{
@@ -261,11 +257,9 @@ select {
 .input_date, .input_amount{
     width:100px;
     border:none;
-    background-color: #eeeeee;
+    border-bottom: 2px solid #06c;
 }
 .row{
-    display:flex;
-    justify-content: center;
     margin: 20px 0;
 }
 #chartdiv {

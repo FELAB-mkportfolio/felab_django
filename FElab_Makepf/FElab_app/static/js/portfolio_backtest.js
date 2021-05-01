@@ -2,6 +2,8 @@ var mystocksDB = [];
 var mystocks = [];
 var stocknames= [];
 var mystocks_weights = [];
+var mystocks_codes=[];
+var mystocks_names=[];
 $(document).ready(function () {
     $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
     $('.nav-links').css("color","black");
@@ -36,9 +38,16 @@ $(document).ready(function () {
         position : {my : 'center top', at: 'center bottom', collision: "None Flip"},
     });
     if (localStorage.getItem('mystocks_weights')){
-        mystocks_names = localStorage.getItem("mystocks_names").split(',');
-        mystocks_codes = localStorage.getItem("mystocks_codes").split(',');
-        mystocks_weights = localStorage.getItem("adjusted_weights").split(',');
+        if(localStorage.getItem('adjusted_weights')){
+            mystocks_weights = localStorage.getItem("adjusted_weights").split(',');
+            mystocks_codes = localStorage.getItem("adjusted_codes").split(',');
+            mystocks_names = localStorage.getItem("adjusted_names").split(',');
+        }
+        else{
+            mystocks_names = localStorage.getItem("mystocks_names").split(',');
+            mystocks_codes = localStorage.getItem("mystocks_codes").split(',');
+            mystocks_weights =localStorage.getItem('mystocks_weights').split(',');
+        }
         my_from = localStorage.getItem("from");
         my_to = localStorage.getItem("to");
         for(i=0; i<mystocks_codes.length;i++){
@@ -52,7 +61,7 @@ $(document).ready(function () {
         }
         $('#from').val(my_from);
         $('#to').val(my_to);
-        pie_backgroundColor = ['#003f5c', '#2f4b7c','#665191','#a05195', '#d45087', '#f95d6a','#ff7c43','#ffa600'];
+        pie_backgroundColor = ['#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#2f4b7c','#665191','#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#f95d6a','#ff7c43','#ffa600'];
         data = {
             datasets: [{
                 data: mystocks_weights,
@@ -73,7 +82,7 @@ $(document).ready(function () {
             add_eq = $('#asset_row tr')['length'];
             mystocksDB.splice(mystocksDB.indexOf(code),1);
             $('#asset_row').append("<tr eq= "+Number(add_eq)+"><td class='numberCell'>"+stockname+
-        "</td><td class='numberCell'><input id='mystocks_weights"+Number(add_eq)+"' class='input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='putout_btn' eq= "+Number(add_eq)+"kor-name="+mystocks_names[i]+" name=" + code +
+        "</td><td class='numberCell'><input id='mystocks_weights"+Number(add_eq)+"' class='input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='putout_btn' eq= "+Number(add_eq)+"kor-name="+stockname+" name=" + code +
         " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+code+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
             $('#comboBox').val("");
         } else {
@@ -100,10 +109,12 @@ $(document).ready(function () {
             sum = sum+Number($('#mystocks_weights'+i).val())
             mystocks_weights.push(Number($('#mystocks_weights'+i).val()));
         }
-        if(sum!=1){
+        if(sum<0.9999){
 
         }else{
-            window.opt_report_chart.destroy();
+            if(window.opt_report_chart){
+                window.opt_report_chart.destroy();
+            }
             data = {
                 datasets: [{
                     data: mystocks_weights,
@@ -174,14 +185,13 @@ $(document).ready(function () {
     });
     cl_cnt = 0
     $('#backtest_btn').click(function() {
-        
         sum = 0
         mystocks_weights=[];
         for(i=0;i<mystocks_codes.length;i++){
             sum = sum+Number($('#mystocks_weights'+i).val());
             mystocks_weights.push(Number($('#mystocks_weights'+i).val()));
         }
-        if(sum!=1){
+        if(sum<0.99999){
             alert("비중의 합이 1이 아닙니다.");
         }else{
             $.ajax({
