@@ -23,7 +23,7 @@ from sqlalchemy import create_engine
 db = {
         'host': "localhost",
         'user': "root",
-        'password' : "su970728!",
+        'password' : "root",
         'db_name' : "krmarket",
     }
     #홈페이지 메인

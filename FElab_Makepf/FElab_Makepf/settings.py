@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'krmarket',
         'USER' : 'root',
-        'PASSWORD' : 'su970728!',
+        'PASSWORD' : 'root',
         'HOST' : 'localhost',
         'PORT' : '3306',
     }
