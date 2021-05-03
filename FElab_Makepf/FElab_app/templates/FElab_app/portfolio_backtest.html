@@ -13,17 +13,26 @@
     평소 사용해보고 싶었던 투자전략들을 과거 데이터를 활용해서 해보는 것입니다.
     </div>
 </div>
-<div style="position:relative;display: flex;flex-direction:row;margin: 0;height:800px;background-color: #fbfbfd;">
-    <div class="bt_left">
+<section class='content'>
+    <div class='wrap'>
+        <section class='portfolio_optimize'  style='margin-bottom:40px;'>
+            <article class='main' style='overflow:hidden;text-align: center;'>
+                <h2 class="topicTitle">효율적 투자선</h2><br>
+                <span style='font-size: 15px;font-family: AppleSDGothicNeoM;'>효율적인 투자자는 같은 수익을 내는 자산이 있다면 더 낮은 위험도를 선호할 것이고, 같은 위험도를 가진 자신이 있다면 수익률이 더 높은 자산을 선호할 것입니다. 내가 가진 자산들을 어떻게 배분하느냐에 따라 수익률도 달라지고 위험도(분산)도 달라지는데 이 때 가장 효율적으로 배분하는 포트폴리오 점들을 따라 그린 선이 효율적 투자선입니다.</span>
+            </article>
+        </section>
+    </div>
+</section>
+<div class="optimize_result" id='optimize_result' style='margin:0 100px;height:600px;'>
+    <div class='left_block' style="width:50%;border-right: 1px solid #cccccc;">
         <div class="backtest_step">
-            <h3 style='margin:50px 0'>자산 선택 및 배분</h3>
-            <input id="comboBox" onfocus="if(this.value == '종목 검색') { this.value = ''; }" value="종목 검색" style='background-color: #eeeeee;' />
-            <button id="putin_btn" style="width:90px;background-color:#8C0000;height:40px;bottom:0;border:none;color:white;">담기</button>
-            <div class="opt_report" style="width:100%; margin: 20px 0;height:250px;font-size:10px;">
-                <canvas id="opt_report_chart" height="100%"></canvas>
+            <input id="comboBox" onfocus="if(this.value == '종목 검색') { this.value = ''; }" value="종목 검색" style='background-color: #eeeeee;width:200px;' />
+            <button id="putin_btn" style="width:90px;background-color:#FA8800;height:40px;bottom:0;border:none;color:white;">담기</button>
+            <div class="opt_report" style="margin: 20px 0;font-size:10px;">
+                <canvas id="opt_report_chart" height="70vh"></canvas>
             </div>
             <div style='width:100%; display:flex;justify-content: center;'>
-                <div id="assetsBox"style='margin-top:30px;width:60%;display:flex;flex-direction:column;'>
+                <div id="my_assetsBox"style='margin-top:30px;width:60%;display:flex;flex-direction:column;'>
                     <table class='table backtest_table'>
                         <thead>
                             <tr>
@@ -34,64 +43,73 @@
                             </tr>
                         </thead>
                         <tbody id='asset_row'>
-                            
                         </tbody>
-    
-                    </table></div>
-        </div>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="bt_right" >
-        <div class="backtest_step" style='height:70%;margin-bottom:20px;'>
-            <h3 style='margin:50px 0'>투자 기간과 전략</h3>
+    <div class='right_block' style='width:50%;'>
+        <div class="backtest_step">
             <div class='row'>
-                <div style='margin:0 30px;'>
-                    <label for="from">시작</label>
-                    <input type="text" class="input_date" id="from" name="from" autocomplete="off" style='width:200px;height:40px;'/>
+                <div style='margin:0 30px;width:100%;text-align: left;'>
+                    <label for="from" style='font-size:20px;'>투자 기간을 입력해 주세요</label>
                 </div>
                 <div style='margin:0 30px;'>
-                    <label for="to">종료</label>
-                    <input type="text" class="input_date" id="to" name="to" autocomplete="off"style='width:200px;height:40px;' />
+                    From:  <input type="text" class="input_date" id="from" name="from" autocomplete="off" style='width:200px;height:40px;'/>
+                    To:  <input type="text" class="input_date" id="to" name="to" autocomplete="off"style='width:200px;height:40px;' />
                 </div>
             </div>
             <div class='row'>
-                <label for='rebalancing_month'>리밸런싱 주기</label>
-                <select id='rebalancing_month'>
-                    <option value='1'>1개월</option>
-                    <option value='2'>2개월</option>
-                    <option value='3'>3개월</option>
-                    <option value='4'>4개월</option>
-                    <option value='5'>5개월</option>
-                    <option value='6'>6개월</option>
-                    <option value='7'>7개월</option>
-                    <option value='8'>8개월</option>
-                    <option value='9'>9개월</option>
-                    <option value='10'>10개월</option>
-                    <option value='11'>11개월</option>
-                    <option value='12'>12개월</option>
-                </select>
+                <div style='margin:0 30px;width:100%;text-align: left;'>
+                    <label style='font-size:20px;'>리밸런싱 주기를 입력해 주세요</label><br>
+                    <span>리밸런싱은 정해진 주기마다 포트폴리오를 재구성하는 것을 의미합니다.</span>
+
+                </div>
+
+                <div style='margin:0 30px;'>
+                    <select id='rebalancing_month' style='border-bottom: 2px solid #cccccc;width:200px;'>
+                        <option value='1'>1개월</option>
+                        <option value='2'>2개월</option>
+                        <option value='3'>3개월</option>
+                        <option value='4'>4개월</option>
+                        <option value='5'>5개월</option>
+                        <option value='6'>6개월</option>
+                        <option value='7'>7개월</option>
+                        <option value='8'>8개월</option>
+                        <option value='9'>9개월</option>
+                        <option value='10'>10개월</option>
+                        <option value='11'>11개월</option>
+                        <option value='12'>12개월</option>
+                    </select>
+                </div>
+                
             </div>
             <div class='row'>
-                <label for='start_amount' style="margin:0 30px;">시작 금액</label>
-                <input type='text' class='input_amount' id='start_amount' style='width:200px;height:40px;'/>
+                <div style='margin:0 30px;width:100%;text-align: left;'>
+                    <label style='font-size:20px;'>투자 금액을 입력해 주세요</label>
+                </div>
+                <div style='margin:0 30px;'>
+                    <input type='text' class='input_amount' id='start_amount' style='width:200px;height:40px;'/>
+                </div>
             </div>
             <div class='row'>
-                <label style="margin:0 30px;">수익률 주기</label>
-                <div>
-                    <label>월 별 <input type='radio' name='interval' value='monthly' checked></label>
-                    <label>주 별 <input type='radio' name='interval' value='weekly'></label>
-                    <label>일 별 <input type='radio' name='interval' value='daily'></label>
+                <div style='margin:0 30px;width:100%;text-align: left;'>
+                    <label style='font-size:20px;'>수익률 주기</label>
+                </div>
+                <div style='margin:0 30px;'>
+                    <label style='font-size:20px;'>월 별 <input type='radio' name='interval' value='monthly' checked></label>
+                    <label style='font-size:20px;'>주 별 <input type='radio' name='interval' value='weekly'></label>
+                    <label style='font-size:20px;'>일 별 <input type='radio' name='interval' value='daily'></label>
                 </div>
             </div>
             
         </div>
-        <div style='display: flex;justify-content: center;background-color: #fbfbfd;'>
-            <button style='width:100%;height:60px;margin:0 30px;background-color: #8C0000;border:none;color:white;' id='backtest_btn'>백테스트 시작</button>
+        <div>
+            <button style='width:40%;height:60px;margin:0 50px;background-color: #00469d;border:none;color:white;' id='backtest_btn'>백테스트 시작</button>
         </div>
     </div>
-    
 </div>
-
 <div id='result_container'>
     <div class='commentBox' style='margin:100px 0px 0px 30px;padding:0; text-align: left;'>
         <h2>백테스트 결과</h2><span>투자기간</span><span id='daterange'></span>

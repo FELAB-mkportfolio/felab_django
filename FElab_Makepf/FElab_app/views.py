@@ -14,8 +14,18 @@ import time
 import requests
 from io import BytesIO
 from sqlalchemy import create_engine 
+import re
+from eunjeon import Mecab
 
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from . import load
+import collections
 
+loaded_model = load.LoadConfig.model
 
 #-*-coding:utf-8 -*-
 # Create your views here.
@@ -66,7 +76,6 @@ def ajax_db_return(request):
     conn.close()
 
     return JsonResponse(data, safe=False)
-
 #포트폴리오 최적화 한 것을 ajax로 통신
 @csrf_exempt
 def ajax_portfolio_optimize_return(request):
@@ -84,7 +93,8 @@ def ajax_portfolio_optimize_return(request):
     ret_vol, efpoints, weights = c_m.plotting()
     data = {'ret_vol': ret_vol, 'efpoints': efpoints, "weights" : weights}
     return JsonResponse(data, safe=False)
-
+    
+#포트폴리오 최적화 한 것을 ajax로 통신
 #ajax 백테스트
 @csrf_exempt
 def ajax_backtest(request):
@@ -107,7 +117,21 @@ def ajax_backtest(request):
 def portfolio_optimize(request):
     return render(request, 'FElab_app/portfolio_optimize.html',{})
 #--------------------------------#
-
+def portfolio_optimize_result(request):
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
+    mystocks= request.POST.getlist('mystocks[]')
+    mystocks_weights = request.POST.getlist('mystocks_weights[]')
+    from_period = pd.to_datetime(request.POST.get('my_from'))
+    to_period = pd.to_datetime(request.POST.get('my_to'))
+    w =[]
+    for i in range(len(mystocks_weights)):
+        w.append(float(mystocks_weights[i]))
+    mystocks_weights = w
+    strategy = request.POST.get('strategy')
+    c_m = c_Models(mystocks,mystocks_weights,from_period,to_period,conn)
+    ret_vol, efpoints, weights = c_m.plotting()
+    data = {'ret_vol': ret_vol, 'efpoints': efpoints, "weights" : weights}
+    return render(request, 'FElab_app/portfolio_optimize_result.html',context={'data':json.dumps(data)})
 #포트폴리오 백테스트 페이지
 def portfolio_backtest(request):
     return render(request, 'FElab_app/portfolio_backtest.html',{})
@@ -240,9 +264,61 @@ def datarefresh(request):
         kospi_stocks_codenamesave(kospi_stocks())
         curs.close()
         conn.close()
-        return    
+        return
+#뉴스 수집 후 반환 
+@csrf_exempt
+def ajax_news_return(request):
+    keyword= str(request.POST.get('keyword'))
+    c_id = "tYIGVa4i5v4xErQcG01z"
+    c_pwd = "FZJ0DeaGzu"
+    search_word = keyword #검색어
+    encode_type = 'json' #출력 방식 json 또는 xml
+    max_display = 100 #출력 뉴스 수
+    sort = 'date' #결과값의 정렬기준 시간순 date, 관련도 순 sim
+    start = 1 # 출력 위치
+    url = f"https://openapi.naver.com/v1/search/news.{encode_type}?query={search_word}&display={str(int(max_display))}&start={str(int(start))}&sort={sort}"
+    headers = {
+        'X-Naver-Client-Id' : c_id,
+        'X-Naver-Client-Secret' : c_pwd,
+    }
+    r = requests.get(url, headers=headers)
+    news = r.json()
+    data = {'news' : news}
+    return JsonResponse(data, safe=False)
+@csrf_exempt
+def ajax_news_analysis(request):
+    news_data = json.loads(request.POST.get('news_data', ''))
+    mecab= Mecab()
+    tokenizer = Tokenizer()
+    def sentiment_predict(new_sentence):
+        max_len = 30
+        stopwords = ['의','가','이','은','들','는','좀','잘','걍','과','도','를','으로','자','에','와','한','하다']
+        new_sentence = re.sub(r'[^ㄱ-ㅎㅏ-ㅣ가-힣 ]','', new_sentence)
+        new_sentence = mecab.morphs(new_sentence) # 토큰화
+        new_sentence = [word for word in new_sentence if not word in stopwords] # 불용어 제거
+        encoded = tokenizer.texts_to_sequences([new_sentence]) # 정수 인코딩
+        pad_new = pad_sequences(encoded, maxlen = max_len) # 패딩
+        score = float(loaded_model.predict(pad_new)) # 예측
+        return score * 100
+    score= []
+    words_list = []
+    for i in range(len(news_data['items'])):
+        title = news_data['items'][i]['title']
+        words_list.extend(mecab.nouns(title))
+        score.append(sentiment_predict(title))
+    score_avg = sum(score)/len(news_data['items'])
+    counter = collections.Counter(words_list)
+    data = {'LSTM_sent' : score_avg, 'words_list' : counter.most_common(30)}
+    return JsonResponse(data, safe=False)
 
-
+@csrf_exempt
+def ajax_macro_return(request):
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
+    sql = "SELECT *,DATE_FORMAT(Date,'%Y') Year FROM macro_economics GROUP BY Year;"
+    curs = conn.cursor()
+    curs.execute(sql)
+    data = curs.fetchall()
+    return JsonResponse(data, safe=False)
 
 #텍스트 마이닝 페이지
 def textmining(request):

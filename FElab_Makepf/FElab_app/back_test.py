@@ -1,6 +1,5 @@
 import json
 from datetime import date
-import cvxpy as cp
 import math
 import itertools as it
 import operator

@@ -177,7 +177,7 @@ class c_Models:
             minvol = minimize(fun, w0, method='SLSQP',bounds = bd, constraints=constraints)
             tvols.append(np.sqrt(np.dot(minvol.x, np.dot(self.cov, minvol.x))))
             
-            pnumber = str(i+1) + "point"
+            pnumber = '{}point'.format(i+1)
             efpoints[pnumber] = minvol.x.tolist()
         
         if self.data.shape[0] <= 1:
