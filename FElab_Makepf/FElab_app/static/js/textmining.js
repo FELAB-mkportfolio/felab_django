@@ -16,7 +16,7 @@ $(document).ready(function(){
     var news_data
     $('#search_btn').click(function(){
         var keyword = $('#comboBox').val();
-        if(keyword == ""){
+        if($('#comboBox').val()==""){
             alert("키워드를 입력해주세요");
         }
         else{
@@ -39,7 +39,7 @@ $(document).ready(function(){
         }
     });
     $('#analysis_btn').click(function(){
-        if (news_data == ""){
+        if (typeof(news_data) == "undefined" || $('#comboBox').val()==""){
             alert("수집된 뉴스가 없습니다");
         }
         else{
@@ -49,24 +49,22 @@ $(document).ready(function(){
                 dataType: "json",
                 data: {'news_data': JSON.stringify(news_data)},
                 success: function(data){
-                    console.log(data);
+                    $('#wordcloud').empty();
                     var words = []
                     for (i=0;i<data.words_list.length;i++){
                         words.push({'text': data.words_list[i][0], 'weight': data.words_list[i][1]})
                     }
-                    $('#wordcloud').jQCloud(words,{
-                        autoResize : true,
+                    //$('.bt_right_block').css('width','60%');
+                    $('.bt_right').animate({width:"60%"},2000,function(){$('#wordcloud').jQCloud(words,{
+                        autoResize : false,
                         height: 350,
                         delay: 50,
-                    });
-                    if (data.LSTM_sent> 50){
-                        var comment = "뉴스 분석 결과 "+data.LSTM_sent +"% 의 확률로 내일 코스피 종가가 오늘 대비 오를 것으로 예상됩니다." 
-                    }
-                    else if (data.LSTM_sent<= 50){
-                        var comment = "뉴스 분석 결과 "+"<span style='color:#06c'>"+(100-data.LSTM_sent).toFixed(2) +"%</span> 의 확률로 내일 코스피 종가가 오늘 대비 내릴 것으로 예상됩니다."
-                    }
-                    //$("#model_result").append(comment);
-                    $('.bt_right').animate({width:"60%"},2000);
+                    });});
+                    $('.bt_right').css("display","block");
+
+                    Draw_sentchart(data.LSTM_sent);
+
+                    
                 },
                 error: function (request, status, error) {
                     console.log('실패');
@@ -151,6 +149,46 @@ function option(){
         }
     }
 };
+function Draw_sentchart(sent){
+    var sentctx= document.getElementById('sent_chart').getContext('2d');
+
+    var purple_orange_gradient = sentctx.createLinearGradient(0, 0, 0, 600);
+    purple_orange_gradient.addColorStop(0, 'orange');
+    purple_orange_gradient.addColorStop(1, 'purple');
+    
+    var sent_chart = new Chart(sentctx, {
+        type: 'bar',
+        data: {
+            labels: ["감성점수"],
+            datasets: [{
+                label: '',
+                data: [sent],
+                            backgroundColor: purple_orange_gradient,
+                            hoverBackgroundColor: purple_orange_gradient,
+                            hoverBorderWidth: 2,
+                            hoverBorderColor: 'purple'
+            }]
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio:false,
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        drawBorder: false,
+                      },
+                    ticks: {
+                        min:0,
+                        max:100,
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+    
+    
+}
 
 function Draw_macro1(data){
     var macro_ctx1 = document.getElementById("macro_graph1").getContext('2d');
@@ -210,16 +248,6 @@ function Draw_macro2(data){
         data: {
             labels: data['Date'],
             datasets: [{
-                label: '환율',
-                data: data['exchange'],
-                borderColor: "#FFA500",
-                backgroundColor: "#FFA500",
-                lineTension: 0,
-                pointRadius: 1,
-                pointHoverRadius: 1,
-                fill: false,
-            },
-            {
                 label: '미국고채 10년물 금리',
                 data: data['US10'],
                 borderColor: "#04092a",
@@ -250,8 +278,8 @@ function Draw_macro3(data){
         data: {
             labels: data['Date'],
             datasets: [{
-                label: '코스피',
-                data: data['Kospi'],
+                label: '환율',
+                data: data['exchange'],
                 borderColor: "#FFA500",
                 backgroundColor: "#FFA500",
                 lineTension: 0,
@@ -260,10 +288,21 @@ function Draw_macro3(data){
                 fill: false,
             },
             {
+                
+                label: '코스피',
+                data: data['Kospi'],
+                borderColor: "#04092a",
+                backgroundColor: "#04092a",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            },
+            {
                 label: 'NASDAQ',
                 data: data['nasdaq'],
-                borderColor: "#04092a",
-                backgroundColor: '#04092a',
+                borderColor: "#cccccc",
+                backgroundColor: '#cccccc',
                 lineTension: 0,
                 pointRadius: 1,
                 pointHoverRadius: 1,
@@ -272,8 +311,8 @@ function Draw_macro3(data){
             {
                 label: 'S&P500',
                 data: data['SP500'],
-                borderColor: "#cccccc",
-                backgroundColor: '#cccccc',
+                borderColor: "#639371",
+                backgroundColor: '#639371',
                 pointRadius: 1,
                 pointHoverRadius: 1,
                 lineTension: 0,

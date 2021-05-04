@@ -13,19 +13,19 @@
         <span style='font-size: 40px;color:#06c;'>텍스트마이닝</span>은 비정형 데이터 및 반정형 데이터에 대하여 자연어 처리 기술과 문서 처리 기술을 적용하여 유용한 정보를 추출, 가공하는 목적으로 하는 기술입니다.
     </div>
 </div>
-<div style="background-color: #fbfbfb;">
+<div>
     <div style='display:flex; justify-content: center;'>
         <a class="category clicked" href="#">시장 분석</a>
         <a class="category" href="#">기업 분석</a>
     </div>
-    <div class="news_container">
+    <div class="news_container" style='border-bottom: 1px solid #cccccc;padding:0 40px;margin: 0 40px;'>
         <div class="bt_left" style='width:90%;margin-right:0;'>
             <div class='backtest_step' style='overflow-y: hidden;'>
-                <h3 style='text-align: center;padding: 50px 50px 10px 50px;margin:30px 20px;color:#454F5D;'>뉴스 검색</h3>
+                <h3 style='text-align: center;padding: 0 50px 10px 50px;margin:20px;color:#454F5D;'>뉴스 검색</h3>
                 <div style='height:40px;'>
                     <input id="comboBox" onfocus="if(this.value == '키워드 검색(EX.증시)') { this.value = ''; }" value="키워드 검색(EX.증시)" style='text-align:right;background-color: #eeeeee;width:50%;height:100%;' />
-                    <button id="search_btn" style="width:50px;background-color:#007BFF;height:100%;border:none;color:white;">Go</button>
-                    <button id='analysis_btn' style='width:100px;background-color: #121013;color:white;height:100%;border:none;'>분석하기</button>
+                    <button id="search_btn" style="width:100px;background-color:#00469d;height:100%;border:none;color:white;">검색하기</button>
+                    <button id='analysis_btn' style='width:100px;background-color: white;color:#00469d;height:100%;border:1px solid #cccccc;'>분석하기</button>
                 </div>
                 <div style='text-align: right;padding:20px 20px;font:italic bold;'>
                 <span>네이버 뉴스 API</span:>
@@ -39,23 +39,30 @@
                 </div>
             </div>
         </div>
-        <div class="bt_right" style='width:0%;'>
-            <div class="backtest_step" style='margin-left:0;'>
+        <div class="bt_right" style='width:0%;display: none;'>
+            <div class="backtest_step" style='margin-left:0;margin-bottom:0;'>
                 <div id="wordcloud" style='margin:30px 20px;'></div>
-                <div id="model_result"></div>
+                <div id="model_result" style='display:flex;height:200px;'>
+                    <div class="sent_div" style='margin-right:20px;'>
+                        <canvas id='sent_chart' width="100",height="100"></canvas>
+                    </div>
+                    <div>
+                        <span>감성점수 모델은 지난 5년간 50만 건의 뉴스를 수집하여 다음날 주가(코스피 종가)의 상승, 하락에 따라 긍정 부정점수를 부여하고, 학습시킨 모델입니다. 점수가 높을 수록 수집된 뉴스들은 다음날 주가를 긍정적으로 바라보는 경향이 있습니다. </span>
+                    </div>
+                </div>
             </div>
         </div>    
     </div>
     <div>
-        <div class="graph_container" style='width:100%;'>
+        <div class="graph_container" style='width:100%;margin:50px 40px;padding: 0 40px;'>
             <div style='width:30%;height: 300px;'><canvas id='macro_graph1'></canvas></div>
             <div style='width:30%;height: 300px;'><canvas id='macro_graph2'></canvas></div>
             <div style='width:30%;height: 300px;'><canvas id='macro_graph3'></canvas></div>
         </div>
     </div>
 </div>
+
 <footer>
-{{ data }}
 </footer>
 
 {% endblock %}
