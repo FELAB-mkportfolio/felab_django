@@ -13,6 +13,9 @@ $(document).ready(function(){
             //기업분석
         }
     });
+    $('.recmd_btn').click(function(){
+        $('#comboBox').val($(this).val());
+    });
     var news_data
     $('#search_btn').click(function(){
         var keyword = $('#comboBox').val();
@@ -55,16 +58,23 @@ $(document).ready(function(){
                         words.push({'text': data.words_list[i][0], 'weight': data.words_list[i][1]})
                     }
                     //$('.bt_right_block').css('width','60%');
-                    $('.bt_right').animate({width:"60%"},2000,function(){$('#wordcloud').jQCloud(words,{
-                        autoResize : false,
-                        height: 350,
-                        delay: 50,
-                    });});
+                    $('.bt_right').animate({
+                        width:"60%"},2000,
+                        function(){$('#wordcloud').jQCloud(words,{
+                            autoResize : false,
+                            height: 350,
+                            delay: 50,
+                        });
+                        if (data.LSTM_sent>50){
+                            var comment = "수집된 뉴스의 감정점수는 "+ data.LSTM_sent.toFixed(0)+ " 점 입니다. 내일의 주가(코스피 종가)를 긍정적으로 예상하고 있습니다.";
+                        }else if(data.LSTM_sent<=50){
+                            var comment = "수집된 뉴스의 감정점수는 "+ data.LSTM_sent.toFixed(0)+ " 점 입니다. 내일의 주가(코스피 종가)를 부정적으로 예상하고 있습니다.";
+                        }
+                        $('#sent_score').html(comment);
+                    });
                     $('.bt_right').css("display","block");
 
                     Draw_sentchart(data.LSTM_sent);
-
-                    
                 },
                 error: function (request, status, error) {
                     console.log('실패');
@@ -78,6 +88,7 @@ $(document).ready(function(){
         dataType: "json",
         data: {},
         success: function (data) {
+            console.log(data);
             var macro = {}
             macro['Date'] = [];
             macro['Gold'] = [];
@@ -86,38 +97,60 @@ $(document).ready(function(){
             macro['oil'] = [];
 
             macro['exchange'] = [];
+            macro['exchange_eur'] = [];
+            macro['exchange_cny'] = [];
+            macro['exchange_jpy'] = [];
+            
             macro['KR10'] = [];
             macro['US10'] = [];
 
             macro['Kospi'] = [];
-            macro['SP500'] = [];
             macro['nasdaq'] = [];
+            macro['SP500'] = [];
+
+            macro['BTC'] = [];
+            macro['ETH'] = [];
             
             for(var i=0;i<data.length;i++){
-                macro['Date'].push(data[i][12]);
+                macro['Date'].push(data[i][17]);
                 macro['Gold'].push(data[i][2]);
                 macro['Silver'].push(data[i][3]);
                 macro['Guri'].push(data[i][4]);
                 macro['oil'].push(data[i][5]);
+
                 macro['exchange'].push(data[i][6]);
-                macro['KR10'].push(data[i][7]);
-                macro['US10'].push(data[i][8]);
+                macro['exchange_eur'].push(data[i][7]);
+                macro['exchange_cny'].push(data[i][8]);
+                macro['exchange_jpy'].push(data[i][9]);
+
+                macro['KR10'].push(data[i][10]);
+                macro['US10'].push(data[i][11]);
                 
-                macro['Kospi'].push(data[i][9]);
-                macro['nasdaq'].push(data[i][10]);
-                macro['SP500'].push(data[i][11]);
+                macro['Kospi'].push(data[i][12]);
+                macro['nasdaq'].push(data[i][13]);
+                macro['SP500'].push(data[i][14]);
+
+                macro['BTC'].push(data[i][15]);
+                macro['ETH'].push(data[i][16]);
+                
             }
             Draw_macro1(macro);
             Draw_macro2(macro);
             Draw_macro3(macro);
+            Draw_macro4(macro);
+            Draw_macro5(macro);
         },
         error: function (request, status, error) {
             console.log('실패');
         }
     });
 });
-function option(){
+function option(title){
     return options ={
+        title:{
+            display: true,
+            text : title,
+        },
         responsive: true,
         maintainAspectRatio: false,
         tooltips: {
@@ -237,7 +270,7 @@ function Draw_macro1(data){
                 fill: false,
             }]
         },
-        options : option()
+        options : option("원자재")
     });
 
 }
@@ -268,7 +301,7 @@ function Draw_macro2(data){
                 fill: false,
             }]
         },
-        options: option()
+        options: option("금리")
     });
 }
 function Draw_macro3(data){
@@ -277,16 +310,7 @@ function Draw_macro3(data){
         type: 'line',
         data: {
             labels: data['Date'],
-            datasets: [{
-                label: '환율',
-                data: data['exchange'],
-                borderColor: "#FFA500",
-                backgroundColor: "#FFA500",
-                lineTension: 0,
-                pointRadius: 1,
-                pointHoverRadius: 1,
-                fill: false,
-            },
+            datasets: [
             {
                 
                 label: '코스피',
@@ -319,7 +343,86 @@ function Draw_macro3(data){
                 fill: false,
             }],
         },
-        options: option()
+        options: option("인덱스")
     });
-
+}
+function Draw_macro4(data){
+    var macro_ctx4 = document.getElementById("macro_graph4").getContext('2d');
+    window.macro_chart4 = new Chart(macro_ctx4, {
+        type: 'line',
+        data: {
+            labels: data['Date'],
+            datasets: [{
+                label: 'USD/KRW',
+                data: data['exchange'],
+                borderColor: "#FFA500",
+                backgroundColor: "#FFA500",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            },
+            {
+                label: 'EUR/KRW(유로화)',
+                data: data['exchange_eur'],
+                borderColor: "#04092a",
+                backgroundColor: "#04092a",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            },
+            {
+                label: 'CNY/KRW(위엔화)',
+                data: data['exchange_cny'],
+                borderColor: "#cccccc",
+                backgroundColor: "#cccccc",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            },
+            {
+                label: 'JPY/KRW(엔화)',
+                data: data['exchange_jpy'],
+                borderColor: "#639371",
+                backgroundColor: "#639371",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            }],
+        },
+        options : option("환율")
+    });
+}
+function Draw_macro5(data){
+    var macro_ctx5 = document.getElementById("macro_graph5").getContext('2d');
+    window.macro_chart5 = new Chart(macro_ctx5, {
+        type: 'line',
+        data: {
+            labels: data['Date'],
+            datasets: [{
+                label: 'BTC',
+                data: data['BTC'],
+                borderColor: "#FFA500",
+                backgroundColor: "#FFA500",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            },
+            {
+                label: 'ETH',
+                data: data['ETH'],
+                borderColor: "#04092a",
+                backgroundColor: "#04092a",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            }],
+        },
+        options : option("가상화폐")
+    });
 }

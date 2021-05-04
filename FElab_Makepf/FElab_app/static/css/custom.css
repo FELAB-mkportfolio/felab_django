@@ -209,6 +209,15 @@ select {
     height:40px;
     border:1px solid #eeeeee;
 }
+.recmd_btn{
+    width:50px;
+    border-radius: 10px;
+    background-color: #00469d;
+    color: white;
+    font-size:15px;
+    font-family: 'Gothic';
+    border:none;
+}
 .ui-datepicker{
     z-index: 10002;
 }

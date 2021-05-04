@@ -314,7 +314,7 @@ def ajax_news_analysis(request):
 @csrf_exempt
 def ajax_macro_return(request):
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
-    sql = "SELECT *,DATE_FORMAT(Date,'%Y') Year FROM macro_economics GROUP BY Year;"
+    sql = "SELECT *,DATE_FORMAT(Date,'%Y-%m') m FROM macro_economics GROUP BY M;"
     curs = conn.cursor()
     curs.execute(sql)
     data = curs.fetchall()
