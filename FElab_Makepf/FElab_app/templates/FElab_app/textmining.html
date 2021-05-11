@@ -15,10 +15,11 @@
 </div>
 <div>
     <div style='display:flex; justify-content: center;'>
-        <a class="category clicked" href="#">시장 분석</a>
-        <a class="category" href="#">기업 분석</a>
+        <a class="category clicked">시장 분석</a>
+        <a class="category">기업 분석</a>
+        <a class="category">경제 지표 분석</a>
     </div>
-    <div class="news_container" style='border-bottom: 1px solid #cccccc;padding:0 40px;margin: 0 40px;'>
+    <div class="news_container" id='market_analysis' style='border-bottom: 1px solid #cccccc;padding:0 40px;margin: 0 40px;'>
         <div class="bt_left" style='width:90%;margin-right:0;'>
             <div class='backtest_step' style='overflow-y: hidden;'>
                 <h3 style='text-align: center;padding: 0 50px 10px 50px;margin:20px;color:#454F5D;'>뉴스 검색</h3>
@@ -37,7 +38,7 @@
                 </div>
                 <div style='text-align: right;padding:20px 20px;font:italic bold;'>
                 <span>네이버 뉴스 API</span:>
-                <span style='text-align: right;margin: 50px 0;' id="now_date"></span><br>
+                <span style='text-align: right;margin: 50px 0;' class="now_date"></span><br>
                 <span style='font-size: 13px;color:#cccccc'>최대 100건 수집이 가능합니다.</span>
                 </div>
                 <div class='news_wrap' style="margin:10px 20px;font-size:15px;height:350px;overflow-y: auto;overflow-x: hidden;">
@@ -63,16 +64,78 @@
         </div>    
     </div>
     <div>
-        <div class="graph_container" style='width:100%;margin:50px 40px;padding: 0 40px;'>
-            <div style='width:30%;height: 300px;'><canvas id='macro_graph1'></canvas></div>
-            <div style='width:30%;height: 300px;'><canvas id='macro_graph2'></canvas></div>
-            <div style='width:30%;height: 300px;'><canvas id='macro_graph3'></canvas></div>
-            <div style='width:30%;height: 300px;'><canvas id='macro_graph4'></canvas></div>
-            <div style='width:30%;height: 300px;'><canvas id='macro_graph5'></canvas></div>
+    <div class="news_container" id='company_analysis'>
+    </div>
+    
+    <div class="news_container" id="macro_analysis">
+        <section class='content' style='margin:50px 40px;'>
+            <h2 class="topicTitle">금융 데이터 과거 추이</h2>
+            <span>2017년부터 현재까지 금융 데이터를 수집하여 분석하였습니다.</span><br>
+        </section>
+        <div style='display: flex;height:300px;'>
+            <div class = "horizon horizon-prev" style='width:50px;height:50px;margin-top:100px;'>
+                <img src='/static/images/next.png' id='left_img' style='width:100%;height:100%;'>
+            </div>
+            <div class="center" id='content'>
+                <div class='internal' style='width:20%;height: 300px;'><canvas id='macro_graph1'></canvas></div>
+                <div class='internal' style='width:20%;height: 300px;'><canvas id='macro_graph2'></canvas></div>
+                <div class='internal' style='width:20%;height: 300px;'><canvas id='macro_graph3'></canvas></div>
+                <div class='internal' style='width:20%;height: 300px;'><canvas id='macro_graph4'></canvas></div>
+                <div class='internal' style='width:20%;height: 300px;'><canvas id='macro_graph5'></canvas></div>
+            </div>
+            <div class ="horizon horizon-next" style='width:50px;height:50px;margin-top:100px;'>
+                <img src='/static/images/next.png' style='width:100%;height:100%;'>
+            </div>
+        </div>
+        <div style='display:flex;justify-content: center;'>
+            
+            
+        </div>
+        
+        <div style='width:100%;margin:150px 0;display:flex;'>
+            <div >
+                <section class='content' style='margin:50px 40px;border:none;'>
+                    <h2 class="topicTitle">지난 7거래일 데이터</h2>
+                    <span class="now_date" style='height:40px;'></span><br>
+                </section>
+                <div class="macro_table" style='margin-left: 50px;height:640px;overflow-y: auto;overflow-x: hidden;'>
+                    <table class='table backtest_table' style='font-size: 0.9rem'>
+                        <thead>
+                            <tr style="border-top-style:hidden;">
+                                <th class='numberCell'>날짜</th>
+                                <th class='numberCell'>국제 금가격<br><span class='deg'> 단위: 달러</span></th>
+                                <th class='numberCell'>국제 은가격<br><span class='deg'> 단위: 달러</span></th>
+                                <th class='numberCell'>WTI(원유)<br><span class='deg'> 단위: 달러</span></th>
+                                <th class='numberCell'>원달러 환율<br><span class='deg'> 단위: 원</span></th>
+                                <th class='numberCell'>원유로 환율<br><span class='deg'> 단위: 원</span></th>
+                                <th class='numberCell'>원위엔 환율<br><span class='deg'> 단위: 원</span></th>
+                                <th class='numberCell'>원엔 환율<br><span class='deg'> 단위: 원</span></th>
+                                <th class='numberCell'>국고채 10년물 금리<br><span class='deg'> 단위: %</span></th>
+                                <th class='numberCell'>미국고채 10년물 금리<br><span class='deg'> 단위: %</span></th>
+                                <th class='numberCell'>코스피</th>
+                                <th class='numberCell'>나스닥</th>
+                                <th class='numberCell'>S&P500</th>
+                                <th class='numberCell'>비트코인<br><span class='deg'> 단위: 원</span></th>
+                                <th class='numberCell'>이더리움<br><span class='deg'> 단위: 원</span></th>
+
+                            </tr>
+                        </thead>
+                        <tbody id='asset_row'>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <section class='content' style='margin:50px 40px;'>
+                    <h2 class="topicTitle">변수 영향도</h2>
+                    <span>지난 7일의 데이터를 분석하여 코스피 지수에 영향을 미치는 변수들의 영향도입니다. 큰 값을 가질수록 지난 한 주동안의 주가(코스피)는 그 변수의 영향을 많이 받았다는 뜻입니다.</span><br>
+                </section>
+                <div style='width:100%;height:640px;'>
+                    <canvas id='imp_chart'></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<footer>
-</footer>
-
+</div>
 {% endblock %}

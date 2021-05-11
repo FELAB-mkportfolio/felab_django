@@ -2,20 +2,44 @@ $(document).ready(function(){
     $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
     $('.nav-links').css("color","black");
     let today = new Date();  
-    $('#now_date').text("기준일 " + today.getFullYear()+"/"+(Number(today.getMonth())+1)+"/"+today.getDate());
+    $('.now_date').text("기준일 " + today.getFullYear()+"/"+(Number(today.getMonth())+1)+"/"+today.getDate());
+    $('#market_analysis').css('display','flex');
     $('.category').click(function(){
         $(".category").removeClass("clicked");
         $(this).addClass("clicked");
-        if($(this).html()=="주가 분석"){
-            //주가 분석
+        if($(this).html()=="시장 분석"){
+            $('#market_analysis').css('display','flex');
+            $('#company_analysis').css('display','none');
+            $('#macro_analysis').css('display','none');
+        }
+        else if($(this).html()=="기업 분석"){
+            $('#market_analysis').css('display','none');
+            $('#company_analysis').css('display','flex');
+            $('#macro_analysis').css('display','none');
         }
         else{
-            //기업분석
+            $('#market_analysis').css('display','none');
+            $('#company_analysis').css('display','none');
+            $('#macro_analysis').css('display','block');
         }
+    });
+    $('.horizon-prev').click(function(event) {
+        event.preventDefault();
+        $('#content').animate({
+          scrollLeft: "-=775px"
+        }, "slow");
+    });
+    $('.horizon-next').click(function(event) {
+        console.log("hi");
+        event.preventDefault();
+        $('#content').animate({
+            scrollLeft: "+=775px"
+        }, "slow");
     });
     $('.recmd_btn').click(function(){
         $('#comboBox').val($(this).val());
     });
+    
     var news_data
     $('#search_btn').click(function(){
         var keyword = $('#comboBox').val();
@@ -88,6 +112,7 @@ $(document).ready(function(){
         dataType: "json",
         data: {},
         success: function (data) {
+
             console.log(data);
             var macro = {}
             macro['Date'] = [];
@@ -110,26 +135,26 @@ $(document).ready(function(){
             macro['BTC'] = [];
             macro['ETH'] = [];
             
-            for(var i=0;i<data.length;i++){
-                macro['Date'].push(data[i][16]);
-                macro['Gold'].push(data[i][2]);
-                macro['Silver'].push(data[i][3]);
-                macro['oil'].push(data[i][4]);
+            for(var i=0;i<data.m_data.length;i++){
+                macro['Date'].push(data.m_data[i][16]);
+                macro['Gold'].push(data.m_data[i][2]);
+                macro['Silver'].push(data.m_data[i][3]);
+                macro['oil'].push(data.m_data[i][4]);
 
-                macro['exchange'].push(data[i][5]);
-                macro['exchange_eur'].push(data[i][6]);
-                macro['exchange_cny'].push(data[i][7]);
-                macro['exchange_jpy'].push(data[i][8]);
+                macro['exchange'].push(data.m_data[i][5]);
+                macro['exchange_eur'].push(data.m_data[i][6]);
+                macro['exchange_cny'].push(data.m_data[i][7]);
+                macro['exchange_jpy'].push(data.m_data[i][8]);
 
-                macro['KR10'].push(data[i][9]);
-                macro['US10'].push(data[i][10]);
+                macro['KR10'].push(data.m_data[i][9]);
+                macro['US10'].push(data.m_data[i][10]);
                 
-                macro['Kospi'].push(data[i][11]);
-                macro['nasdaq'].push(data[i][12]);
-                macro['SP500'].push(data[i][13]);
+                macro['Kospi'].push(data.m_data[i][11]);
+                macro['nasdaq'].push(data.m_data[i][12]);
+                macro['SP500'].push(data.m_data[i][13]);
 
-                macro['BTC'].push(data[i][14]);
-                macro['ETH'].push(data[i][15]);
+                macro['BTC'].push(data.m_data[i][14]);
+                macro['ETH'].push(data.m_data[i][15]);
                 
             }
             Draw_macro1(macro);
@@ -137,12 +162,30 @@ $(document).ready(function(){
             Draw_macro3(macro);
             Draw_macro4(macro);
             Draw_macro5(macro);
+            Draw_impchart(data.result);
+            for(var i=0; i<data.d_data.length;i++){
+                var append_text= ""
+                r_array = round_array(data.d_data[i]);
+                append_text+='<tr><td>'+data.d_data[i][1].substring(0,10)+'</td>';
+                for(var j=2; j<r_array.length; j++){
+                    append_text+='<td class="numberCell">'+r_array[j]+'</td>';
+                }
+                $('#asset_row').append(append_text+'</tr>');
+            }
         },
+
         error: function (request, status, error) {
             console.log('실패');
         }
     });
 });
+function round_array(array){
+    r_array = []
+    for(var i=0;i<array.length;i++){
+        r_array.push(Number(array[i]).toFixed(2));
+    }
+    return r_array
+}
 function option(title){
     return options ={
         title:{
@@ -180,6 +223,37 @@ function option(title){
         }
     }
 };
+function Draw_impchart(importances){
+    var impctx = document.getElementById('imp_chart').getContext('2d');
+    var imp_chart = new Chart(impctx, {
+        type: 'horizontalBar',
+        data: {
+            labels:['국제 금가격','국제 은가격','WTI(원유)','원달러 환율','원유로 환율','원위엔 환율','원엔 환율','국채10년물 금리','미국채 10년물 금리','나스닥','S&P500','BTC','ETH'],
+            datasets:[{
+                label : '',
+                data: importances,
+                backgroundColor: ['#003f5c','#2f4b7c','#665191','#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#2f4b7c','#665191','#a05195','#d45087','#f95d6a','#ff7c43','#ffa600'],
+            }],
+        },
+        options: {
+            legend: {
+                display: false
+            },
+            responsive:true,
+            maintainAspectRatio:false,
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: 0 // Edit the value according to what you need
+                    }
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
+        }
+    });
+}
 function Draw_sentchart(sent){
     var sentctx= document.getElementById('sent_chart').getContext('2d');
 
@@ -194,10 +268,10 @@ function Draw_sentchart(sent){
             datasets: [{
                 label: '',
                 data: [sent],
-                            backgroundColor: purple_orange_gradient,
-                            hoverBackgroundColor: purple_orange_gradient,
-                            hoverBorderWidth: 2,
-                            hoverBorderColor: 'purple'
+                backgroundColor: purple_orange_gradient,
+                hoverBackgroundColor: purple_orange_gradient,
+                hoverBorderWidth: 2,
+                hoverBorderColor: 'purple'
             }]
         },
         options: {
@@ -228,7 +302,7 @@ function Draw_macro1(data){
         data: {
             labels: data['Date'],
             datasets: [{
-                label: '금 선물',
+                label: '국제 금가격',
                 data: data['Gold'],
                 borderColor: "#FFA500",
                 backgroundColor: "#FFA500",
@@ -238,7 +312,7 @@ function Draw_macro1(data){
                 fill: false,
             },
             {
-                label: '은 선물',
+                label: '국제 은가격',
                 data: data['Silver'],
                 borderColor: "#04092a",
                 backgroundColor: '#04092a',
@@ -248,7 +322,7 @@ function Draw_macro1(data){
                 fill: false,
             },
             {
-                label: 'WTI(원유) 선물',
+                label: 'WTI(원유)',
                 data: data['oil'],
                 borderColor: "#639371",
                 backgroundColor: '#639371',

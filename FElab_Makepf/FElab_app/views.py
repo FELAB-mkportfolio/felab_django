@@ -4,9 +4,11 @@ import json
 import pymysql
 from django.views.decorators.csrf import csrf_exempt
 from FElab_app.opt_models import c_Models
+from FElab_app.RF_regressor import RF_model
+from FElab_app.back_test import back_test
+
 import pandas as pd
 from django.http import HttpResponse,JsonResponse
-from FElab_app.back_test import back_test
 import numpy as np
 import FinanceDataReader as fdr
 from datetime import datetime, timedelta
@@ -20,13 +22,12 @@ from eunjeon import Mecab
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from . import load
 import collections
 
 loaded_model = load.LoadConfig.model
-
+tokenizer = load.LoadConfig.tokenizer
 #-*-coding:utf-8 -*-
 # Create your views here.
 #db 
@@ -292,16 +293,14 @@ def ajax_news_return(request):
 def ajax_news_analysis(request):
     news_data = json.loads(request.POST.get('news_data', ''))
     mecab= Mecab()
-    
-
     def sentiment_predict(new_sentence):
         max_len = 30
         stopwords = ['의','가','이','은','들','는','좀','잘','걍','과','도','를','으로','자','에','와','한','하다']
         new_sentence = re.sub(r'[^ㄱ-ㅎㅏ-ㅣ가-힣 ]','', new_sentence)
         new_sentence = mecab.morphs(new_sentence) # 토큰화
         new_sentence = [word for word in new_sentence if not word in stopwords] # 불용어 제거
-        tokenizer = Tokenizer()
-        tokenizer.fit_on_texts(new_sentence)
+        #tokenizer = Tokenizer()
+        tokenizer.fit_on_texts([new_sentence])
         encoded = tokenizer.texts_to_sequences([new_sentence]) # 정수 인코딩
         pad_new = pad_sequences(encoded, maxlen = max_len) # 패딩
         score = float(loaded_model.predict(pad_new)) # 예측
@@ -311,8 +310,10 @@ def ajax_news_analysis(request):
     for i in range(len(news_data['items'])):
         title = news_data['items'][i]['title']
         words_list.extend(mecab.nouns(title))
-        score.append(sentiment_predict(title))
-    score_avg = sum(score)/len(news_data['items'])
+        s = sentiment_predict(title)
+        if s>10 and s<90:
+            score.append(s)
+    score_avg = sum(score)/len(score)
     counter = collections.Counter(words_list)
     data = {'LSTM_sent' : score_avg, 'words_list' : counter.most_common(30)}
     return JsonResponse(data, safe=False)
@@ -324,7 +325,22 @@ def ajax_macro_return(request):
     curs = conn.cursor()
     curs.execute(sql)
     data = curs.fetchall()
-    return JsonResponse(data, safe=False)
+    sql2 = "SELECT * FROM macro_economics ORDER BY Date DESC LIMIT 7;"
+    #sql3 = "SELECT * FROM macro_economics ORDER BY Date DESC LIMIT 30;"
+    curs.execute(sql2)
+    data2 = curs.fetchall()
+    rf_model = RF_model()
+
+    df = pd.read_sql(sql2, con=conn)
+    '''
+    result_array=[]
+    for i in range(10):
+        result_array.append(rf_model.getDf(df))
+    result = np.mean(result_array,axis=0)'''
+    result = rf_model.retCorr(df)
+    curs.close()
+    conn.close()
+    return JsonResponse({'m_data': data,'d_data': data2,'result':list(result)}, safe=False)
 
 #텍스트 마이닝 페이지
 def textmining(request):
