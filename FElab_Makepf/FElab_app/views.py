@@ -127,10 +127,13 @@ def portfolio_optimize_result(request):
     for i in range(len(mystocks_weights)):
         w.append(float(mystocks_weights[i]))
     mystocks_weights = w
-    strategy = request.POST.get('strategy')
+    #strategy = request.POST.get('strategy')
     c_m = c_Models(mystocks,mystocks_weights,from_period,to_period,conn)
-    ret_vol, efpoints, weights = c_m.plotting()
-    data = {'ret_vol': ret_vol, 'efpoints': efpoints, "weights" : weights}
+    if(c_m=="No Data"):
+        data = "No Data"
+    else:
+        ret_vol, efpoints, weights = c_m.plotting()
+        data = {'ret_vol': ret_vol, 'efpoints': efpoints, "weights" : weights}
     return render(request, 'FElab_app/portfolio_optimize_result.html',context={'data':json.dumps(data)})
 #포트폴리오 백테스트 페이지
 def portfolio_backtest(request):
@@ -289,13 +292,16 @@ def ajax_news_return(request):
 def ajax_news_analysis(request):
     news_data = json.loads(request.POST.get('news_data', ''))
     mecab= Mecab()
-    tokenizer = Tokenizer()
+    
+
     def sentiment_predict(new_sentence):
         max_len = 30
         stopwords = ['의','가','이','은','들','는','좀','잘','걍','과','도','를','으로','자','에','와','한','하다']
         new_sentence = re.sub(r'[^ㄱ-ㅎㅏ-ㅣ가-힣 ]','', new_sentence)
         new_sentence = mecab.morphs(new_sentence) # 토큰화
         new_sentence = [word for word in new_sentence if not word in stopwords] # 불용어 제거
+        tokenizer = Tokenizer()
+        tokenizer.fit_on_texts(new_sentence)
         encoded = tokenizer.texts_to_sequences([new_sentence]) # 정수 인코딩
         pad_new = pad_sequences(encoded, maxlen = max_len) # 패딩
         score = float(loaded_model.predict(pad_new)) # 예측

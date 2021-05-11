@@ -93,7 +93,6 @@ $(document).ready(function(){
             macro['Date'] = [];
             macro['Gold'] = [];
             macro['Silver'] = [];
-            macro['Guri'] = [];
             macro['oil'] = [];
 
             macro['exchange'] = [];
@@ -112,26 +111,25 @@ $(document).ready(function(){
             macro['ETH'] = [];
             
             for(var i=0;i<data.length;i++){
-                macro['Date'].push(data[i][17]);
+                macro['Date'].push(data[i][16]);
                 macro['Gold'].push(data[i][2]);
                 macro['Silver'].push(data[i][3]);
-                macro['Guri'].push(data[i][4]);
-                macro['oil'].push(data[i][5]);
+                macro['oil'].push(data[i][4]);
 
-                macro['exchange'].push(data[i][6]);
-                macro['exchange_eur'].push(data[i][7]);
-                macro['exchange_cny'].push(data[i][8]);
-                macro['exchange_jpy'].push(data[i][9]);
+                macro['exchange'].push(data[i][5]);
+                macro['exchange_eur'].push(data[i][6]);
+                macro['exchange_cny'].push(data[i][7]);
+                macro['exchange_jpy'].push(data[i][8]);
 
-                macro['KR10'].push(data[i][10]);
-                macro['US10'].push(data[i][11]);
+                macro['KR10'].push(data[i][9]);
+                macro['US10'].push(data[i][10]);
                 
-                macro['Kospi'].push(data[i][12]);
-                macro['nasdaq'].push(data[i][13]);
-                macro['SP500'].push(data[i][14]);
+                macro['Kospi'].push(data[i][11]);
+                macro['nasdaq'].push(data[i][12]);
+                macro['SP500'].push(data[i][13]);
 
-                macro['BTC'].push(data[i][15]);
-                macro['ETH'].push(data[i][16]);
+                macro['BTC'].push(data[i][14]);
+                macro['ETH'].push(data[i][15]);
                 
             }
             Draw_macro1(macro);
@@ -247,16 +245,6 @@ function Draw_macro1(data){
                 lineTension: 0,
                 pointRadius: 1,
                 pointHoverRadius: 1,
-                fill: false,
-            },
-            {
-                label: '구리 선물',
-                data: data['Guri'],
-                borderColor: "#cccccc",
-                backgroundColor: '#cccccc',
-                pointRadius: 1,
-                pointHoverRadius: 1,
-                lineTension: 0,
                 fill: false,
             },
             {
