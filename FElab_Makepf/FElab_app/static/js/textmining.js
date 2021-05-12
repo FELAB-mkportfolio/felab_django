@@ -1,9 +1,15 @@
+var mystocks_names;
 $(document).ready(function(){
+    if(localStorage.getItem('mystocks_names')){
+        mystocks_names = localStorage.getItem('mystocks_names');  
+    }
+    console.log(mystocks_names);
     $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
     $('.nav-links').css("color","black");
     let today = new Date();  
     $('.now_date').text("기준일 " + today.getFullYear()+"/"+(Number(today.getMonth())+1)+"/"+today.getDate());
-    $('#market_analysis').css('display','flex');
+    
+    $('#company_analysis').css('display','flex');
     $('.category').click(function(){
         $(".category").removeClass("clicked");
         $(this).addClass("clicked");

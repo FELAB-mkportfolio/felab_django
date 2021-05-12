@@ -15,8 +15,8 @@
 </div>
 <div>
     <div style='display:flex; justify-content: center;'>
-        <a class="category clicked">시장 분석</a>
-        <a class="category">기업 분석</a>
+        <a class="category">시장 분석</a>
+        <a class="category clicked">기업 분석</a>
         <a class="category">경제 지표 분석</a>
     </div>
     <div class="news_container" id='market_analysis' style='border-bottom: 1px solid #cccccc;padding:0 40px;margin: 0 40px;'>
@@ -64,7 +64,22 @@
         </div>    
     </div>
     <div>
-    <div class="news_container" id='company_analysis'>
+    <div class="news_container" id='company_analysis' style='display: flex;justify-content: center;'>
+        <div class="content" style='width:70%; height:400px;'>
+            <div style='height:40px;display: flex;justify-content: center;'>
+                <input id="comboBox2" style='text-align:right;background-color: #eeeeee;width:50%;height:100%;border:none;' />
+                <button id="search_btn" style="width:100px;background-color:#00469d;height:100%;border:none;color:white;margin-left:10px;">분석하기</button>
+                
+            </div>
+            <div>
+                <div style='width:50%;margin-top:10px;margin-left:150px;'>
+                    <span>보유 종목</span>
+                    <input type='button' class="recmd_btn" id='first_recmd' value='증시'/>
+                    <input type='button' class="recmd_btn" id='second_recmd' value='경제'/>
+                    <input type='button' class="recmd_btn" id='third_recmd' value='금융'/>
+                </div>
+            </div>
+        </div>
     </div>
     
     <div class="news_container" id="macro_analysis">

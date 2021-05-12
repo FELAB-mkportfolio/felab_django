@@ -23,11 +23,11 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from . import load
+from FElab_app.load import LoadConfig
 import collections
 
-loaded_model = load.LoadConfig.model
-tokenizer = load.LoadConfig.tokenizer
+loaded_model = LoadConfig.model
+tokenizer = LoadConfig.tokenizer
 #-*-coding:utf-8 -*-
 # Create your views here.
 #db 
@@ -63,7 +63,6 @@ def ajax_stockname_return(request):
 #ajax 통신 (디비 내용 json으로 response)
 @csrf_exempt
 def ajax_db_return(request):
-    
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
     sql = "SELECT * FROM "+ request.POST['stock_code']+";"
 

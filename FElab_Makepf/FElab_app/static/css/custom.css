@@ -3,6 +3,9 @@
     padding:0px;
     box-sizing:border-box;
 }
+a{
+    cursor: pointer;
+}
 body {
     font-family: 'AppleSDGothicNeoM';
     z-index: 0;
@@ -365,6 +368,17 @@ button[class=amcharts-input]{
 }
 .news_container{
     display:none;
+}
+.content_list{
+    width:100%;
+    height:50px;
+    box-shadow: 1px 1px 3px 1px #dadce0;
+    display: flex;
+    margin:10px;
+}
+.content_list h4{
+    width:30%;
+    padding:10px;
 }
 .block {
     width:33%;
