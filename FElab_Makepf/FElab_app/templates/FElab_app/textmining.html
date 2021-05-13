@@ -7,25 +7,39 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud-1.0.4.js"></script>
 </head>
-<div style="display:flex;justify-content:center; padding:40px;background-color: white;border-bottom: 1px solid #eeeeee;margin:0 40px;">
-    <div class="commentBox" style="width:90%;position:relative;">
+<div class='h_container'>
+    <div class="h_container__title">
         <span style='font-size: 40px;color:#06c;'>텍스트마이닝</span>은 비정형 데이터 및 반정형 데이터에 대하여 자연어 처리 기술과 문서 처리 기술을 적용하여 유용한 정보를 추출, 가공하는 목적으로 하는 기술입니다.
     </div>
 </div>
-<div>
-    <div style='display:flex; justify-content: center;margin-top: 50px;'>
-        <a class="category">시장 분석</a>
-        <a class="category clicked">기업 분석</a>
-        <a class="category">경제 지표 분석</a>
-    </div>
-    <div class="news_container" id='market_analysis' style='border-bottom: 1px solid #cccccc;padding:0 40px;margin: 0 40px;'>
-        <div class="bt_left" style='width:90%;margin-right:0;'>
-            <div class='backtest_step' style='overflow-y: hidden;'>
+<div class='b_container'>
+    <section class='b_container__content' style='box-shadow: 1px 1px 3px 1px #dadce0;'>
+        <div class='b_container__content_header' style='margin-top:0;'>
+            <div style='display: flex;justify-content: center;'>
+                <div class='category_container'>
+                    <div><img src='/static/images/learning.png' class='category_icon'></div>
+                    <a class="category clicked">시장 분석</a><br>
+                    <span style='font-weight: 10;font-size:20px;'>네이버 뉴스 API에서 수집한 뉴스 데이터의 텍스트를 분석하여 의미있는 정보를 찾아냅니다.</span>
+                </div>
+                <div class='category_container'>
+                    <div><img src='/static/images/growth.png' class='category_icon'></div>
+                    <a class="category">기업 분석</a><br>
+                    <span style='font-weight: 10;font-size:20px;'>기업의 주가에 영향을 미치는 변수를 분석하고 뉴스 정보를 수집합니다.</span>
+                </div>
+                <div class='category_container'>
+                    <div><img src='/static/images/presentation.png' class='category_icon'></div>
+                    <a class="category">금융데이터 분석</a><br>
+                    <span style='font-weight: 10;font-size:20px;'>거시 경제 지표 및 인덱스, 비트코인 시세를 수집하여 분석합니다.</span>
+                </div>
+            </div>
+        </div>
+        <div class="b_container__content_body bcgray">
+            <div class='analysis_section' id='market_analysis'>
                 <h3 style='text-align: center;padding: 0 50px 10px 50px;margin:20px;color:#454F5D;'>뉴스 검색</h3>
                 <div style='height:40px;'>
                     <input id="comboBox" style='text-align:right;background-color: #eeeeee;width:50%;height:100%;' />
-                    <button id="search_btn" style="width:100px;background-color:#00469d;height:100%;border:none;color:white;">검색하기</button>
-                    <button id='analysis_btn' style='width:100px;background-color: white;color:#00469d;height:100%;border:1px solid #cccccc;'>분석하기</button>
+                    <button id="search_btn" class='blue_btn' style="width:100px;">검색하기</button>
+                    <button id='market_analysis_btn' class='white_btn' style='width:100px'>분석하기</button>
                 </div>
                 <div>
                     <div style='width:50%;margin-top:10px;'>
@@ -36,17 +50,30 @@
                     </div>
                 </div>
                 <div style='text-align: right;padding:20px 20px;font:italic bold;'>
-                <span>네이버 뉴스 API</span:>
-                <span style='text-align: right;margin: 50px 0;' class="now_date"></span><br>
-                <span style='font-size: 13px;color:#cccccc'>최대 100건 수집이 가능합니다.</span>
+                    <span>네이버 뉴스 API</span:>
+                    <span style='text-align: right;margin: 50px 0;' class="now_date"></span><br>
+                    <span style='font-size: 13px;color:#cccccc'>최대 100건 수집이 가능합니다.</span>
                 </div>
                 <div class='news_wrap' style="margin:10px 20px;font-size:15px;height:350px;overflow-y: auto;overflow-x: hidden;">
-                    <div id="news_board">
-
+                    <div id="news_board"></div>
+                </div>
+            </div>
+            <div class='analysis_section' id='company_analysis' style='height:300px;'>
+                <h3 style='text-align: center;padding: 0 50px 10px 50px;margin:20px;color:#454F5D;'>기업 검색</h3>
+                <div style='height:40px;'>
+                    <input id="comboBox2" style='text-align:right;background-color: #eeeeee;width:50%;height:100%;border:none;' />
+                    <button id='company_analysis_btn' class='blue_btn' style='width:100px'>분석하기</button>
+                </div>
+                <div>
+                    <div id='myasset' style='width:50%;margin-top:10px;margin-left:70px;'>
+                        <span>보유 종목</span>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class='analysis_section' id='macro_analysis'>
+
+            </div>
+
         <div class="bt_right" style='width:0%;display: none;'>
             <div class="backtest_step" style='margin-left:0;margin-bottom:0;'>
                 <div id="wordcloud" style='margin:30px 20px;'></div>
@@ -63,21 +90,7 @@
         </div>    
     </div>
     <div>
-    <div class="news_container" id='company_analysis' style='width100%;height:700px;'>
-        <div class="content" style='margin:100px;width:70%; height:400px;display: flex;justify-content: center;'>
-            <div style='height:40px;display: flex;justify-content: center;'>
-                <input id="comboBox2" style='text-align:right;background-color: #eeeeee;width:50%;height:100%;border:none;' />
-                <button id="analysis_btn" style="width:100px;background-color:#00469d;height:100%;border:none;color:white;margin-left:10px;">분석하기</button>
-                
-            </div>
-            <div>
-                <div id='myasset' style='width:50%;margin-top:10px;margin-left:20%;'>
-                    <span>보유 종목</span>
-                    
-                </div>
-            </div>
-        </div>
-        
+
         <div class='content'>
             <canvas id='chartdiv'></canvas>
         </div>

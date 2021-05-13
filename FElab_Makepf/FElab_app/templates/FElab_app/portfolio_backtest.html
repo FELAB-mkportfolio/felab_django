@@ -14,7 +14,7 @@
 
 <div class='b_container'>
     <section class='b_container__content bcgray'>
-        <div class='b_container__content_header'>
+        <div class='b_container__content_header' style='padding:0 100px;'>
             <h2>나의 포트폴리오 비중대로 자산에 투자했다면 성과가 어땠을지, 어느정도의 리스크까지 감수할 수 있었는지 확인해보세요. </h2>
         </div>
         <div class="b_container__content_body">
@@ -22,8 +22,8 @@
                 <div class='half_block' id='backtest_inputdiv_left'>
                     <input class='bcgray' id="comboBox" onfocus="if(this.value == '종목 검색') { this.value = ''; }" value="종목 검색" style='width:200px;margin-top: 50px;' />
                     <button id="putin_btn" class='orange_btn' style="width:90px;">담기</button>
-                    <div class="portfolio_pie" style="margin: 20px 0;font-size:10px;">
-                        <canvas id="portfolio_pie_chart" height="70vh"></canvas>
+                    <div class="portfolio_pie" style="height: 250px;">
+                        <canvas id="portfolio_pie_chart" style='height:90%;margin: 40px 0;'></canvas>
                     </div>
                     <div class='portfolio_table'>
                         <table class='table backtest_table' id='backtest_portfolio_table'>

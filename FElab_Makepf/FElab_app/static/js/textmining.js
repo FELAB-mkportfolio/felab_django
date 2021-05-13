@@ -7,11 +7,11 @@ $(document).ready(function(){
         mystocks_names = localStorage.getItem('mystocks_names').split(',');;  
         mystocks_codes = localStorage.getItem('mystocks_codes').split(',');;
         for (var i=0;i<mystocks_codes.length;i++){
-            $('#myasset').append("<a class='myasset_btn' value='"+mystocks_codes[i]+"' style='color: #06c; margin: 0 10px'>"+mystocks_names[i]+"</a>");
+            $('#myasset').append("<input type='button' class='myasset_btn' data='"+mystocks_codes[i]+"' value='"+mystocks_names[i]+"'/>");
         }
     }
     $(document).on('click', '.myasset_btn', function () {
-        $('#comboBox2').val($(this).attr('value').slice(2,) +' '+ $(this).text());
+        $('#comboBox2').val($(this).attr('data').slice(2,) +' '+ $(this).val());
     });
     $.ajax({
         url: '/ajax_stockname_return/',
@@ -86,18 +86,18 @@ $(document).ready(function(){
     let today = new Date();  
     $('.now_date').text("기준일 " + today.getFullYear()+"/"+(Number(today.getMonth())+1)+"/"+today.getDate());
     
-    $('#company_analysis').css('display','flex');
+    $('#company_analysis').css('display','block');
     $('.category').click(function(){
         $(".category").removeClass("clicked");
         $(this).addClass("clicked");
         if($(this).html()=="시장 분석"){
-            $('#market_analysis').css('display','flex');
+            $('#market_analysis').css('display','block');
             $('#company_analysis').css('display','none');
             $('#macro_analysis').css('display','none');
         }
         else if($(this).html()=="기업 분석"){
             $('#market_analysis').css('display','none');
-            $('#company_analysis').css('display','flex');
+            $('#company_analysis').css('display','block');
             $('#macro_analysis').css('display','none');
         }
         else{
@@ -147,7 +147,7 @@ $(document).ready(function(){
             });
         }
     });
-    $('#analysis_btn').click(function(){
+    $('#market_analysis_btn').click(function(){
         if (typeof(news_data) == "undefined" || $('#comboBox').val()==""){
             alert("수집된 뉴스가 없습니다");
         }
