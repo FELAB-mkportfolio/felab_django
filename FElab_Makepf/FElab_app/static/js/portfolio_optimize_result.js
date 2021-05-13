@@ -10,6 +10,7 @@ var mystocks_codes=[];
 var original_ctx = "";
 var after_ctx = "";
 $(document).ready(function () {
+
     $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
     $('.nav-links').css("color","black");
     $.ajax({
@@ -34,7 +35,6 @@ $(document).ready(function () {
     investment_kinds = localStorage.getItem("investment_kinds").split(',');
     
     opt_data = JSON.parse($('#any').val());
-    console.log(opt_data);
     GMV = opt_data .ret_vol['GMV'];
     MaxSharp = opt_data .ret_vol['MaxSharp'];
     RiskParity = opt_data .ret_vol['RiskParity'];
@@ -231,11 +231,11 @@ function round_array(array){
 }
 function Draw_optimize_pie(data){
     if(original_ctx !=""){
-        window.opt_report_chart.destroy();
+        window.portfolio_pie_chart.destroy();
     }
-    var ctx_opt_weight = document.getElementById("opt_report_chart").getContext('2d');
-    original_ctx= ctx_opt_weight;
-    window.opt_report_chart = new Chart(ctx_opt_weight, {
+    var portfolio_ctx = document.getElementById("portfolio_pie_chart").getContext('2d');
+    original_ctx= portfolio_ctx;
+    window.portfolio_pie_chart = new Chart(portfolio_ctx, {
         type: 'pie',
         data : data,
         label: mystocks_names,

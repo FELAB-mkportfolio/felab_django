@@ -6,28 +6,51 @@
 <head>
     <script type='text/javascript' src="{% static 'js/portfolio_optimize.js' %}"></script>
 </head>
-<div style="display:flex;justify-content:center; padding:20px;background-color: white;border-bottom: 1px solid #eeeeee;margin:0 40px;">
-    <div class="commentBox" style="width:90%;position:relative;">
+<div class='h_container'>
+    <div class="h_container__title">
         <span style='font-size: 35px;color:#06c;'>포트폴리오 이론</span>은 해리 마코위츠(Harry Max Markowitz)에 의해 체계화된 이론으로, 자산을 분산투자하여 포트폴리오를 만들게 되면 분산투자 전보다 위험을 감소시킬 수 있다는 이론입니다.
         투자자산의 가치는 그 투자로부터 기대되는 수익률이 클수록 커지며, 반면에 위험이 클수록 작아집니다. 지배 원리란 같은 위험 하에서는 기대 수익률이 높은 것이, 같은 기대수익률 하에서는 위험이 작은 것이 그렇지 않은 투자대상을 지배한다는 것입니다. 이 지배원리에 입각하여 선택되는 투자안이 <span style='font-size: 35px;color:#06c;'>효율적 투자대상</span>이 됩니다.
     </div>
 </div>
-<section class='content'>
-    <div class='wrap' style='height:100%;'>
-        <section>
-            <article class='main' style='overflow:hidden;text-align: center;'>
-                <h2 class="topicTitle">투자하고 있는 자산 입력하기</h2>
-                <p style='color:#cccccc;font-size:15px;'>투자를 하고 있지 않아도 투자하고 싶은 종목이나 자산을 입력하셔도 됩니다.</p>
-                <br></br>
-                <div style='text-align:center;'>
-                    <button id='register_pf' style='font-size:15px;'>Register</button>
-                </div>
-            </article>
-        </section>
-        
-    </div>
-</section>
-
+<div class='b_container'>
+    <section class='b_container__content bcgray'>
+        <div class='b_container__content_header' style="height:400px;">
+            <h2 class="topicTitle">투자하고 있는 자산 입력하기</h2>
+            <p style='color:#cccccc;font-size:20px;'>투자를 하고 있지 않아도 투자하고 싶은 종목이나 자산을 입력하시면 됩니다.</p>
+            <br>
+            <div style='text-align:center;'>
+                <button id='register_pf' style='font-size:15px;'>Register</button>
+            </div>
+        </div>
+        <div class="b_container__content_body">
+        </div>
+    </section>
+    <section class='b_container__content'>
+        <div class="b_container__content_body">
+            <section class='lecture'>
+                <article class='lecture_image' style='width:50%;'>
+                    <img src='/static/images/diversification1.jpg' style='width:100%; height: 100%;'>
+                </article>
+                <article class='lecture_comment' style='width:50%;'>
+                    <div class='lecture_commet_title'>
+                        <h2>분산투자, 알고계셨나요?</h2>
+                    </div>
+                    <div class='lecture_commet_content'>
+                        <p>'계란을 한 바군니에 담지 말라' 라는 말을 들어보셨을 겁니다. 각 자산은 투자에 따른 위험도가 각기 다르기 때문에 위험을 분산시키기 위해 다양한 자산으로 포트폴리오를 구성하는 것을 의미합니다. 
+                        </p>
+                    </div>
+                    <div class='lecture_commet_title' style='text-align: right;margin-top: 100px;'>
+                        <h2>분산투자가 중요한 이유는 ‘변동성 감소’ 때문</h2>
+                    </div>
+                    <div class='lecture_commet_content' style='text-align: right;'>
+                        <p>분산투자가 필요한 이유는 분산투자를 실행함으로써 투자자산의 수익률 변동성을 낮출 수 있기 때문입니다. 그렇다면 왜 수익률 변동성을 낮춰야 하는 걸까요? 수익률 변동성을 낮추면 투자과정 중 경험하는 수익률 하락 폭이 줄어들게 되어 ‘손실과 이익의 비대칭성’ 및 ‘비합리적인 매매의 가능성’을 예방할 수 있기 때문입니다. 
+                        </p>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </section>
+</div>
 <div>
     <div class="modal-mask modal-register_pf" style='font-family: AppleSDGothicNeoM;'>
         <div class="modal-wrapper">

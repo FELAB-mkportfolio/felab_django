@@ -4,6 +4,7 @@ var stocknames= [];
 var mystocks_weights = [];
 var mystocks_codes=[];
 var mystocks_names=[];
+
 pie_backgroundColor = ['#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#2f4b7c','#665191','#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#f95d6a','#ff7c43','#ffa600'];
 $(document).ready(function () {
     $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
@@ -118,8 +119,8 @@ $(document).ready(function () {
         if(sum<0.9999){
 
         }else{
-            if($('#opt_report_chart').is(!':empty')){
-                window.opt_report_chart.destroy();
+            if($('#portfolio_pie_chart').is(!':empty')){
+                window.portfolio_pie_chart.destroy();
             }
             data = {
                 datasets: [{
@@ -274,7 +275,7 @@ $(document).ready(function () {
                     $('#SP_VaR').html(SP500_VaR.toFixed(2));
                     $('#SP_MDD').html(SP500_MDD.toFixed(2));
 
-                    $('#result_container').css('display','block');
+                    $('#backtest_outputdiv').css('display','block');
                 },
                 error: function (request, status, error) {
                     console.log('실패');
@@ -286,8 +287,8 @@ $(document).ready(function () {
 
 });
 function Draw_optimize_pie(data){
-    var ctx_opt_weight = document.getElementById("opt_report_chart").getContext('2d');
-    window.opt_report_chart = new Chart(ctx_opt_weight, {
+    var portfolio_ctx = document.getElementById("portfolio_pie_chart").getContext('2d');
+    window.portfolio_pie_chart = new Chart(portfolio_ctx, {
         type: 'pie',
         data : data,
         option : {
@@ -356,7 +357,7 @@ function Draw_value_chart(x, y,y_kospi, y_SP) {
                 xAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: '기간'
                     }
                 }],
@@ -426,7 +427,7 @@ function Draw_Return_chart(x, y, y_kospi, y_SP) {
                 xAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: '기간'
                     }
                 }],
@@ -495,7 +496,7 @@ function Draw_MDD_chart(x, y, y_kospi,y_SP) {
                 xAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: '기간'
                     }
                 }],
@@ -541,7 +542,7 @@ function Draw_hist_chart(x, y) {
                 xAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: '기간'
                     }
                 }],

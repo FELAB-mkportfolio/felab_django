@@ -318,6 +318,10 @@ def ajax_news_analysis(request):
     return JsonResponse(data, safe=False)
 
 @csrf_exempt
+def ajax_company_analysis(request):
+    data =1
+    return JsonResponse(data, safe=False)
+@csrf_exempt
 def ajax_macro_return(request):
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
     sql = "SELECT *,DATE_FORMAT(Date,'%Y-%m') m FROM macro_economics GROUP BY M;"

@@ -4,7 +4,6 @@
 {% load static %}
 <head>
     <script type='text/javascript' src="{% static '/js/textmining.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud-1.0.4.js"></script>
 </head>
@@ -14,7 +13,7 @@
     </div>
 </div>
 <div>
-    <div style='display:flex; justify-content: center;'>
+    <div style='display:flex; justify-content: center;margin-top: 50px;'>
         <a class="category">시장 분석</a>
         <a class="category clicked">기업 분석</a>
         <a class="category">경제 지표 분석</a>
@@ -64,21 +63,23 @@
         </div>    
     </div>
     <div>
-    <div class="news_container" id='company_analysis' style='display: flex;justify-content: center;'>
-        <div class="content" style='width:70%; height:400px;'>
+    <div class="news_container" id='company_analysis' style='width100%;height:700px;'>
+        <div class="content" style='margin:100px;width:70%; height:400px;display: flex;justify-content: center;'>
             <div style='height:40px;display: flex;justify-content: center;'>
                 <input id="comboBox2" style='text-align:right;background-color: #eeeeee;width:50%;height:100%;border:none;' />
-                <button id="search_btn" style="width:100px;background-color:#00469d;height:100%;border:none;color:white;margin-left:10px;">분석하기</button>
+                <button id="analysis_btn" style="width:100px;background-color:#00469d;height:100%;border:none;color:white;margin-left:10px;">분석하기</button>
                 
             </div>
             <div>
-                <div style='width:50%;margin-top:10px;margin-left:150px;'>
+                <div id='myasset' style='width:50%;margin-top:10px;margin-left:20%;'>
                     <span>보유 종목</span>
-                    <input type='button' class="recmd_btn" id='first_recmd' value='증시'/>
-                    <input type='button' class="recmd_btn" id='second_recmd' value='경제'/>
-                    <input type='button' class="recmd_btn" id='third_recmd' value='금융'/>
+                    
                 </div>
             </div>
+        </div>
+        
+        <div class='content'>
+            <canvas id='chartdiv'></canvas>
         </div>
     </div>
     
