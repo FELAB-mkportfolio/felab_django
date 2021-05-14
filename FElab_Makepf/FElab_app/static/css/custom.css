@@ -324,20 +324,31 @@ select {
     margin: 30px 20px 30px 20px; color: #cccccc; font-size: 30px;
 }
 .analysis_section{
-    overflow-y: hidden; 
+    overflow-y: hidden; display:none; 
 }
 .analysis_result_container{
-    display: flex;height:350px; margin: 0 20%;
+    display: flex;justify-content: center;height:350px;
+}
+#wordcloud_div{
+    max-width:700px; height:500px; background-color: white; padding: 10px; margin-right: 20px; overflow-y:auto; overflow-x:hidden;
 }
 #wordcloud{
-    width:60%; height:100%;
+    width: 650px;height:500px;;
+}
+#stockchart_div{
+    max-width:700px; height:500px; background-color: white; padding: 10px; margin-right: 20px; overflow-y:auto; overflow-x:hidden;
+}
+#company_news_board{
+    max-width:400px; height:500px; background-color: #191f28; font-weight: 500;  overflow-y:auto; overflow-x:hidden;
+}
+#company_news_board a{
+    color:white;
 }
 .macro_table{
-    margin-left: 50px;height:100%;overflow-y: auto;overflow-x: hidden;
+    margin: 0 50px;overflow-y: auto;overflow-x: hidden;
 }
-.sent_div{
-    width:10%;
-    margin-right:20px;
+#sent_div{
+    max-width:400px; height:300px; background-color: #191f28; font-weight: 500;  overflow-y:auto; overflow-x:hidden; display: flex; color:white;
 }
 .recmd_btn{
     width:50px;border-radius: 10px; background-color: #00469d; color: white; font-size:15px; font-family: 'Gothic'; border:none;
@@ -361,13 +372,14 @@ div.center{
     width:100%; margin-bottom:50px; margin-left: 50px; height:300px; overflow-x: hidden; overflow-y: hidden; white-space: nowrap;
 }
 div.internal {
-    display: inline-block; vertical-align: middle; width: 100%; text-align: center;
+    display: inline-block; vertical-align: middle; width: 30%; height:100%;text-align: center;
+}
+canvas .macro_graph{
+    height: 100%;
 }
 #left_img {
     transform:rotate(90deg); -moz-transform: scaleX(-1);  -o-transform: scaleX(-1);  -webkit-transform: scaleX(-1);  transform: scaleX(-1);   
     filter: FlipH; -ms-filter: "FlipH";
 }
-#wordcloud{
-    height: 300px;margin: 0 auto;
-}
+
 /*     */

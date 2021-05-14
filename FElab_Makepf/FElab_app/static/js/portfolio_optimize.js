@@ -164,7 +164,7 @@ $(document).ready(function () {
                 mystocks_weights.push(parseFloat($('#mystocks_weights'+i).val()));
                 sum = sum+ Number(parseFloat($('#mystocks_weights'+i).val()).toFixed(1));
             }
-            if(sum !=1 ){
+            if(sum <0.9999 ){
                 alert("비중의 합이 1이 아닙니다.")
             }else{
                 var url = "/portfolio_optimize_result";

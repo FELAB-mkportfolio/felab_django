@@ -77,7 +77,7 @@ $(document).ready(function () {
     }
     opt_result(mystocks_names, GMV, MaxSharp, RiskParity, Trets, Tvols,ef_points_tooltip);
     $("#putin_btn").click(function () {
-        if (mystocksDB.includes($('#comboBox').val().split(' ')[0])) {
+        if (stocknames.includes($('#comboBox').val())) {
             var code = "kp"+$('#comboBox').val().split(' ')[0];
             var stockname = $('#comboBox').val().split(' ').slice(1,).join(' ');
             if(adjusted_assets_codes.includes(code)){
@@ -88,7 +88,7 @@ $(document).ready(function () {
                 var add_eq = $('#adjusted_asset_row tr')['length'];
                 $('#comboBox').val("");
                 $('#adjusted_asset_row').append("<tr eq= "+Number(add_eq)+"><td class='numberCell'>"+stockname+
-            "</td><td class='numberCell'><input id='adjusted_assets_weights"+Number(add_eq)+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='putout_btn' eq= "+Number(add_eq)+"kor-name="+adjusted_assets_names[i]+" name=" + code +
+            "</td><td class='numberCell'><input id='adjusted_assets_weights"+Number(add_eq)+"' class='my_input_weight' type='number' style='width:100px;height:30px;border:none; background-color:#eeeeee;bottom:3px' value=''></td><td class='numberCell'><button id='putout_btn' eq= '"+Number(add_eq)+"' kor-name="+adjusted_assets_names[i]+" name=" + code +
             " style='width:60px;height:30px;border:none;border-radius:5px; background-color:#eeeeee;bottom:3px;'>빼기</button></td><td><image src='/static/images/loupe.png' id='showSise' data-stock = '"+code+"'data-popup-open = 'showSise' style='width:25px;height:25px;text-align:center;cursor:pointer;' align='middle' title='시세보기' cursor:pointer></image></td></tr>");
                 
             }
@@ -140,7 +140,7 @@ $(document).ready(function () {
                 stockGraph(stockdata,chart);
             },
             error: function (request, status, error) {
-                console.log('실패');
+                alert("서버와 통신에 실패했습니다.");
             }
         })
     });
@@ -172,13 +172,13 @@ $(document).ready(function () {
     });
     $('#change_btn').click(function(){
         var ad_sum = 0
-
         adjusted_assets_weights= [];
         for (i=0;i<adjusted_assets_codes.length;i++){
             adjusted_assets_weights.push(parseFloat($('#adjusted_assets_weights'+i).val()));
             ad_sum = ad_sum+ parseFloat($('#adjusted_assets_weights'+i).val());
         }
-        if(ad_sum !=1 ){
+
+        if(ad_sum<0.9999){
             alert("비중의 합이 1이 아닙니다.")
         }else{
             $.ajax({
@@ -453,7 +453,6 @@ function opt_result_change(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols,ef
                 bodyAlign: 'center',
                 callbacks: {
                     label: function(tooltipitem, data){
-                        console.log(tooltipitem);
                         var title = "기대수익률 : "+ tooltipitem['yLabel'].toFixed(2) + " 표준편차 : "+tooltipitem['xLabel'].toFixed(2);
                         var body = "";
                         adjusted_tooltip_weights = [];
@@ -507,10 +506,10 @@ function opt_result_change(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols,ef
             }]
         },
     });
-    pushscatter(adjusted_Efchart, GMV[0], GMV[1], 'GMV Portfolio', '#d9534f', '2');
-    pushscatter(adjusted_Efchart, MaxSharp[0], MaxSharp[1], 'Max Sharp Portfolio', '#5bc0de', '2');
-    pushscatter(adjusted_Efchart, RiskParity[0], RiskParity[1], 'Risk Parity Portfolio', '#5cb85c', '2');
-    pushscatter(adjusted_Efchart, adjusted_Userpf[0], adjusted_Userpf[1], "내 포트폴리오","#428bca", "2");
+    pushscatter(adjusted_Efchart, GMV[0], GMV[1], 'GMV Portfolio', '#003f5c', '2');
+    pushscatter(adjusted_Efchart, MaxSharp[0], MaxSharp[1], 'Max Sharp Portfolio', '#d45087', '2');
+    pushscatter(adjusted_Efchart, RiskParity[0], RiskParity[1], 'Risk Parity Portfolio', '#ff7c43', '2');
+    pushscatter(adjusted_Efchart, adjusted_Userpf[0], adjusted_Userpf[1], "내 포트폴리오","#ffa600", "2");
 
 }
 

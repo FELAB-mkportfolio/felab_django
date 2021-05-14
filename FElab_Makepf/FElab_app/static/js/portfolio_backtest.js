@@ -75,7 +75,7 @@ $(document).ready(function () {
     }
     
     $("#putin_btn").click(function () {
-        if (mystocksDB.includes($('#comboBox').val().split(' ')[0])) {
+        if (stocknames.includes($('#comboBox').val())) {
             code = "kp"+$('#comboBox').val().split(' ')[0];
             if (mystocks_codes.includes(code)){
                 alert("이미 담겨 있는 종목입니다");
@@ -117,7 +117,7 @@ $(document).ready(function () {
             mystocks_weights.push(Number($('#mystocks_weights'+i).val()));
         }
         if(sum<0.9999){
-
+            alert("비중의 합이 1이 아닙니다.");
         }else{
             if($('#portfolio_pie_chart').is(!':empty')){
                 window.portfolio_pie_chart.destroy();
@@ -292,7 +292,7 @@ function Draw_optimize_pie(data){
         type: 'pie',
         data : data,
         option : {
-            responsive: false,
+            responsive: true,
             legend : true,
             maintainAspectRatio : false,
             animation: true,
