@@ -19,22 +19,22 @@ from sqlalchemy import create_engine
 import re
 from eunjeon import Mecab
 
-import tensorflow as tf
-from tensorflow.keras.models import load_model
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from FElab_app.load import LoadConfig
+#import tensorflow as tf
+#from tensorflow.keras.models import load_model
+#from sklearn.model_selection import train_test_split
+#from tensorflow.keras.preprocessing.sequence import pad_sequences
+#from FElab_app.load import LoadConfig
 import collections
 
-loaded_model = LoadConfig.model
-tokenizer = LoadConfig.tokenizer
+#loaded_model = LoadConfig.model
+#tokenizer = LoadConfig.tokenizer
 #-*-coding:utf-8 -*-
 # Create your views here.
 #db 
 db = {
         'host': "localhost",
         'user': "root",
-        'password' : "su970728!",
+        'password' : "root",
         'db_name' : "krmarket",
     }
     #홈페이지 메인
@@ -290,8 +290,8 @@ def ajax_news_return(request):
     return JsonResponse(data, safe=False)
 @csrf_exempt
 def ajax_news_analysis(request):
-    news_data = json.loads(request.POST.get('news_data', ''))
-    mecab= Mecab()
+#    news_data = json.loads(request.POST.get('news_data', ''))
+#    mecab= Mecab()
     def sentiment_predict(new_sentence):
         max_len = 30
         stopwords = ['의','가','이','은','들','는','좀','잘','걍','과','도','를','으로','자','에','와','한','하다']
