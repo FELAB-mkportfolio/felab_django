@@ -48,39 +48,7 @@ $(document).ready(function(){
         disable : false,
         position : {my : 'center top', at: 'center bottom', collision: "None Flip"},
     });
-    $('#analysis_btn').click(function(){
-        $.ajax({
-            url: '/ajax_company_analysis/',
-            type: "POST",
-            dataType: "json",
-            data: {'data': 'kp'+$('#comboBox2').val().split(' ')[0]},
-            success: function (data) {
-                
-            },
-            error: function (request, status, error) {
-                console.log('실패');
-            }
-        });
-        $.ajax({
-            url: '/ajax_db_return/',
-            type: "POST",
-            dataType: "json",
-            data: {'data': 'kp'+$('#comboBox2').val().split(' ')[0]},
-            success: function (data) {
-                var stockdata = [];
-                for (var i = 0; i < data.length; i++) {
-                    stockdata.push({ 'Date': moment(data[i][0]).format('YYYY-MM-DD'), 'Open': data[i][1], 'High': data[i][2], 'Low': data[i][3], 'Close': data[i][4], 'Volume': data[i][5] })
-                }
-                var chartdiv = document.querySelector('#chartdiv');
-                var charttype = am4charts.XYChart;
-                var chart = createChart(chartdiv, charttype);
-                stockGraph(stockdata,chart);
-                },
-            error: function (request, status, error) {
-                console.log('실패');
-            }
-        });
-    });
+    
     $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
     $('.nav-links').css("color","black");
     let today = new Date();  
@@ -164,29 +132,63 @@ $(document).ready(function(){
                         words.push({'text': data.words_list[i][0], 'weight': data.words_list[i][1]})
                     }
                     //$('.bt_right_block').css('width','60%');
-                    $('.bt_right').animate({
-                        width:"60%"},2000,
-                        function(){$('#wordcloud').jQCloud(words,{
-                            autoResize : false,
-                            height: 350,
-                            delay: 50,
-                        });
-                        if (data.LSTM_sent>50){
-                            var comment = "수집된 뉴스의 감정점수는 "+ data.LSTM_sent.toFixed(0)+ " 점 입니다. 내일의 주가(코스피 종가)를 긍정적으로 예상하고 있습니다.";
-                        }else if(data.LSTM_sent<=50){
-                            var comment = "수집된 뉴스의 감정점수는 "+ data.LSTM_sent.toFixed(0)+ " 점 입니다. 내일의 주가(코스피 종가)를 부정적으로 예상하고 있습니다.";
-                        }
-                        $('#sent_score').html(comment);
+                    $('#wordcloud').jQCloud(words,{
+                        autoResize : false,
+                        height: 350,
+                        delay: 50,
                     });
-                    $('.bt_right').css("display","block");
-
+                    if (data.LSTM_sent>50){
+                        var comment = "수집된 뉴스의 감정점수는 "+ data.LSTM_sent.toFixed(0)+ " 점 입니다. 내일의 주가(코스피 종가)를 긍정적으로 예상하고 있습니다.";
+                    }else if(data.LSTM_sent<=50){
+                        var comment = "수집된 뉴스의 감정점수는 "+ data.LSTM_sent.toFixed(0)+ " 점 입니다. 내일의 주가(코스피 종가)를 부정적으로 예상하고 있습니다.";
+                    }
+                    $('#sent_score').html(comment);
+                    $('#market_analysis_result').css('display','inline-block');
+                    
                     Draw_sentchart(data.LSTM_sent);
                 },
                 error: function (request, status, error) {
-                    console.log('실패');
+                    alert('서버와 통신에 실패했습니다');
                 }
             });
         }
+    });
+    $('#company_analysis_btn').click(function(){
+        $('#market_analysis_result').css('display','none');
+        $.ajax({
+            url: '/ajax_company_analysis/',
+            type: "POST",
+            dataType: "json",
+            data: {'data': 'kp'+$('#comboBox2').val().split(' ')[0]},
+            success: function (data) {
+                
+            },
+            error: function (request, status, error) {
+                console.log('실패');
+            }
+        });
+        $.ajax({
+            url: '/ajax_db_return/',
+            type: "POST",
+            dataType: "json",
+            data: {'data': 'kp'+$('#comboBox2').val().split(' ')[0]},
+            success: function (data) {
+                var stockdata = [];
+                for (var i = 0; i < data.length; i++) {
+                    stockdata.push({ 'Date': moment(data[i][0]).format('YYYY-MM-DD'), 'Open': data[i][1], 'High': data[i][2], 'Low': data[i][3], 'Close': data[i][4], 'Volume': data[i][5] })
+                }
+                var chartdiv = document.querySelector('#chartdiv');
+                var charttype = am4charts.XYChart;
+                var chart = createChart(chartdiv, charttype);
+                stockGraph(stockdata,chart);
+                },
+            error: function (request, status, error) {
+                console.log('실패');
+            }
+        });
+    });
+    $('#macro_analysis_btn').click(function(){
+
     });
     $.ajax({
         url: '/ajax_macro_return/',
@@ -355,6 +357,9 @@ function Draw_sentchart(sent){
             }]
         },
         options: {
+            legend: {
+                display: false
+             },
             responsive:true,
             maintainAspectRatio:false,
             scales: {

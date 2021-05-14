@@ -324,7 +324,20 @@ select {
     margin: 30px 20px 30px 20px; color: #cccccc; font-size: 30px;
 }
 .analysis_section{
-    overflow-y: hidden; display: none;
+    overflow-y: hidden; 
+}
+.analysis_result_container{
+    display: flex;height:350px; margin: 0 20%;
+}
+#wordcloud{
+    width:60%; height:100%;
+}
+.macro_table{
+    margin-left: 50px;height:100%;overflow-y: auto;overflow-x: hidden;
+}
+.sent_div{
+    width:10%;
+    margin-right:20px;
 }
 .recmd_btn{
     width:50px;border-radius: 10px; background-color: #00469d; color: white; font-size:15px; font-family: 'Gothic'; border:none;
