@@ -178,7 +178,7 @@ $(document).ready(function () {
             ad_sum = ad_sum+ parseFloat($('#adjusted_assets_weights'+i).val());
         }
 
-        if(ad_sum<0.9999){
+        if(ad_sum<0.9999 || ad_sum>1){
             alert("비중의 합이 1이 아닙니다.")
         }else{
             $.ajax({

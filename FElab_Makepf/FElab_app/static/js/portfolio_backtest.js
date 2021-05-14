@@ -116,8 +116,7 @@ $(document).ready(function () {
             sum = sum+Number($('#mystocks_weights'+i).val())
             mystocks_weights.push(Number($('#mystocks_weights'+i).val()));
         }
-        if(sum<0.9999){
-            alert("비중의 합이 1이 아닙니다.");
+        if (sum<0.9999 || sum>1){
         }else{
             if($('#portfolio_pie_chart').is(!':empty')){
                 window.portfolio_pie_chart.destroy();
@@ -198,7 +197,7 @@ $(document).ready(function () {
             sum = sum+Number($('#mystocks_weights'+i).val());
             mystocks_weights.push(Number($('#mystocks_weights'+i).val()));
         }
-        if(sum<0.99999){
+        if(sum<0.9999 || sum>1){
             alert("비중의 합이 1이 아닙니다.");
         }else{
             $.ajax({
