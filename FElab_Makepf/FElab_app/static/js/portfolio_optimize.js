@@ -75,7 +75,7 @@ $(document).ready(function () {
 
     
     $("#my_putin_btn").click(function () {
-        if (mystocksDB.includes($('#my_comboBox').val().split(' ')[0])) {
+        if (stocknames.includes($('#my_comboBox').val())) {
             code = "kp"+$('#my_comboBox').val().split(' ')[0];
             stockname = $('#my_comboBox').val().split(' ').slice(1,).join(' ');
             if(mystocks_names.includes(stockname)){
@@ -100,6 +100,10 @@ $(document).ready(function () {
     $(document).on('click', '.my_putout_btn', function () {
         mystocks_codes.splice(mystocks_codes.indexOf($(this).attr('name')),1);
         mystocks_names.splice(mystocks_names.indexOf($(this).attr('kor-name')),1);
+        if (!stocknames.includes($(this).attr('name').slice(2,)+' '+ $(this).attr('kor-name'))){
+            stocknames.push($(this).attr('name').slice(2,)+' '+ $(this).attr('kor-name'));
+            
+        }
         $("#asset_row tr[eq="+$(this).attr('eq')+"]").remove();
         for (i=0;i<mystocks_codes.length;i++){
             $('#asset_row tr').eq(i).attr('eq',i);

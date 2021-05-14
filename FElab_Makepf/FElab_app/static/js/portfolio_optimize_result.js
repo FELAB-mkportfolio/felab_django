@@ -10,6 +10,7 @@ var mystocks_codes=[];
 var original_ctx = "";
 var after_ctx = "";
 $(document).ready(function () {
+
     $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
     $('.nav-links').css("color","black");
     $.ajax({
@@ -47,8 +48,8 @@ $(document).ready(function () {
     ef_points_tooltip.push(asset_weights['ms']);
     ef_points_tooltip.push(asset_weights['rp']);
     ef_points_tooltip.push(numtofix(mystocks_weights));
-    $('user_ret').val(Userpf[1]);
-    $('user_vol').val(Userpf[0]);
+    $('#user_ret').text((Userpf[1]*100).toFixed(2)+"%");
+    $('#user_vol').text(Userpf[0].toFixed(2));
     if (asset_weights ==1){
         alert("입력한 기간이 짧습니다.");
         location.reload();
@@ -61,12 +62,12 @@ $(document).ready(function () {
     $('#strategy_comment_span').html('GMV(전역 최소 분산) 포트폴리오는 투자자의 위험 성향이 아주 강한 경우의 포트폴리오입니다. 이러한 상황에서 투자자는 수익의 최대화보다 위험의 최소화를 우선순위로 두게 되며, 이에 따라 최적화 프로세스는 가장 낮은 변동성의 포트폴리오를 구성할 수 있도록 가중치의 해를 찾습니다.');
     data = {
         datasets: [{
-            data: asset_weights['gmv'],
+            data: mystocks_weights,
             backgroundColor:pie_backgroundColor.slice(0,mystocks_codes.length),
         }],
         labels : mystocks_names, 
     }
-    r_array= round_array(asset_weights['gmv']);
+    r_array= round_array(mystocks_weights);
     Draw_optimize_pie(data);
     
     
@@ -230,11 +231,11 @@ function round_array(array){
 }
 function Draw_optimize_pie(data){
     if(original_ctx !=""){
-        window.opt_report_chart.destroy();
+        window.portfolio_pie_chart.destroy();
     }
-    var ctx_opt_weight = document.getElementById("opt_report_chart").getContext('2d');
-    original_ctx= ctx_opt_weight;
-    window.opt_report_chart = new Chart(ctx_opt_weight, {
+    var portfolio_ctx = document.getElementById("portfolio_pie_chart").getContext('2d');
+    original_ctx= portfolio_ctx;
+    window.portfolio_pie_chart = new Chart(portfolio_ctx, {
         type: 'pie',
         data : data,
         label: mystocks_names,

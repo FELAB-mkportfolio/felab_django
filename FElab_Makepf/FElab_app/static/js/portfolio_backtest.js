@@ -4,6 +4,7 @@ var stocknames= [];
 var mystocks_weights = [];
 var mystocks_codes=[];
 var mystocks_names=[];
+
 pie_backgroundColor = ['#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#2f4b7c','#665191','#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#f95d6a','#ff7c43','#ffa600'];
 $(document).ready(function () {
     $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
@@ -118,8 +119,8 @@ $(document).ready(function () {
         if(sum<0.9999){
 
         }else{
-            if($('#opt_report_chart').is(!':empty')){
-                window.opt_report_chart.destroy();
+            if($('#portfolio_pie_chart').is(!':empty')){
+                window.portfolio_pie_chart.destroy();
             }
             data = {
                 datasets: [{
@@ -210,7 +211,7 @@ $(document).ready(function () {
             'rebalancing_month' : $('#rebalancing_month').val(), 'start_amount' : $('#start_amount').val(), 'strategy': $('input[name=strategy]:checked').val(),
             "interval": $("input[name='interval']:checked").val()},
                 success: function (data) {
-                    console.log(data.indicator);
+                    console.log(data);
                     back_Mean = data.indicator[0]['Mean'];
                     back_Std = data.indicator[0]['Std'];
                     back_Sharp_ratio = data.indicator[0]['Sharpe ratio'];
@@ -230,6 +231,19 @@ $(document).ready(function () {
                     KOSPI_drawdown = data.bench[0]['KOSPI_Drawdown'];
                     SP500_drawdown = data.bench[0]['S&P500_Drawdown'];
                     
+                    KOSPI_mean_return = data.KOSPI_indicator[0]['Mean'];
+                    KOSPI_MDD = data.KOSPI_indicator[0]['MDD'];
+                    KOSPI_sharpe = data.KOSPI_indicator[0]['Sharpe ratio'];
+                    KOSPI_std = data.KOSPI_indicator[0]['Std'];
+                    KOSPI_VaR = data.KOSPI_indicator[0]['VaR'];
+
+                    SP500_mean_return = data['S&P500_indicator'][0]['Mean'];
+                    SP500_MDD = data['S&P500_indicator'][0]['MDD'];
+                    SP500_sharpe = data['S&P500_indicator'][0]['Sharpe ratio'];
+                    SP500_std = data['S&P500_indicator'][0]['Std'];
+                    SP500_VaR = data['S&P500_indicator'][0]['VaR'];
+                    
+                    
 
                     $('#daterange').html(" " + $('#from').val() +"~"+ $('#to').val());
                     //그래프 그리기
@@ -243,13 +257,25 @@ $(document).ready(function () {
                     Draw_value_chart(back_Date, back_value,KOSPI_balance, SP500_balance);
                     Draw_Return_chart(back_Date, back_return,KOSPI_return, SP500_return);
                     Draw_MDD_chart(back_Date, back_Drawdown,KOSPI_drawdown,SP500_drawdown);
-                    $('#mean_return').html(back_Mean.toFixed(2));
+                    $('#mean_return').html((back_Mean*100).toFixed(2)+"%");
                     $('#std').html(back_Std.toFixed(2));
                     $('#sharp').html(back_Sharp_ratio.toFixed(2));
                     $('#VaR').html(back_VaR.toFixed(2));
                     $('#MDD').html(back_MDD.toFixed(2));
 
-                    $('#result_container').css('display','block');
+                    $('#KP_mean_return').html((KOSPI_mean_return*100).toFixed(2)+"%");
+                    $('#KP_std').html(KOSPI_std.toFixed(2));
+                    $('#KP_sharp').html(KOSPI_sharpe.toFixed(2));
+                    $('#KP_VaR').html(KOSPI_VaR.toFixed(2));
+                    $('#KP_MDD').html(KOSPI_MDD.toFixed(2));
+
+                    $('#SP_mean_return').html((SP500_mean_return*100).toFixed(2)+"%");
+                    $('#SP_std').html(SP500_std.toFixed(2));
+                    $('#SP_sharp').html(SP500_sharpe.toFixed(2));
+                    $('#SP_VaR').html(SP500_VaR.toFixed(2));
+                    $('#SP_MDD').html(SP500_MDD.toFixed(2));
+
+                    $('#backtest_outputdiv').css('display','block');
                 },
                 error: function (request, status, error) {
                     console.log('실패');
@@ -261,8 +287,8 @@ $(document).ready(function () {
 
 });
 function Draw_optimize_pie(data){
-    var ctx_opt_weight = document.getElementById("opt_report_chart").getContext('2d');
-    window.opt_report_chart = new Chart(ctx_opt_weight, {
+    var portfolio_ctx = document.getElementById("portfolio_pie_chart").getContext('2d');
+    window.portfolio_pie_chart = new Chart(portfolio_ctx, {
         type: 'pie',
         data : data,
         option : {
@@ -331,7 +357,7 @@ function Draw_value_chart(x, y,y_kospi, y_SP) {
                 xAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: '기간'
                     }
                 }],
@@ -401,7 +427,7 @@ function Draw_Return_chart(x, y, y_kospi, y_SP) {
                 xAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: '기간'
                     }
                 }],
@@ -470,7 +496,7 @@ function Draw_MDD_chart(x, y, y_kospi,y_SP) {
                 xAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: '기간'
                     }
                 }],
@@ -516,7 +542,7 @@ function Draw_hist_chart(x, y) {
                 xAxes: [{
                     display: true,
                     scaleLabel: {
-                        display: true,
+                        display: false,
                         labelString: '기간'
                     }
                 }],

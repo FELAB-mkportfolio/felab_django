@@ -1,22 +1,131 @@
+var mystocks_names;
+var mystocks_codes;
+var mystocksDB=[];
+var stocknames=[];
 $(document).ready(function(){
+    if(localStorage.getItem('mystocks_names')){
+        mystocks_names = localStorage.getItem('mystocks_names').split(',');;  
+        mystocks_codes = localStorage.getItem('mystocks_codes').split(',');;
+        for (var i=0;i<mystocks_codes.length;i++){
+            $('#myasset').append("<input type='button' class='myasset_btn' data='"+mystocks_codes[i]+"' value='"+mystocks_names[i]+"'/>");
+        }
+    }
+    $(document).on('click', '.myasset_btn', function () {
+        $('#comboBox2').val($(this).attr('data').slice(2,) +' '+ $(this).val());
+    });
+    $.ajax({
+        url: '/ajax_stockname_return/',
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+            for (var i = 0; i < data.length; i++) {
+                mystocksDB.push(data[i].split(' ')[0]);
+                stocknames.push(data[i]);
+            }
+        },
+        error: function (request, status, error) {
+            console.log('실패');
+        }
+    });
+    $('#comboBox2').autocomplete({
+        source: stocknames,
+        select: function (event, ui) {
+        },
+        focus : function(event, ui){
+            return false;
+        },
+        minLength : 1,
+        autoFocus : true,
+        classes : {
+            'ui-autocomplete' : 'highlight'
+        },
+        open: function(event, ui) {
+            $(this).autocomplete("widget").css({
+                "width": 300
+            });
+        },
+        delay : 500,
+        disable : false,
+        position : {my : 'center top', at: 'center bottom', collision: "None Flip"},
+    });
+    $('#analysis_btn').click(function(){
+        $.ajax({
+            url: '/ajax_company_analysis/',
+            type: "POST",
+            dataType: "json",
+            data: {'data': 'kp'+$('#comboBox2').val().split(' ')[0]},
+            success: function (data) {
+                
+            },
+            error: function (request, status, error) {
+                console.log('실패');
+            }
+        });
+        $.ajax({
+            url: '/ajax_db_return/',
+            type: "POST",
+            dataType: "json",
+            data: {'data': 'kp'+$('#comboBox2').val().split(' ')[0]},
+            success: function (data) {
+                var stockdata = [];
+                for (var i = 0; i < data.length; i++) {
+                    stockdata.push({ 'Date': moment(data[i][0]).format('YYYY-MM-DD'), 'Open': data[i][1], 'High': data[i][2], 'Low': data[i][3], 'Close': data[i][4], 'Volume': data[i][5] })
+                }
+                var chartdiv = document.querySelector('#chartdiv');
+                var charttype = am4charts.XYChart;
+                var chart = createChart(chartdiv, charttype);
+                stockGraph(stockdata,chart);
+                },
+            error: function (request, status, error) {
+                console.log('실패');
+            }
+        });
+    });
     $("#js-navbar-toggle").attr("src", "/static/images/menu_black.png");
     $('.nav-links').css("color","black");
     let today = new Date();  
-    $('#now_date').text("기준일 " + today.getFullYear()+"/"+(Number(today.getMonth())+1)+"/"+today.getDate());
+    $('.now_date').text("기준일 " + today.getFullYear()+"/"+(Number(today.getMonth())+1)+"/"+today.getDate());
+    
+    $('#company_analysis').css('display','block');
     $('.category').click(function(){
         $(".category").removeClass("clicked");
         $(this).addClass("clicked");
-        if($(this).html()=="주가 분석"){
-            //주가 분석
+        if($(this).html()=="시장 분석"){
+            $('#market_analysis').css('display','block');
+            $('#company_analysis').css('display','none');
+            $('#macro_analysis').css('display','none');
+        }
+        else if($(this).html()=="기업 분석"){
+            $('#market_analysis').css('display','none');
+            $('#company_analysis').css('display','block');
+            $('#macro_analysis').css('display','none');
         }
         else{
-            //기업분석
+            $('#market_analysis').css('display','none');
+            $('#company_analysis').css('display','none');
+            $('#macro_analysis').css('display','block');
         }
     });
+    $('.horizon-prev').click(function(event) {
+        event.preventDefault();
+        $('#content').animate({
+          scrollLeft: "-=775px"
+        }, "slow");
+    });
+    $('.horizon-next').click(function(event) {
+        event.preventDefault();
+        $('#content').animate({
+            scrollLeft: "+=775px"
+        }, "slow");
+    });
+    $('.recmd_btn').click(function(){
+        $('#comboBox').val($(this).val());
+    });
+    
     var news_data
     $('#search_btn').click(function(){
         var keyword = $('#comboBox').val();
-        if(keyword == ""){
+        if($('#comboBox').val()==""){
             alert("키워드를 입력해주세요");
         }
         else{
@@ -38,8 +147,8 @@ $(document).ready(function(){
             });
         }
     });
-    $('#analysis_btn').click(function(){
-        if (news_data == ""){
+    $('#market_analysis_btn').click(function(){
+        if (typeof(news_data) == "undefined" || $('#comboBox').val()==""){
             alert("수집된 뉴스가 없습니다");
         }
         else{
@@ -49,24 +158,29 @@ $(document).ready(function(){
                 dataType: "json",
                 data: {'news_data': JSON.stringify(news_data)},
                 success: function(data){
-                    console.log(data);
+                    $('#wordcloud').empty();
                     var words = []
                     for (i=0;i<data.words_list.length;i++){
                         words.push({'text': data.words_list[i][0], 'weight': data.words_list[i][1]})
                     }
-                    $('#wordcloud').jQCloud(words,{
-                        autoResize : true,
-                        height: 350,
-                        delay: 50,
+                    //$('.bt_right_block').css('width','60%');
+                    $('.bt_right').animate({
+                        width:"60%"},2000,
+                        function(){$('#wordcloud').jQCloud(words,{
+                            autoResize : false,
+                            height: 350,
+                            delay: 50,
+                        });
+                        if (data.LSTM_sent>50){
+                            var comment = "수집된 뉴스의 감정점수는 "+ data.LSTM_sent.toFixed(0)+ " 점 입니다. 내일의 주가(코스피 종가)를 긍정적으로 예상하고 있습니다.";
+                        }else if(data.LSTM_sent<=50){
+                            var comment = "수집된 뉴스의 감정점수는 "+ data.LSTM_sent.toFixed(0)+ " 점 입니다. 내일의 주가(코스피 종가)를 부정적으로 예상하고 있습니다.";
+                        }
+                        $('#sent_score').html(comment);
                     });
-                    if (data.LSTM_sent> 50){
-                        var comment = "뉴스 분석 결과 "+data.LSTM_sent +"% 의 확률로 내일 코스피 종가가 오늘 대비 오를 것으로 예상됩니다." 
-                    }
-                    else if (data.LSTM_sent<= 50){
-                        var comment = "뉴스 분석 결과 "+"<span style='color:#06c'>"+(100-data.LSTM_sent).toFixed(2) +"%</span> 의 확률로 내일 코스피 종가가 오늘 대비 내릴 것으로 예상됩니다."
-                    }
-                    //$("#model_result").append(comment);
-                    $('.bt_right').animate({width:"60%"},2000);
+                    $('.bt_right').css("display","block");
+
+                    Draw_sentchart(data.LSTM_sent);
                 },
                 error: function (request, status, error) {
                     console.log('실패');
@@ -84,42 +198,80 @@ $(document).ready(function(){
             macro['Date'] = [];
             macro['Gold'] = [];
             macro['Silver'] = [];
-            macro['Guri'] = [];
             macro['oil'] = [];
 
             macro['exchange'] = [];
+            macro['exchange_eur'] = [];
+            macro['exchange_cny'] = [];
+            macro['exchange_jpy'] = [];
+            
             macro['KR10'] = [];
             macro['US10'] = [];
 
             macro['Kospi'] = [];
-            macro['SP500'] = [];
             macro['nasdaq'] = [];
+            macro['SP500'] = [];
+
+            macro['BTC'] = [];
+            macro['ETH'] = [];
             
-            for(var i=0;i<data.length;i++){
-                macro['Date'].push(data[i][12]);
-                macro['Gold'].push(data[i][2]);
-                macro['Silver'].push(data[i][3]);
-                macro['Guri'].push(data[i][4]);
-                macro['oil'].push(data[i][5]);
-                macro['exchange'].push(data[i][6]);
-                macro['KR10'].push(data[i][7]);
-                macro['US10'].push(data[i][8]);
+            for(var i=0;i<data.m_data.length;i++){
+                macro['Date'].push(data.m_data[i][16]);
+                macro['Gold'].push(data.m_data[i][2]);
+                macro['Silver'].push(data.m_data[i][3]);
+                macro['oil'].push(data.m_data[i][4]);
+
+                macro['exchange'].push(data.m_data[i][5]);
+                macro['exchange_eur'].push(data.m_data[i][6]);
+                macro['exchange_cny'].push(data.m_data[i][7]);
+                macro['exchange_jpy'].push(data.m_data[i][8]);
+
+                macro['KR10'].push(data.m_data[i][9]);
+                macro['US10'].push(data.m_data[i][10]);
                 
-                macro['Kospi'].push(data[i][9]);
-                macro['nasdaq'].push(data[i][10]);
-                macro['SP500'].push(data[i][11]);
+                macro['Kospi'].push(data.m_data[i][11]);
+                macro['nasdaq'].push(data.m_data[i][12]);
+                macro['SP500'].push(data.m_data[i][13]);
+
+                macro['BTC'].push(data.m_data[i][14]);
+                macro['ETH'].push(data.m_data[i][15]);
+                
             }
             Draw_macro1(macro);
             Draw_macro2(macro);
             Draw_macro3(macro);
+            Draw_macro4(macro);
+            Draw_macro5(macro);
+            Draw_impchart(data.result);
+            for(var i=0; i<data.d_data.length;i++){
+                var append_text= ""
+                r_array = round_array(data.d_data[i]);
+                append_text+='<tr><td>'+data.d_data[i][1].substring(0,10)+'</td>';
+                for(var j=2; j<r_array.length; j++){
+                    append_text+='<td class="numberCell">'+r_array[j]+'</td>';
+                }
+                $('#asset_row').append(append_text+'</tr>');
+            }
         },
+
         error: function (request, status, error) {
             console.log('실패');
         }
     });
 });
-function option(){
+function round_array(array){
+    r_array = []
+    for(var i=0;i<array.length;i++){
+        r_array.push(Number(array[i]).toFixed(2));
+    }
+    return r_array
+}
+function option(title){
     return options ={
+        title:{
+            display: true,
+            text : title,
+        },
         responsive: true,
         maintainAspectRatio: false,
         tooltips: {
@@ -151,6 +303,77 @@ function option(){
         }
     }
 };
+function Draw_impchart(importances){
+    var impctx = document.getElementById('imp_chart').getContext('2d');
+    var imp_chart = new Chart(impctx, {
+        type: 'horizontalBar',
+        data: {
+            labels:['국제 금가격','국제 은가격','WTI(원유)','원달러 환율','원유로 환율','원위엔 환율','원엔 환율','국채10년물 금리','미국채 10년물 금리','나스닥','S&P500','BTC','ETH'],
+            datasets:[{
+                label : '',
+                data: importances,
+                backgroundColor: ['#003f5c','#2f4b7c','#665191','#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#2f4b7c','#665191','#a05195','#d45087','#f95d6a','#ff7c43','#ffa600'],
+            }],
+        },
+        options: {
+            legend: {
+                display: false
+            },
+            responsive:true,
+            maintainAspectRatio:false,
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: 0 // Edit the value according to what you need
+                    }
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
+        }
+    });
+}
+function Draw_sentchart(sent){
+    var sentctx= document.getElementById('sent_chart').getContext('2d');
+
+    var purple_orange_gradient = sentctx.createLinearGradient(0, 0, 0, 600);
+    purple_orange_gradient.addColorStop(0, 'orange');
+    purple_orange_gradient.addColorStop(1, 'purple');
+    
+    var sent_chart = new Chart(sentctx, {
+        type: 'bar',
+        data: {
+            labels: ["감성점수"],
+            datasets: [{
+                label: '',
+                data: [sent],
+                backgroundColor: purple_orange_gradient,
+                hoverBackgroundColor: purple_orange_gradient,
+                hoverBorderWidth: 2,
+                hoverBorderColor: 'purple'
+            }]
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio:false,
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        drawBorder: false,
+                      },
+                    ticks: {
+                        min:0,
+                        max:100,
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+    
+    
+}
 
 function Draw_macro1(data){
     var macro_ctx1 = document.getElementById("macro_graph1").getContext('2d');
@@ -159,7 +382,7 @@ function Draw_macro1(data){
         data: {
             labels: data['Date'],
             datasets: [{
-                label: '금 선물',
+                label: '국제 금가격',
                 data: data['Gold'],
                 borderColor: "#FFA500",
                 backgroundColor: "#FFA500",
@@ -169,7 +392,7 @@ function Draw_macro1(data){
                 fill: false,
             },
             {
-                label: '은 선물',
+                label: '국제 은가격',
                 data: data['Silver'],
                 borderColor: "#04092a",
                 backgroundColor: '#04092a',
@@ -179,17 +402,7 @@ function Draw_macro1(data){
                 fill: false,
             },
             {
-                label: '구리 선물',
-                data: data['Guri'],
-                borderColor: "#cccccc",
-                backgroundColor: '#cccccc',
-                pointRadius: 1,
-                pointHoverRadius: 1,
-                lineTension: 0,
-                fill: false,
-            },
-            {
-                label: 'WTI(원유) 선물',
+                label: 'WTI(원유)',
                 data: data['oil'],
                 borderColor: "#639371",
                 backgroundColor: '#639371',
@@ -199,7 +412,7 @@ function Draw_macro1(data){
                 fill: false,
             }]
         },
-        options : option()
+        options : option("원자재")
     });
 
 }
@@ -210,16 +423,6 @@ function Draw_macro2(data){
         data: {
             labels: data['Date'],
             datasets: [{
-                label: '환율',
-                data: data['exchange'],
-                borderColor: "#FFA500",
-                backgroundColor: "#FFA500",
-                lineTension: 0,
-                pointRadius: 1,
-                pointHoverRadius: 1,
-                fill: false,
-            },
-            {
                 label: '미국고채 10년물 금리',
                 data: data['US10'],
                 borderColor: "#04092a",
@@ -240,7 +443,7 @@ function Draw_macro2(data){
                 fill: false,
             }]
         },
-        options: option()
+        options: option("금리")
     });
 }
 function Draw_macro3(data){
@@ -249,11 +452,13 @@ function Draw_macro3(data){
         type: 'line',
         data: {
             labels: data['Date'],
-            datasets: [{
+            datasets: [
+            {
+                
                 label: '코스피',
                 data: data['Kospi'],
-                borderColor: "#FFA500",
-                backgroundColor: "#FFA500",
+                borderColor: "#04092a",
+                backgroundColor: "#04092a",
                 lineTension: 0,
                 pointRadius: 1,
                 pointHoverRadius: 1,
@@ -262,8 +467,8 @@ function Draw_macro3(data){
             {
                 label: 'NASDAQ',
                 data: data['nasdaq'],
-                borderColor: "#04092a",
-                backgroundColor: '#04092a',
+                borderColor: "#cccccc",
+                backgroundColor: '#cccccc',
                 lineTension: 0,
                 pointRadius: 1,
                 pointHoverRadius: 1,
@@ -272,15 +477,308 @@ function Draw_macro3(data){
             {
                 label: 'S&P500',
                 data: data['SP500'],
-                borderColor: "#cccccc",
-                backgroundColor: '#cccccc',
+                borderColor: "#639371",
+                backgroundColor: '#639371',
                 pointRadius: 1,
                 pointHoverRadius: 1,
                 lineTension: 0,
                 fill: false,
             }],
         },
-        options: option()
+        options: option("인덱스")
     });
+}
+function Draw_macro4(data){
+    var macro_ctx4 = document.getElementById("macro_graph4").getContext('2d');
+    window.macro_chart4 = new Chart(macro_ctx4, {
+        type: 'line',
+        data: {
+            labels: data['Date'],
+            datasets: [{
+                label: 'USD/KRW',
+                data: data['exchange'],
+                borderColor: "#FFA500",
+                backgroundColor: "#FFA500",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            },
+            {
+                label: 'EUR/KRW(유로화)',
+                data: data['exchange_eur'],
+                borderColor: "#04092a",
+                backgroundColor: "#04092a",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            },
+            {
+                label: 'CNY/KRW(위엔화)',
+                data: data['exchange_cny'],
+                borderColor: "#cccccc",
+                backgroundColor: "#cccccc",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            },
+            {
+                label: 'JPY/KRW(엔화)',
+                data: data['exchange_jpy'],
+                borderColor: "#639371",
+                backgroundColor: "#639371",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            }],
+        },
+        options : option("환율")
+    });
+}
+function Draw_macro5(data){
+    var macro_ctx5 = document.getElementById("macro_graph5").getContext('2d');
+    window.macro_chart5 = new Chart(macro_ctx5, {
+        type: 'line',
+        data: {
+            labels: data['Date'],
+            datasets: [{
+                label: 'BTC',
+                data: data['BTC'],
+                borderColor: "#FFA500",
+                backgroundColor: "#FFA500",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            },
+            {
+                label: 'ETH',
+                data: data['ETH'],
+                borderColor: "#04092a",
+                backgroundColor: "#04092a",
+                lineTension: 0,
+                pointRadius: 1,
+                pointHoverRadius: 1,
+                fill: false,
+            }],
+        },
+        options : option("가상화폐")
+    });
+}
+var chartReg = {};
+function createChart(chartdiv, charttype) {
+    // Check if the chart instance exists
+    maybeDisposeChart(chartdiv);
 
+    // Create new chart
+    chartReg[chartdiv] = am4core.create(chartdiv, charttype);
+    return chartReg[chartdiv];
+}
+function maybeDisposeChart(chartdiv){
+    if (chartReg[chartdiv]) {
+        chartReg[chartdiv].dispose();
+        delete chartReg[chartdiv];
+    }
+}
+function stockGraph(stockdata,chart) {
+    am4core.ready(function () {
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        //chart = am4core.create("chartdiv", am4charts.XYChart);
+
+        chart.padding(0, 15, 0, 15);
+
+        // Load data
+        chart.data = stockdata;
+
+        // the following line makes value axes to be arranged vertically.
+        chart.leftAxesContainer.layout = "vertical";
+
+        // uncomment this line if you want to change order of axes
+        //chart.bottomAxesContainer.reverseOrder = true;
+
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.renderer.grid.template.location = 0;
+        dateAxis.renderer.ticks.template.length = 8;
+        dateAxis.renderer.ticks.template.strokeOpacity = 0.1;
+        dateAxis.renderer.grid.template.disabled = true;
+        dateAxis.renderer.ticks.template.disabled = false;
+        dateAxis.renderer.ticks.template.strokeOpacity = 0.2;
+        dateAxis.renderer.minLabelPosition = 0.01;
+        dateAxis.renderer.maxLabelPosition = 0.99;
+        dateAxis.keepSelection = true;
+        dateAxis.minHeight = 30;
+
+        dateAxis.groupData = true;
+        dateAxis.minZoomCount = 5;
+
+        // these two lines makes the axis to be initially zoomed-in
+        // dateAxis.start = 0.7;
+        // dateAxis.keepSelection = true;
+
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.tooltip.disabled = true;
+        valueAxis.zIndex = 10001;
+        valueAxis.renderer.baseGrid.disabled = true;
+        // height of axis
+        valueAxis.height = am4core.percent(65);
+
+        valueAxis.renderer.gridContainer.background.fill = am4core.color("#000000");
+        valueAxis.renderer.gridContainer.background.fillOpacity = 0.05;
+        valueAxis.renderer.inside = true;
+        valueAxis.renderer.labels.template.verticalCenter = "bottom";
+        valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
+
+        //valueAxis.renderer.maxLabelPosition = 0.95;
+        valueAxis.renderer.fontSize = "0.8em"
+
+        var series = chart.series.push(new am4charts.CandlestickSeries());
+        series.dataFields.dateX = "Date";
+        series.dataFields.openValueY = "Open";
+        series.dataFields.valueY = "Close";
+        series.dataFields.lowValueY = "Low";
+        series.dataFields.highValueY = "High";
+        series.clustered = false;
+        series.tooltipText = "open: {openValueY.value}\nlow: {lowValueY.value}\nhigh: {highValueY.value}\nclose: {valueY.value}";
+        series.name = "MSFT";
+        series.defaultState.transitionDuration = 0;
+
+        var valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis2.tooltip.disabled = true;
+        // height of axis
+        valueAxis2.height = am4core.percent(35);
+        valueAxis2.zIndex = 3
+        // this makes gap between panels
+        valueAxis2.marginTop = 30;
+        valueAxis2.renderer.baseGrid.disabled = true;
+        valueAxis2.renderer.inside = true;
+        valueAxis2.renderer.labels.template.verticalCenter = "bottom";
+        valueAxis2.renderer.labels.template.padding(2, 2, 2, 2);
+        //valueAxis.renderer.maxLabelPosition = 0.95;
+        valueAxis2.renderer.fontSize = "0.8em"
+
+        valueAxis2.renderer.gridContainer.background.fill = am4core.color("#000000");
+        valueAxis2.renderer.gridContainer.background.fillOpacity = 0.05;
+
+        var series2 = chart.series.push(new am4charts.ColumnSeries());
+        series2.dataFields.dateX = "Date";
+        series2.clustered = false;
+        series2.dataFields.valueY = "Volume";
+        series2.yAxis = valueAxis2;
+        series2.tooltipText = "{valueY.value}";
+        series2.name = "Series 2";
+        // volume should be summed
+        series2.groupFields.valueY = "sum";
+        series2.defaultState.transitionDuration = 0;
+
+        chart.cursor = new am4charts.XYCursor();
+
+        var scrollbarX = new am4charts.XYChartScrollbar();
+
+        var sbSeries = chart.series.push(new am4charts.LineSeries());
+        sbSeries.dataFields.valueY = "Close";
+        sbSeries.dataFields.dateX = "Date";
+        scrollbarX.series.push(sbSeries);
+        sbSeries.disabled = true;
+        scrollbarX.marginBottom = 20;
+        chart.scrollbarX = scrollbarX;
+        scrollbarX.scrollbarChart.xAxes.getIndex(0).minHeight = undefined;
+        /**
+         * Set up external controls
+         */
+
+        // Date format to be used in input fields
+        var inputFieldFormat = "yyyy-MM-dd";
+
+        document.getElementById("b1m").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.add(date, "month", -1);
+            zoomToDates(date);
+        });
+
+        document.getElementById("b3m").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.add(date, "month", -3);
+            zoomToDates(date);
+        });
+
+        document.getElementById("b6m").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.add(date, "month", -6);
+            zoomToDates(date);
+        });
+
+        document.getElementById("b1y").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.add(date, "year", -1);
+            zoomToDates(date);
+        });
+
+        document.getElementById("bytd").addEventListener("click", function () {
+            var max = dateAxis.groupMax["day1"];
+            var date = new Date(max);
+            am4core.time.round(date, "year", 1);
+            zoomToDates(date);
+        });
+
+        document.getElementById("bmax").addEventListener("click", function () {
+            var min = dateAxis.groupMin["day1"];
+            var date = new Date(min);
+            zoomToDates(date);
+        });
+
+        dateAxis.events.on("selectionextremeschanged", function () {
+            updateFields();
+        });
+
+        dateAxis.events.on("extremeschanged", updateFields);
+
+        function updateFields() {
+            var minZoomed = dateAxis.minZoomed + am4core.time.getDuration(dateAxis.mainBaseInterval.timeUnit, dateAxis.mainBaseInterval.count) * 0.5;
+            document.getElementById("fromfield").value = chart.dateFormatter.format(minZoomed, inputFieldFormat);
+            document.getElementById("tofield").value = chart.dateFormatter.format(new Date(dateAxis.maxZoomed), inputFieldFormat);
+        }
+
+        document.getElementById("fromfield").addEventListener("keyup", updateZoom);
+        document.getElementById("tofield").addEventListener("keyup", updateZoom);
+
+        var zoomTimeout;
+        function updateZoom() {
+            if (zoomTimeout) {
+                clearTimeout(zoomTimeout);
+            }
+            zoomTimeout = setTimeout(function () {
+                var start = document.getElementById("fromfield").value;
+                var end = document.getElementById("tofield").value;
+                if ((start.length < inputFieldFormat.length) || (end.length < inputFieldFormat.length)) {
+                    return;
+                }
+                var startDate = chart.dateFormatter.parse(start, inputFieldFormat);
+                var endDate = chart.dateFormatter.parse(end, inputFieldFormat);
+
+                if (startDate && endDate) {
+                    dateAxis.zoomToDates(startDate, endDate);
+                }
+            }, 500);
+        }
+
+        function zoomToDates(date) {
+            var min = dateAxis.groupMin["day1"];
+            var max = dateAxis.groupMax["day1"];
+            dateAxis.keepSelection = true;
+            //dateAxis.start = (date.getTime() - min)/(max - min);
+            //dateAxis.end = 1;
+
+            dateAxis.zoom({ start: (date.getTime() - min) / (max - min), end: 1 });
+        }
+    }); // end am4core.ready()
 }
