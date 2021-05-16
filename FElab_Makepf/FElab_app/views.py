@@ -109,7 +109,7 @@ def ajax_backtest(request):
     #strategy = request.POST.get('strategy')
     backtest = back_test()
 
-    data = backtest.backtest_data(assetnames,assetweights,from_period,to_period,start_amount,rebalancing_month,conn,interval)
+    data = backtest.backtest_data(assetnames,assetweights,from_period,to_period,start_amount,rebalancing_month,conn,interval,'rp')
 
     return JsonResponse(data, safe=False)
 
