@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
 class RF_model():
     def getDf(self,data):
-        X_data = data[data.drop(["macro_economics_id",'Date','Kospi'],axis=1).columns]
+        X_data = data[data.drop(['Date','Kospi'],axis=1).columns]
         y_data = data[['Kospi']]
         #정규화
         ss = StandardScaler()
@@ -18,7 +18,7 @@ class RF_model():
         
         return list(forest.feature_importances_)
     def retCorr(self,data):
-        corr= list(data.corr(method='pearson')['Kospi'].drop(["macro_economics_id",'Kospi']))
+        corr= list(data.corr(method='pearson')['Kospi'].drop(['Kospi']))
         n_corr = []
         for i in corr:
             n_corr.append(abs(i))

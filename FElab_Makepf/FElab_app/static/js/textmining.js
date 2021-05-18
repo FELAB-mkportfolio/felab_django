@@ -82,6 +82,7 @@ $(document).ready(function(){
                 dataType: "json",
                 data: {},
                 success: function (data) {
+                    console.log(data);
                     var macro = {}
                     macro['Date'] = [];
                     macro['Gold'] = [];
@@ -104,25 +105,25 @@ $(document).ready(function(){
                     macro['ETH'] = [];
                     
                     for(var i=0;i<data.m_data.length;i++){
-                        macro['Date'].push(data.m_data[i][16]);
-                        macro['Gold'].push(data.m_data[i][2]);
-                        macro['Silver'].push(data.m_data[i][3]);
-                        macro['oil'].push(data.m_data[i][4]);
+                        macro['Date'].push(data.m_data[i][15]);
+                        macro['Gold'].push(data.m_data[i][1]);
+                        macro['Silver'].push(data.m_data[i][2]);
+                        macro['oil'].push(data.m_data[i][3]);
         
-                        macro['exchange'].push(data.m_data[i][5]);
-                        macro['exchange_eur'].push(data.m_data[i][6]);
-                        macro['exchange_cny'].push(data.m_data[i][7]);
-                        macro['exchange_jpy'].push(data.m_data[i][8]);
+                        macro['exchange'].push(data.m_data[i][4]);
+                        macro['exchange_eur'].push(data.m_data[i][5]);
+                        macro['exchange_cny'].push(data.m_data[i][6]);
+                        macro['exchange_jpy'].push(data.m_data[i][7]);
         
-                        macro['KR10'].push(data.m_data[i][9]);
-                        macro['US10'].push(data.m_data[i][10]);
+                        macro['KR10'].push(data.m_data[i][8]);
+                        macro['US10'].push(data.m_data[i][9]);
                         
-                        macro['Kospi'].push(data.m_data[i][11]);
-                        macro['nasdaq'].push(data.m_data[i][12]);
-                        macro['SP500'].push(data.m_data[i][13]);
+                        macro['Kospi'].push(data.m_data[i][10]);
+                        macro['nasdaq'].push(data.m_data[i][11]);
+                        macro['SP500'].push(data.m_data[i][12]);
         
-                        macro['BTC'].push(data.m_data[i][14]);
-                        macro['ETH'].push(data.m_data[i][15]);
+                        macro['BTC'].push(data.m_data[i][13]);
+                        macro['ETH'].push(data.m_data[i][14]);
                         
                     }
                     Draw_macro1(macro);
@@ -134,8 +135,8 @@ $(document).ready(function(){
                     for(var i=0; i<data.d_data.length;i++){
                         var append_text= ""
                         r_array = round_array(data.d_data[i]);
-                        append_text+='<tr><td>'+data.d_data[i][1].substring(0,10)+'</td>';
-                        for(var j=2; j<r_array.length; j++){
+                        append_text+='<tr><td>'+data.d_data[i][0].substring(0,10)+'</td>';
+                        for(var j=1; j<r_array.length; j++){
                             append_text+='<td class="numberCell">'+r_array[j]+'</td>';
                         }
                         $('#asset_row').append(append_text+'</tr>');
@@ -190,6 +191,7 @@ $(document).ready(function(){
         }
     });
     $('#market_analysis_btn').click(function(){
+       
         if (typeof(news_data) == "undefined" || $('#comboBox').val()==""){
             alert("수집된 뉴스가 없습니다");
         }
@@ -222,12 +224,18 @@ $(document).ready(function(){
                     $('#macro_analysis_result').css('display','none');
                     
                     Draw_sentchart(data.LSTM_sent);
-                },
-                error: function (request, status, error) {
+
+                },beforeSend:function(){
+                    loading();
+                },complete:function(){
+                    closeloading();
+                },error: function (request, status, error) {
                     alert('서버와 통신에 실패했습니다');
                 }
             });
         }
+       
+
     });
     $('#company_analysis_btn').click(function(){
         if (stocknames.includes($('#comboBox2').val())){
@@ -291,6 +299,14 @@ $(document).ready(function(){
         }
     });
 });
+function loading(){
+    $("#loading_back").css('display','block');
+    $("#wrap_loading").css('display','block');
+}
+function closeloading(){
+    $("#loading_back").css('display','none');
+    $("#wrap_loading").css('display','none');
+}
 function round_array(array){
     r_array = []
     for(var i=0;i<array.length;i++){

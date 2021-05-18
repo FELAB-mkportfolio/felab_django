@@ -53,10 +53,10 @@
                     </div>
                     <div class='backtest_input_row'>
                         <div class='backtest_input_row_title'>
-                            <label style='font-size:20px;'>리밸런싱 주기를 입력해 주세요</label><br>
+                            <label style='font-size:20px;'>리밸런싱 주기와 최적화 전략을 입력해 주세요</label><br>
                             <span>리밸런싱은 정해진 주기마다 포트폴리오를 재구성하는 것을 의미합니다.</span>
                         </div>
-                        <div>
+                        <div style='display:flex;justify-content: center;'>
                             <select id='rebalancing_month' style='border-bottom: 2px solid #cccccc;width:200px;'>
                                 <option value='1'>1개월</option>
                                 <option value='2'>2개월</option>
@@ -71,7 +71,14 @@
                                 <option value='11'>11개월</option>
                                 <option value='12'>12개월</option>
                             </select>
+                            <select id='rebalancing_option' style='border-bottom: 2px solid #cccccc;width:200px;'>
+                                <option value='basic'>선택한 비중을 유지합니다.</option>
+                                <option value='gmv'>Global Maximum Variance</option>
+                                <option value='ms'>Maximum Sharpe</option>
+                                <option value='rp'>Risk Parity</option>
+                            </select>
                         </div>
+                        
                         
                     </div>
                     <div class='backtest_input_row'>
@@ -79,12 +86,12 @@
                             <label style='font-size:20px;'>투자 금액을 입력해 주세요</label>
                         </div>
                         <div>
-                            <input type='text' class='input_amount' id='start_amount' style='width:200px;height:40px;'/>
+                            <input type='number' class='input_amount' id='start_amount' style='width:200px;height:40px;text-align: center;' value="1000000"/>원
                         </div>
                     </div>
                     <div class='backtest_input_row'>
                         <div class='backtest_input_row_title'>
-                            <label style='font-size:20px;'>수익률 주기</label>
+                            <label style='font-size:20px;'>수익률 산출 주기</label>
                         </div>
                         <div>
                             <label style='font-size:20px;'>월 별 <input type='radio' name='interval' value='monthly' checked></label>

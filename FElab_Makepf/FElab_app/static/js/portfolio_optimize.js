@@ -157,7 +157,10 @@ $(document).ready(function () {
             alert("선택된 자산이 없습니다.");
         }else if(mystocks_codes.length==1){
             alert("한개의 자산으로는 최적화를 진행할 수 없습니다.");
-        }else {
+        }else if(90>(new Date($('#my_to').val())- new Date($('#my_from').val())) / 1000 / 60 / 60 / 24){
+            alert("투자 기간은 최소 3개월 이상이어야 합니다.");
+        }
+        else {
             var sum = 0
             mystocks_weights= [];
             for (i=0;i<mystocks_codes.length;i++){

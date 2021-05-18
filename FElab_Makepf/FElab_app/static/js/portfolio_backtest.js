@@ -197,9 +197,18 @@ $(document).ready(function () {
             sum = sum+Number($('#mystocks_weights'+i).val());
             mystocks_weights.push(Number($('#mystocks_weights'+i).val()));
         }
-        if(sum<0.9999 || sum>1){
+        if(mystocks_names.length==0){
+            alert("입력된 자산이 없습니다.");
+        }
+        else if(sum<0.9999 || sum>1){
             alert("비중의 합이 1이 아닙니다.");
-        }else{
+        }else if(90>(new Date($('#to').val())- new Date($('#from').val())) / 1000 / 60 / 60 / 24){
+            alert("투자 기간은 최소 3개월 이상이어야 합니다.");
+        }
+        else if($('#input_amount')==""){
+            alert("투자 금액을 입력해주세요");
+        }
+        else{
             $.ajax({
                 url: '/ajax_backtest/',
                 type: "POST",
@@ -208,7 +217,7 @@ $(document).ready(function () {
                 //,
                 data : {"assetsBox[]" : mystocks_codes, "assetweights[]" : mystocks_weights, "from" : $('#from').val(), 'to' : $('#to').val(),
             'rebalancing_month' : $('#rebalancing_month').val(), 'start_amount' : $('#start_amount').val(), 'strategy': $('input[name=strategy]:checked').val(),
-            "interval": $("input[name='interval']:checked").val()},
+            "interval": $("input[name='interval']:checked").val(),'rebalancing_option' : $('#rebalancing_option').val()},
                 success: function (data) {
                     console.log(data);
                     back_Mean = data.indicator[0]['Mean'];
