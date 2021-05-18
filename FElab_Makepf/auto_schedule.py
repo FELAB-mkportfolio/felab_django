@@ -13,19 +13,20 @@ import time
 from sqlalchemy import create_engine 
 import sys, traceback
 import logging
+import pandas_datareader as pdr
 logging.basicConfig(level=logging.ERROR)
 
 class autoUpdate:
-    def __init__(self,conn):
+    def __init__(self):
         sql = "SHOW tables;"
-        self.conn = conn
+        self.conn = pymysql.connect(host='localhost', user='root', password='su970728!', db='krmarket')
+        self.engine= create_engine('mysql+pymysql://root:su970728!@localhost:3306/stockcodename') #pymysql로 작성시 error
         curs = self.conn.cursor()
         curs.execute(sql)
         self.datas = curs.fetchall()
         curs.close()
 
     def kospi_stocks_codenamesave(self): #codename update
-        engine = create_engine('mysql+pymysql://root:su970728!@localhost:3306/stockcodename') #pymysql로 작성시 error
         etfcodename = pd.DataFrame({'Code':['139260','139220','139290','139270','227550','227560','139250','139230','139240','227540','243880','243890','315270','139280'],
                                          'Name':['TIGER 200 IT', 'TIGER 200 건설','TIGER 200 경기소비재','TIGER 200 금융','TIGER 200 산업재','TIGER 200 생활소비재'
                                                  ,'TIGER 200 에너지화학','TIGER 200 중공업','TIGER 200 철강소재','TIGER 200 헬스케어'
@@ -35,10 +36,10 @@ class autoUpdate:
         self.tmp = self.tmp.append(etfcodename)
         self.tmp = self.tmp.reset_index().drop('index',axis=1)
         try:
-            self.tmp.to_sql(name='codename', con=engine.connect(), if_exists='replace')
+            self.tmp.to_sql(name='codename', con=self.engine.connect(), if_exists='replace')
         except:
             return logging.error(traceback.format_exc())
-        return "codename update 성공"
+        print("codename update 성공")
         
 
     def kospi_stocks(self):  #KRX excel download
@@ -80,7 +81,6 @@ class autoUpdate:
         return kospi_stocklist
     
     def DB_update(self): #Krmarket update
-        engine = create_engine('mysql+pymysql://root:su970728!@localhost:3306/krmarket')
         #db에 있는 kospi 주식 데이터 갱신
         db_stocklist = [] #새롭게 상장된 주식을 확인하기 위해 현재 db에 있는 종목코드를 담는 공간
         curs = self.conn.cursor()
@@ -131,7 +131,7 @@ class autoUpdate:
             for stock in new_stocks:
                 tmp = fdr.DataReader(stock)
                 try:
-                    tmp.to_sql(name='kp{}'.format(stock), con=engine.connect(), if_exists='append')
+                    tmp.to_sql(name='kp{}'.format(stock), con=self.engine.connect(), if_exists='append')
                 except:
                     logging.error(traceback.format_exc())
                     print("상장 종목 추가 ERROR", ticker)
@@ -139,11 +139,10 @@ class autoUpdate:
         except:
             logging.error(traceback.format_exc())
         curs.close()
-        return "종목 DB 업데이트 성공"
+        print("종목 DB 업데이트 성공")
     
     def DB_macro_update(self):
         try:
-            engine = create_engine('mysql+pymysql://root:su970728!@localhost:3306/stockcodename')
             gold = pdr.DataReader('GOLDAMGBD228NLBM', 'fred', start='2011-01-01')#gold
             gold.rename(columns={'GOLDAMGBD228NLBM': "Gold"},inplace=True)
             silver = pdr.DataReader('SLVPRUSD', 'fred', start='2011-01-01')#silver
@@ -182,8 +181,8 @@ class autoUpdate:
             macro_df = pd.concat([gold, silver, oil, exchange,exchange_eur, exchange_cny, exchange_jpy,KR10Bond,US10Bond, kospi,nasdaq,SP500,BTC_kor, ETH_kor], axis=1).fillna(method='ffill')[1:]
             macro_df.dropna(inplace=True)
             macro_df = macro_df.reset_index().rename(columns={"index":'Date'}).set_index("Date")
-            macro_df.to_sql(name='macro_economics', con=engine.connect(), if_exists='replace')
-            return "금융데이터 Update 성공"
+            macro_df.to_sql(name='macro_economics', con=self.engine.connect(), if_exists='replace')
+            print("금융데이터 Update 성공")
         except:
             logging.error(traceback.format_exc())
             print("금융데이터 update 실패")
@@ -192,9 +191,11 @@ class autoUpdate:
  
 #schedule.every(30).minutes.do(printhello) #30분마다 실행
 #정해진 시간에 실행
-dbupdate = autoUpdate(pymysql.connect(host='localhost', user='root', password='su970728!', db='krmarket'))
-schedule.every().tuesday.at("17:00").do(dbupdate.kospi_stocks_codenamesave)
-schedule.every().tuesday.at("17:00").do(dbupdate.DB_update) 
+dbupdate = autoUpdate()
+n_time="21:39"
+schedule.every().tuesday.at(n_time).do(dbupdate.kospi_stocks_codenamesave)
+schedule.every().tuesday.at(n_time).do(dbupdate.DB_update)
+schedule.every().tuesday.at(n_time).do(dbupdate.DB_macro_update)  
 #schedule.every().day.at("10:30").do(job) #매일 10시30분에 
  
 #실제 실행하게 하는 코드
