@@ -34,6 +34,8 @@ _Note: This is only a navigation guide for the specification, and does not defin
 **Backend**
 
 **DataBase**
+-krmarket : 현시점에서 Kospi에 상장된 주식과 Tiger ETF의 시작가, 고가, 저가, 종가, 거래량, Rate of return의 정보가 있다. 
+-stockcodename : 
 
 **Natural Language Processing**
 1. 뉴스 감성지수 분류기
