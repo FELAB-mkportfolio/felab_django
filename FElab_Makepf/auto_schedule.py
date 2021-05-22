@@ -19,8 +19,9 @@ logging.basicConfig(level=logging.ERROR)
 class autoUpdate:
     def __init__(self):
         sql = "SHOW tables;"
-        self.conn = pymysql.connect(host='localhost', user='root', password='su970728!', db='krmarket')
-        self.engine= create_engine('mysql+pymysql://root:su970728!@localhost:3306/stockcodename') #pymysql로 작성시 error
+        self.conn = pymysql.connect(host='localhost', user='root', password='password', db='krmarket')
+        self.engine= create_engine('mysql+pymysql://root:password@localhost:3306/stockcodename') #pymysql로 작성시 error
+        self.engine2 = create_engine('mysql+pymysql://root:password@localhost:3306/krmarket')
         curs = self.conn.cursor()
         curs.execute(sql)
         self.datas = curs.fetchall()
@@ -131,7 +132,7 @@ class autoUpdate:
             for stock in new_stocks:
                 tmp = fdr.DataReader(stock)
                 try:
-                    tmp.to_sql(name='kp{}'.format(stock), con=self.engine.connect(), if_exists='append')
+                    tmp.to_sql(name='kp%s' %stock, con=self.engine2.connect(), if_exists='append')
                 except:
                     logging.error(traceback.format_exc())
                     print("상장 종목 추가 ERROR", ticker)
@@ -193,13 +194,15 @@ class autoUpdate:
 #정해진 시간에 실행
 dbupdate = autoUpdate()
 n_time="21:39"
-schedule.every().tuesday.at(n_time).do(dbupdate.kospi_stocks_codenamesave)
-schedule.every().tuesday.at(n_time).do(dbupdate.DB_update)
-schedule.every().tuesday.at(n_time).do(dbupdate.DB_macro_update)  
+schedule.every(4).minutes.do(dbupdate.kospi_stocks_codenamesave) #30분마다 실행
+schedule.every(4).minutes.do(dbupdate.DB_update) #30분마다 실행
+schedule.every(4).minutes.do(dbupdate.DB_macro_update) #30분마다 실행
+#schedule.every().tuesday.at(n_time).do(dbupdate.kospi_stocks_codenamesave)
+#schedule.every().tuesday.at(n_time).do(dbupdate.DB_update)
+#schedule.every().tuesday.at(n_time).do(dbupdate.DB_macro_update)  
 #schedule.every().day.at("10:30").do(job) #매일 10시30분에 
  
 #실제 실행하게 하는 코드
 while True:
     schedule.run_pending()
     time.sleep(1)
-
