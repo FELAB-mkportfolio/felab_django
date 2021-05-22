@@ -32,6 +32,19 @@ _Note: This is only a navigation guide for the specification, and does not defin
 > Reference : Socar, Apple, Toss
 
 **Backend**
+1. 
+2. 포트폴리오 백테스트
+  - 성과지표
+    * A
+    * B
+  - 포트폴리오 성과 및 리밸런싱
+    * A
+    * B
+
+3. 기업분석
+  - 팩터모델
+    * BOK, fdr
+    * RF, adaboost
 
 **DataBase**
 -krmarket : 현시점에서 Kospi에 상장된 주식과 Tiger ETF의 시작가, 고가, 저가, 종가, 거래량, Rate of return의 정보가 있다. 
