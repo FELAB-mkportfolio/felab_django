@@ -35,17 +35,34 @@ _Note: This is only a navigation guide for the specification, and does not defin
 
 1. 
 2. 포트폴리오 백테스트
-  - 성과지표
-    * A
-    * B
-  - 포트폴리오 성과 및 리밸런싱
-    * A
-    * B
+  - 성과지표 ( input은 return값만 필요하다. )
+    * 산술평균
+    * dd(drawdown)
+    * mdd(maximum drawdown)
+    * sharpe ratio
+    * value at risk
+    * winning rate
+  - 포트폴리오 성과 및 리밸런싱 ( input은 종목, 투자비중, 시작일, 종료일, 초기투자금, 리밸런싱 주기, 
+  조회간격, 자산배분전략이 필요하다. )
+    * DB에서 선택한 종목과 날짜를 활용해 종목들의 수익률과 날짜를 가져와 DataFrame으로 만든다.
+    * 자산배분 전략에 따라 리밸런싱 전까지, 매일 변하는 가중치를 계산하여 DataFrame으로 만든다.
+      (이때, 선택된 자산배분 전략에 따라 리밸런싱 기간마다 새로운 가중치를 가져오게 된다.)
+    * 포트폴리오의 수익률을 계산하기 위해 앞서 구한 두 데이터프레임에서 종목별 수익률과 가중치를 
+      곱하여 포트폴리오 수익률을 산출한다.
+    * FinanceDataReader함수로 부터 벤치마크 대상인 S&P500과 KOSPI의 수익률과 날짜를 가져와 DataFrame
+      으로 만든다.
+    * 포트폴리오와 벤치마크의 일별 수익률을 앞서 산출한 성과지표에 입력하여 값을 산출한다.
+    * 포트폴리오와 벤치마크의 수익률 데이터를 조회간격에 따라 월별, 주별, 일별로 resample하여 최종적으로 보여줄 수익률을 확정한다.
+    * resample된 수익률을 활용하여 누적수익률, 수익금, Drawdown을 산출한다. 
+    
 
 3. 기업분석
-  - 팩터모델
-    * BOK, fdr
-    * RF, adaboost
+  - 관련변수 선정 ( input은 종목값만 필요하다. ) 
+    * DB에서 최근 n개년의 한국은행 월별 거시경제 데이터와, 선택한 종목의 수익률을 가져온다.
+    * resample함수를 통해 수익률을 월별로 변환하고 거시경제 데이터와 통합하여 하나의 DataFrame을 산출
+    * shift함수를 통해 수익률 column을 n개월 shift한다.
+    * sklearn함수의 RandomForestRegressor, AdaBoostRegressor를 활용하여 해당종목의 수익률과 가장관련이 큰 거시경제 지표를 선정한다. 
+    * RandomForest와 AdaBoost의 결과로 거시경제 지표별 중요도와 모델의 정확도 RMSE, R^2를 도출한다.
 
 **DataBase**
 -krmarket : 현시점에서 Kospi에 상장된 주식과 Tiger ETF의 시작가, 고가, 저가, 종가, 거래량, Rate of return의 정보가 있다. 
