@@ -36,20 +36,20 @@ _Note: This is only a navigation guide for the specification, and does not defin
 1. 포트폴리오 최적화
   - Scipy 라이브러리 
 	  * GMV 포트폴리오
-    목적함수 fun = lambda w: np.dot(w.T, np.dot(self.cov, w)) 은  W^T ∑▒W   (포트폴리오 분산)
-    제약조건: 총 비중 합 = 1, 비중 양수(공매도 제한)
-    최적화방법: Scipy 라이브러리의 minimize 함수를 사용하여 포트폴리오 분산을 최소화
+	    목적함수 fun = lambda w: np.dot(w.T, np.dot(self.cov, w)) 은  W^T ∑▒W   (포트폴리오 분산)
+	    제약조건: 총 비중 합 = 1, 비중 양수(공매도 제한)
+	    최적화방법: Scipy 라이브러리의 minimize 함수를 사용하여 포트폴리오 분산을 최소화
 	  * Max Sharpe Ratio
-    목적함수 fun = lambda w: -(np.dot(w.T, self.mu) - 0.008) / np.sqrt(np.dot(w.T, np.dot(self.cov, w)))은 –((μ^T W-r_f)/√(W^T ∑▒W  )) (- 위험대비 수익률)
-    제약조건: 총 비중 합 = 1, 비중 양수(공매도 제한)
-    최적화방법: 샤프지수의 최대화를 Scipy 라이브러리의 minimize 함수를 사용하기 위해 샤프지수 최대화 대신 (- 샤프지수)의 최소화를 진행하였음
+	    목적함수 fun = lambda w: -(np.dot(w.T, self.mu) - 0.008) / np.sqrt(np.dot(w.T, np.dot(self.cov, w)))은 –((μ^T W-r_f)/√(W^T ∑▒W  )) (- 위험대비 수익률)
+	    제약조건: 총 비중 합 = 1, 비중 양수(공매도 제한)
+	    최적화방법: 샤프지수의 최대화를 Scipy 라이브러리의 minimize 함수를 사용하기 위해 샤프지수 최대화 대신 (- 샤프지수)의 최소화를 진행하였음
 	  * Risk Parity 
-    기존 위 두 최적화와 다르게 Risk Parity 전략은 기대수익률 data를 사용하지 않고, 자산 비중 및 공분산 행렬만을 사용한다. 과정은 크게 두 가지로, Risk Contribution(리스크 기여도)계산과         Risk Parity Optimization(자산 기여도를 동등하게 최적화)으로 이루어져있다. 
-    
-    먼저, Risk Contribution이란 개별종목이 전체 포트폴리오 위험에 기여하는 정도를 의미한다. 다른 조건들이 동일할 때, 특정 종목의 비중을 한 단위 늘렸을 경우 증가하는 포트폴리오 위험인           Marginal Risk Contribution과 개별 종목 비중의 곱으로 정의된다. 
-    MRC=  (∂σ_P)/(∂w_i )  ,RC=  (∂σ_P)/(∂w_i )  ×w_i   
-    즉 MRC가 작더라도 전체 포트폴리오에서 차지하는 비중 W_i 값이 크면 해당 종목으로 인해 발생하는 위험인 RC가 커질 수 있다. 
-    먼저 (1/pfo_std ) * (np.dot(self.cov, w)) 로 MRC=  (∂σ_P)/(∂w_i )  행렬을 구하였고, mrc * w를 이용해 RC=  (∂σ_P)/(∂w_i )  ×w_i 행렬을 구하였다. 그 후 rc = rc / rc.sum() 를 이용하여 추후 최적화가 쉽도록 scaling 해주었다.
+	    기존 위 두 최적화와 다르게 Risk Parity 전략은 기대수익률 data를 사용하지 않고, 자산 비중 및 공분산 행렬만을 사용한다. 과정은 크게 두 가지로, Risk Contribution(리스크 기여도)계산과         Risk Parity Optimization(자산 기여도를 동등하게 최적화)으로 이루어져있다. 
+
+	    우선, Risk Contribution이란 개별종목이 전체 포트폴리오 위험에 기여하는 정도를 의미한다. 다른 조건들이 동일할 때, 특정 종목의 비중을 한 단위 늘렸을 경우 증가하는 포트폴리오 위험인           Marginal Risk Contribution과 개별 종목 비중의 곱으로 정의된다. 
+	    $$ MRC=  (∂σ_P)/(∂w_i )  ,RC=  (∂σ_P)/(∂w_i )  ×w_i $$
+	    즉 MRC가 작더라도 전체 포트폴리오에서 차지하는 비중 W_i 값이 크면 해당 종목으로 인해 발생하는 위험인 RC가 커질 수 있다. 
+	    먼저 $ (1/pfo_std ) * (np.dot(self.cov, w)) $ 로 $ MRC=  (∂σ_P)/(∂w_i ) $ 행렬을 구하였고, $ mrc * w $ 를 이용해 $ RC=  (∂σ_P)/(∂w_i )  ×w_i $ 행렬을 구하였다. 그 후 $ rc = rc / rc.sum() $ 를 이용하여 추후 최적화가 쉽도록 scaling 해주었다.
     
     다음으로는 a = np.reshape(rc, (len(rc),1)) 를 이용하여 앞서 구한 rc를 array 형태로 만들어준 후 differs = a - a.T 라는 각 rc 값들의 차를 계산했다. 결과적으로 저 differs 값의 제곱을       최소화시켜줌으로써 각 rc값들이 모두 같도록 최적화한다. 
 
