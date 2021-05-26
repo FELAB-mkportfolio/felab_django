@@ -284,8 +284,11 @@ $(document).ready(function () {
                     $('#SP_MDD').html(SP500_MDD.toFixed(2));
 
                     $('#backtest_outputdiv').css('display','block');
-                },
-                error: function (request, status, error) {
+                },beforeSend:function(){
+                    loading();
+                },complete:function(){
+                    closeloading();
+                },error: function (request, status, error) {
                     console.log('실패');
                 }
         });
@@ -294,6 +297,14 @@ $(document).ready(function () {
     
 
 });
+function loading(){
+    $("#loading_back").css('display','block');
+    $("#wrap_loading").css('display','block');
+}
+function closeloading(){
+    $("#loading_back").css('display','none');
+    $("#wrap_loading").css('display','none');
+}
 function Draw_optimize_pie(data){
     var portfolio_ctx = document.getElementById("portfolio_pie_chart").getContext('2d');
     window.portfolio_pie_chart = new Chart(portfolio_ctx, {

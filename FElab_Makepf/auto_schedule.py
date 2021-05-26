@@ -17,14 +17,13 @@ import pandas_datareader as pdr
 logging.basicConfig(level=logging.ERROR)
 
 class autoUpdate:
-    def __init__(self):
+    def startconnection(self):
         sql = "SHOW tables;"
         self.conn = pymysql.connect(host='localhost', user='root', password='su970728!', db='krmarket')
         self.engine= create_engine('mysql+pymysql://root:su970728!@localhost:3306/stockcodename') #pymysql로 작성시 error
-        curs = self.conn.cursor()
-        curs.execute(sql)
-        self.datas = curs.fetchall()
-        curs.close()
+        self.curs = self.conn.cursor()
+        self.curs.execute(sql)
+        self.datas = self.curs.fetchall()
 
     def kospi_stocks_codenamesave(self): #codename update
         etfcodename = pd.DataFrame({'Code':['139260','139220','139290','139270','227550','227560','139250','139230','139240','227540','243880','243890','315270','139280'],
@@ -39,6 +38,7 @@ class autoUpdate:
             self.tmp.to_sql(name='codename', con=self.engine.connect(), if_exists='replace')
         except:
             return logging.error(traceback.format_exc())
+        print(datetime.now())
         print("codename update 성공")
         
 
@@ -83,7 +83,6 @@ class autoUpdate:
     def DB_update(self): #Krmarket update
         #db에 있는 kospi 주식 데이터 갱신
         db_stocklist = [] #새롭게 상장된 주식을 확인하기 위해 현재 db에 있는 종목코드를 담는 공간
-        curs = self.conn.cursor()
         process_cnt = 0
         #기존 디비 업데이트
         for data in self.datas:
@@ -95,9 +94,9 @@ class autoUpdate:
             db_stocklist.append(data[0][2:].upper())
             ticker = data[0]
             sql = "SELECT Date FROM " + ticker + " ORDER BY Date DESC LIMIT 1;"
-            curs.execute(sql)
+            self.curs.execute(sql)
 
-            db_lastdate = curs.fetchall()
+            db_lastdate = self.curs.fetchall()
             #db 저장된 마지막 날짜
             db_lastdate = db_lastdate[0][0]
 
@@ -116,7 +115,7 @@ class autoUpdate:
                     newdata['Date'] = newdata['Date'].astype(str)
                     sql = "INSERT INTO " + ticker + " VALUES (%s,%s,%s,%s,%s,%s,%s);"
                     val = [tuple(x) for x in newdata.to_numpy()]
-                    curs.executemany(sql,val)
+                    self.curs.executemany(sql,val)
                     self.conn.commit()
                 except:
                     logging.error(traceback.format_exc())
@@ -138,7 +137,6 @@ class autoUpdate:
                     continue
         except:
             logging.error(traceback.format_exc())
-        curs.close()
         print("종목 DB 업데이트 성공")
     
     def DB_macro_update(self):
@@ -187,15 +185,28 @@ class autoUpdate:
             logging.error(traceback.format_exc())
             print("금융데이터 update 실패")
         
+    def closeconnection(self):
+        self.conn.close()
+        self.curs.close()
 
  
 #schedule.every(30).minutes.do(printhello) #30분마다 실행
 #정해진 시간에 실행
 dbupdate = autoUpdate()
-n_time="21:39"
-schedule.every().tuesday.at(n_time).do(dbupdate.kospi_stocks_codenamesave)
-schedule.every().tuesday.at(n_time).do(dbupdate.DB_update)
-schedule.every().tuesday.at(n_time).do(dbupdate.DB_macro_update)  
+n_time="17:33"
+
+schedule.every(4).minutes.do(dbupdate.startconnection)
+schedule.every(4).minutes.do(dbupdate.kospi_stocks_codenamesave)
+schedule.every(4).minutes.do(dbupdate.DB_update)
+schedule.every(4).minutes.do(dbupdate.DB_macro_update)
+schedule.every(4).minutes.do(dbupdate.closeconnection)
+
+'''schedule.every().wednesday.at(n_time).do(dbupdate.startconnection)
+schedule.every().wednesday.at(n_time).do(dbupdate.kospi_stocks_codenamesave)
+schedule.every().wednesday.at(n_time).do(dbupdate.DB_update)
+schedule.every().wednesday.at(n_time).do(dbupdate.DB_macro_update)  
+schedule.every().wednesday.at(n_time).do(dbupdate.closeconnection)'''
+
 #schedule.every().day.at("10:30").do(job) #매일 10시30분에 
  
 #실제 실행하게 하는 코드
