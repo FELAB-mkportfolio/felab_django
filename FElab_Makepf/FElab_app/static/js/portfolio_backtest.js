@@ -219,7 +219,6 @@ $(document).ready(function () {
             'rebalancing_month' : $('#rebalancing_month').val(), 'start_amount' : $('#start_amount').val(), 'strategy': $('input[name=strategy]:checked').val(),
             "interval": $("input[name='interval']:checked").val(),'rebalancing_option' : $('#rebalancing_option').val()},
                 success: function (data) {
-                    console.log(data);
                     back_Mean = data.indicator[0]['Mean'];
                     back_Std = data.indicator[0]['Std'];
                     back_Sharp_ratio = data.indicator[0]['Sharpe ratio'];

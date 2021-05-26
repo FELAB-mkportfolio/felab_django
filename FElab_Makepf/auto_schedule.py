@@ -21,6 +21,7 @@ class autoUpdate:
         sql = "SHOW tables;"
         self.conn = pymysql.connect(host='localhost', user='root', password='su970728!', db='krmarket')
         self.engine= create_engine('mysql+pymysql://root:su970728!@localhost:3306/stockcodename') #pymysql로 작성시 error
+        self.engine2 = create_engine('mysql+pymysql://root:su970728!@localhost:3306/krmarket')
         self.curs = self.conn.cursor()
         self.curs.execute(sql)
         self.datas = self.curs.fetchall()
