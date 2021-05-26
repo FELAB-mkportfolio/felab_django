@@ -163,7 +163,7 @@
 }
 /* 각 페이지의 content_section */
 .b_container__content{
-    overflow: hidden; box-sizing: border-box; width:100%; margin-bottom: 120px;
+    box-sizing: border-box; width:100%; margin-bottom: 120px;
 }
 
 /*포폴 최적화 css */
@@ -267,6 +267,27 @@ select {
 }
 #optimize_result{
     display: flex; margin:50px 20px; height:500px; justify-content: center; font-family: 'AppleSDGothicNeoM';
+}
+.strategy_container{
+    width:100%;
+    display: flex;
+    margin:20px;
+    border-top:1px solid #cccccc;
+    flex-direction: column;
+}
+.strategy_title{
+    width:100%;
+    text-align: left;
+}
+.strategy_comment{
+    width:100%;
+    text-align: left;
+}
+#button_container{
+    display:flex;
+    justify-content: center;
+    height:200px;
+    margin: 50px;
 }
 /*백테스트 css */
 #backtest_inputdiv{

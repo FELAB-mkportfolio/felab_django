@@ -177,8 +177,9 @@ $(document).ready(function () {
             adjusted_assets_weights.push(parseFloat($('#adjusted_assets_weights'+i).val()));
             ad_sum = ad_sum+ parseFloat($('#adjusted_assets_weights'+i).val());
         }
+        console.log(Number(ad_sum.toFixed(12)));
 
-        if(ad_sum<0.9999 || ad_sum>1){
+        if(Number(ad_sum.toFixed(12))!=1){
             alert("비중의 합이 1이 아닙니다.")
         }else{
             $.ajax({
@@ -209,7 +210,11 @@ $(document).ready(function () {
                     }
                     $('.optimize_result').css('display', 'flex');
                     opt_result_change(adjusted_assets_names, adjusted_GMV, adjusted_MaxSharp, adjusted_RiskParity, adjusted_Trets, adjusted_Tvols,adjusted_ef_points_tooltip);
+                },error: function(request, status, error){
+                    alert("입력하신 기간동안의 데이터가 부족한 종목이 포함되어 있습니다.");
+
                 }
+
             });
         }
     });
@@ -331,24 +336,24 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols,ef_points
                                 body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['index']][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['index']][i]);
                             }
-                            $('#strategy_name_h2').html('');
-                            $('#strategy_comment_span').html('');
                             
                         }else if(tooltipitem['datasetIndex']==1){
                             for (var i=0; i<mystocks_names.length; i++){
                                 body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
                             }
-                            $('#strategy_name_h2').html('Global Minimum Variance');
-                                $('#strategy_comment_span').html('GMV(전역 최소 분산) 포트폴리오는 투자자의 위험 성향이 아주 강한 경우의 포트폴리오입니다. 이러한 상황에서 투자자는 수익의 최대화보다 위험의 최소화를 우선순위로 두게 되며, 이에 따라 최적화 프로세스는 가장 낮은 변동성의 포트폴리오를 구성할 수 있도록 가중치의 해를 찾습니다.');
+                            $('#gmv_title').css('color','#06c');
+                            $('#ms_title').css('color','black');
+                            $('#rp_title').css('color','black');
                                 
                         }else if(tooltipitem['datasetIndex']==2){
                             for (var i=0; i<mystocks_names.length; i++){
                                 body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
                             }
-                            $('#strategy_name_h2').html('Maximum Sharpe Ratio');
-                            $('#strategy_comment_span').html('샤프지수는 감수한 위험 대비 달성 하게 되는 수익이 어느정도나 되는 가를 평가할 때 쓰이는 지수입니다. 즉 위험 자산에 투자함으로써 얻은 초과 수익의 정도를 나타내는 지표입니다. 샤프 지수가 높을수록 안전하게 투자했지만 그에 비해 수익률은 높게 나왔다는 뜻입니다. 이러한 샤프 지수를 최대화한 포트폴리오가 Maximum Sharpe Ratio Portfolio 입니다.');
+                            $('#gmv_title').css('color','black');
+                            $('#ms_title').css('color','#06c');
+                            $('#rp_title').css('color','black');
                             /*data = {
                                 datasets: [{
                                     data: tooltip_weights,
@@ -368,15 +373,14 @@ function opt_result(assetsBox, GMV, MaxSharp, RiskParity, Trets, Tvols,ef_points
                                 body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
                             }
-                            $('#strategy_name_h2').html('Risk Parity Portfolio');
-                            $('#strategy_comment_span').html('리스크 패리티 전략은 개별자산의 수익률 변동이 포트폴리오 전체 위험에 기여하는 정도를 동일하도록 구성해서 포트폴리오 전체 위험이 특정 자산의 가격 변동에 과도하게 노출되는 것을 피하기 위한 자산배분전략입니다.');
+                            $('#gmv_title').css('color','black');
+                            $('#ms_title').css('color','black');
+                            $('#rp_title').css('color','#06c');
                         }else if(tooltipitem['datasetIndex']==4){
                             for (var i=0; i<mystocks_names.length; i++){
                                 body= body + mystocks_names[i] + ": " + ef_points_tooltip[tooltipitem['datasetIndex']+29][i].toFixed(2)*100 + '% \n';
                                 tooltip_weights.push(ef_points_tooltip[tooltipitem['datasetIndex']+29][i]);
                             }
-                            $('#strategy_name_h2').html('내 포트폴리오');
-                            $('#strategy_comment_span').html('');
                         }
                         return [title, "", body];
                     }
