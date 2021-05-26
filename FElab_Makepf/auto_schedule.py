@@ -25,6 +25,7 @@ class autoUpdate:
         self.curs.execute(sql)
         self.datas = self.curs.fetchall()
 
+
     def kospi_stocks_codenamesave(self): #codename update
         etfcodename = pd.DataFrame({'Code':['139260','139220','139290','139270','227550','227560','139250','139230','139240','227540','243880','243890','315270','139280'],
                                          'Name':['TIGER 200 IT', 'TIGER 200 건설','TIGER 200 경기소비재','TIGER 200 금융','TIGER 200 산업재','TIGER 200 생활소비재'
@@ -130,7 +131,7 @@ class autoUpdate:
             for stock in new_stocks:
                 tmp = fdr.DataReader(stock)
                 try:
-                    tmp.to_sql(name='kp{}'.format(stock), con=self.engine.connect(), if_exists='append')
+                    tmp.to_sql(name='kp%s' %stock, con=self.engine2.connect(), if_exists='append')
                 except:
                     logging.error(traceback.format_exc())
                     print("상장 종목 추가 ERROR", ticker)
@@ -207,10 +208,8 @@ schedule.every().wednesday.at(n_time).do(dbupdate.DB_update)
 schedule.every().wednesday.at(n_time).do(dbupdate.DB_macro_update)  
 schedule.every().wednesday.at(n_time).do(dbupdate.closeconnection)'''
 
-#schedule.every().day.at("10:30").do(job) #매일 10시30분에 
- 
+
 #실제 실행하게 하는 코드
 while True:
     schedule.run_pending()
     time.sleep(1)
-
