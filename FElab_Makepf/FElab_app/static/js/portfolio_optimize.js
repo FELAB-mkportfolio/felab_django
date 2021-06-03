@@ -167,12 +167,9 @@ $(document).ready(function () {
                 mystocks_weights.push(parseFloat($('#mystocks_weights'+i).val()));
                 sum = sum+ Number(parseFloat($('#mystocks_weights'+i).val()).toFixed(1));
             }
-            if(sum<0.9999 || sum>1){
+            if(Number(sum.toFixed(12))!=1){
                 alert("비중의 합이 1이 아닙니다.")
             }else{
-                var url = "/portfolio_optimize_result";
-                location.href=url;
-
                 var investment_kinds = []
                 for ( var i = 0; i < $("input[name=investment_kind]:checkbox" ).length; i++) {
                     if ($( "input[name=investment_kind]:checkbox")[i].checked == true ) {
@@ -189,7 +186,21 @@ $(document).ready(function () {
                     $('#modal_form').append("<input type='hidden' name='mystocks[]' value='"+mystocks_codes[i]+"'/>");
                     $('#modal_form').append("<input type='hidden' name='mystocks_weights[]' value='"+mystocks_weights[i]+"'/>");
                 }
-                $('#modal_form').submit();
+                $.ajax({
+                    url: '/ajax_portfolio_optimize_return/',
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        "mystocks[]": mystocks_codes, "mystocks_weights[]" : mystocks_weights, "from": $('#my_from').val(), 'to': $('#my_to').val(),
+                        //"investment_kinds" : 
+                    },
+                    success: function (data) {
+                        $('#modal_form').submit();
+                    },error: function(request, status, error){
+                        alert("입력하신 기간동안의 데이터가 부족한 종목이 포함되어 있습니다.");
+                    }
+                });
+                
             }
         }
     });
