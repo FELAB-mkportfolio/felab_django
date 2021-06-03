@@ -152,15 +152,30 @@ $(document).ready(function(){
     });
     $('.horizon-prev').click(function(event) {
         event.preventDefault();
-        $('#content').animate({
-          scrollLeft: "-=775px"
-        }, "slow");
+        if (screen.width>=375 && screen.width<420){
+            $('#content').animate({
+                scrollLeft: "-=275px"
+              }, "slow");    
+        }
+        else{
+            $('#content').animate({
+                scrollLeft: "-=775px"
+              }, "slow");
+        }
+        
     });
     $('.horizon-next').click(function(event) {
         event.preventDefault();
-        $('#content').animate({
-            scrollLeft: "+=775px"
-        }, "slow");
+        if (screen.width>=375 && screen.width<420){
+            $('#content').animate({
+                scrollLeft: "+=275px"
+              }, "slow");    
+        }else{
+            $('#content').animate({
+                scrollLeft: "+=775px"
+            }, "slow");
+        }
+        
     });
     $('.recmd_btn').click(function(){
         $('#comboBox').val($(this).val());

@@ -208,7 +208,7 @@ $(document).ready(function () {
                         alert("입력한 기간이 짧습니다.");
                         location.reload();
                     }
-                    $('.optimize_result').css('display', 'flex');
+                    //$('.optimize_result').css('display', 'flex');
                     opt_result_change(adjusted_assets_names, adjusted_GMV, adjusted_MaxSharp, adjusted_RiskParity, adjusted_Trets, adjusted_Tvols,adjusted_ef_points_tooltip);
                 },error: function(request, status, error){
                     alert("입력하신 기간동안의 데이터가 부족한 종목이 포함되어 있습니다.");

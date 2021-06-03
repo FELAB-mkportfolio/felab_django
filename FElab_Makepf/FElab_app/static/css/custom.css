@@ -147,6 +147,9 @@
 #third_section:hover{
     border-bottom : 2px solid #831919; transition: 2s ease;
 }
+section .content{
+    margin:50px 40px;
+}
 /*각 페이지의 개념 설명 header*/
 .h_container{
     display:flex; justify-content:center; padding:40px; background-color: white; font-family: 'AppleSDGothicNeoM';
@@ -162,7 +165,7 @@
     background-color: white; font-family: 'AppleSDGothicNeoM';
 }
 .b_container__content_header{
-    width:100%;text-align: center; font-weight: 700; font-size: 32px; color: #191f28; line-height: 1.6; margin: 60px auto; padding-top:60px; 
+    width:100%;text-align: center; font-weight: 700; font-size: 32px; color: #191f28; line-height: 1.6; margin: 60px auto; padding-top:60px;  
 }
 .b_container__content_body{
     width:100%;text-align: center;
@@ -243,7 +246,7 @@ select {
 
 }
 #register_pf, #add_asset_btn{
-    background-color: #00469d;min-width: 160px;color:white;border:none;height: 60px;font-size: 2rem;
+    background-color: #00469d;width: 160px;color:white;border:none;height: 60px;font-size: 2rem;
 }
 @media (min-width: 768px){
     .modal-container {
@@ -254,7 +257,7 @@ select {
 }
 /* 포폴 결과 */
 #tobacktest_btn{
-    background-color: white; min-width: 160px; color:#00469d; border:1px solid #cccccc; height: 60px;font-size: 2rem;
+    background-color: white; width: 160px; color:#00469d; border:1px solid #cccccc; height: 60px;font-size: 2rem;
 }
 #my_assetsBox{
     text-align:center; height:230px; overflow-y: auto; overflow-x: hidden;
@@ -271,7 +274,7 @@ select {
 #add_block{
     display:none;
 }
-#optimize_result{
+.optimize_result{
     display: flex; margin:50px 20px; height:500px; justify-content: center; font-family: 'AppleSDGothicNeoM';
 }
 .portfolio_pie{
@@ -303,6 +306,18 @@ select {
     justify-content: center;
     height:200px;
     margin: 50px;
+}
+#ef_graph{
+    width:70%;margin: 0 0 0 100px;
+}
+#ef_comment{
+    width:40%;margin: 0 100px 0 0;
+}
+.left_block{
+    width:40%;margin: 0 0 0 100px;
+}
+.right_block{
+    width:70%;margin: 0 100px 0 0;
 }
 /*백테스트 css */
 #backtest_inputdiv{
@@ -359,6 +374,9 @@ select {
 .category{
     margin: 30px 20px 30px 20px; color: #cccccc; font-size: 30px;
 }
+.category_comment{
+    font-weight: 10;font-size:20px;
+}
 .analysis_section{
     overflow-y: hidden; display:none; 
 }
@@ -366,7 +384,7 @@ select {
     display: flex;justify-content: center;height:350px;
 }
 #wordcloud_div{
-    max-width:700px; height:500px; background-color: white; padding: 10px; margin-right: 20px; overflow-y:auto; overflow-x:hidden;
+    max-width:700px; background-color: white; padding: 10px; margin-right: 20px; overflow-y:auto; overflow-x:hidden;
 }
 #wordcloud{
     width: 650px;height:500px;;
@@ -459,7 +477,94 @@ canvas .macro_graph{
         height:50vh;
     }
     .portfolio_optimize{
-        width:100%;
         margin: 10px auto;
+    }
+    .optimize_result{
+        display: block;
+        height: auto;
+    }
+    #ef_graph{
+        width:100%;margin: 10px;
+    }
+    #ef_comment{
+        width:100%;margin: 10px;
+    }
+    .strategy_container{
+        margin: 5px;
+    }
+    .strategy_title{
+        font-size: 15px;
+    }
+    .strategy_comment{
+        font-size: 10px;
+    }
+    h3{
+        font-size:15px;
+    }
+    #add_asset_btn{
+        width: 100px;
+        font-size: 15px;
+    }
+    #tobacktest_btn{
+        width:100px;
+        font-size: 15px;
+    }
+    .content .wrap section{
+        padding-top:0;
+    }
+    .left_block{
+        width:100%;margin: 10px;
+    }
+    .right_block{
+        width:100%;margin: 10px;
+    }
+    .b_container__content_header{
+        font-size: 15px;
+    }
+    #backtest_inputdiv{
+        margin: 0;
+        display: block;
+        height:auto;
+    }
+    .half_block{
+        width:100%;
+    }
+    .b_container__content{
+        margin-bottom: 40px;
+    }
+    .backtest_graph_block{
+        width:100%;
+    }
+    .backtest_graph_container{
+        height:300px;
+    }
+    .category{
+        font-size:15px;
+        margin:0;
+    }
+    .category_comment{
+        font-size:10px;
+    }
+    .category_container{
+        padding:0;
+        margin:0;
+    }
+    #wordcloud_div{
+        width: 100%;
+        margin:0;
+    }
+    #wordcloud{
+        width:375px;
+    }
+    .analysis_result_container{
+        display: block;
+        height: auto;
+    }
+    div.internal {
+        width: 100%;
+    }
+    .macro_table{
+        overflow-x: auto;
+        
     }
 }
