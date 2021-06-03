@@ -4,6 +4,9 @@
         padding:0px;
         box-sizing:border-box;
     }
+    p{
+        font-size: 20px;
+    }
 @font-face {
     font-family: 'AppleSDGothicNeoB';
     src: local('AppleSDGothicNeoB'),
@@ -148,6 +151,9 @@
 .h_container{
     display:flex; justify-content:center; padding:40px; background-color: white; font-family: 'AppleSDGothicNeoM';
 }
+.highlight_text{
+    font-size: 35px;color:#06c;
+}
 .h_container__title{
     width:80%; margin: 100px; text-align: center; font-size: 20px; 
 }
@@ -268,6 +274,15 @@ select {
 #optimize_result{
     display: flex; margin:50px 20px; height:500px; justify-content: center; font-family: 'AppleSDGothicNeoM';
 }
+.portfolio_pie{
+    height:300px; width:300px; margin: 0px auto;
+}
+#portfolio_pie_chart{
+    height: 200;
+}
+.portfolio_optimize{
+    width:60%; margin:40px auto;
+}
 /*백테스트 css */
 #backtest_inputdiv{
     margin: 100px 200px;height:600px; background-color: white; border-radius: 5px;display: flex;
@@ -382,4 +397,48 @@ canvas .macro_graph{
     filter: FlipH; -ms-filter: "FlipH";
 }
 
-/*     */
+/* 모바일 css (iphone X)  */
+@media screen and (min-width:375px)and (max-width : 1024px){
+    .content .wrap section{
+        margin: 60px;
+    }
+    .topicTitle{
+        font-size:15px;
+    }
+    p{
+        font-size: 10px;
+    }
+    #header_section{
+        margin: 60px;
+    }
+    .h_container{
+        padding:10px;
+    }
+    .h_container__title{
+        font-size: 15px; margin:70px 5px;
+    }
+    .highlight_text {
+        font-size: 20px;
+    }
+    .lecture{
+        margin:10px;
+    }
+    .lecture_image{
+        height: 200px;
+        width:200px;
+    }
+    .lecture_comment{
+        padding: 5px;
+    }
+    .portfolio_pie{
+        height: 200px;
+        width:200px;
+    }
+    #portfolio_pie_chart{
+        height:50vh;
+    }
+    .portfolio_optimize{
+        width:100%;
+        margin: 10px auto;
+    }
+}

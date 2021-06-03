@@ -132,6 +132,7 @@ $(document).ready(function(){
                     Draw_macro4(macro);
                     Draw_macro5(macro);
                     Draw_impchart(data.result);
+                    $('#asset_row').empty();
                     for(var i=0; i<data.d_data.length;i++){
                         var append_text= ""
                         r_array = round_array(data.d_data[i]);
