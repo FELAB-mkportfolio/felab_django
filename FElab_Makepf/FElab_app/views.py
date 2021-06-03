@@ -194,11 +194,12 @@ def ajax_news_analysis(request):
 @csrf_exempt
 def ajax_company_analysis(request):
     conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='bokdata')
-    assetnames= request.POST.get('abcd')
+    stock_conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
+    assetnames= '005930' #request.POST.get('input is company code like 013890')
 
     rf_model = RF_model()
 
-    data = RF_model.stock_feature(input,assetnames,conn)
+    data = rf_model.stock_feature(assetnames,conn,stock_conn)
     return JsonResponse(data, safe=False)
 @csrf_exempt
 def ajax_macro_return(request):

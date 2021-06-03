@@ -36,7 +36,7 @@ class RF_model():
             n_corr.append(abs(i))
         return n_corr
         
-    def stock_feature(self,select,conn):
+    def stock_feature(self,select,conn,stock_conn):
         '''
         select : '013890'의 형태로 input 필요
         conn의 경우는 bokdata db 필요
@@ -54,8 +54,16 @@ class RF_model():
         ###
         #bok_data # 주의 사항 데이터 마다 현 시점으로 부터 1달전, 2달전 업데이트가 다를 수 있음 NA값이 허용되는 분석 혹은 삭제 필
 
-        ticker = select # input으로 받기 
-        stock_data = fdr.DataReader(ticker, datetime.datetime.now() - relativedelta(years=5), datetime.datetime.now())
+        ticker = 'kp' + select
+        curs = stock_conn.cursor()
+        sql = "SELECT * FROM " + ticker
+        stock_data = pd.read_sql(sql,stock_conn)
+        stock_conn.close()
+        
+        start_d = stock_data['Date'] >= datetime.datetime.now() - relativedelta(years=5)
+        end_d =  stock_data['Date'] <= datetime.datetime.now()
+        stock_data = stock_data[start_d & end_d]
+        stock_data = stock_data.set_index('Date')
         stock_data = pd.DataFrame(stock_data.resample('MS').first(),columns = ['Close','Change']).reset_index()
         stock_data = stock_data[stock_data.Close != 0] # 거래정지종목의 Open값이 0으로 나오는 문제 -> row 삭제
         # 주가가 선반영하는 성질을 반영해, shift를 휴리스틱하게 주었음( 추후 근거 필요 )
