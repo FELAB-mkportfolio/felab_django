@@ -398,7 +398,7 @@ select {
 #company_news_board a{
     color:white;
 }
-.macro_table{
+.macro_table, .accuracy_table{
     margin: 0 50px;overflow-y: auto;overflow-x: hidden;
 }
 #sent_div{
@@ -434,6 +434,17 @@ canvas .macro_graph{
 #left_img {
     transform:rotate(90deg); -moz-transform: scaleX(-1);  -o-transform: scaleX(-1);  -webkit-transform: scaleX(-1);  transform: scaleX(-1);   
     filter: FlipH; -ms-filter: "FlipH";
+}
+#variable_importance{
+    display:flex;
+}
+.imp_chart{
+    height:100;
+    width:100;
+}
+.imp_chart_wrapper{
+    height:300px;
+    width:50%;
 }
 
 /* 모바일 css (iphone X)  */
@@ -518,6 +529,9 @@ canvas .macro_graph{
     .right_block{
         width:100%;margin: 10px;
     }
+    .half_block{
+        width:100%;
+    }
     .b_container__content_header{
         font-size: 15px;
     }
@@ -525,9 +539,6 @@ canvas .macro_graph{
         margin: 0;
         display: block;
         height:auto;
-    }
-    .half_block{
-        width:100%;
     }
     .b_container__content{
         margin-bottom: 40px;
@@ -563,8 +574,18 @@ canvas .macro_graph{
     div.internal {
         width: 100%;
     }
-    .macro_table{
+    .macro_table,.accuracy_table{
         overflow-x: auto;
-        
+    }
+    #stockchart_div{
+        height:250px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    #company_news_board{
+        height:250px;
+    }
+    .imp_chart_wrapper{
+        width:100%;
     }
 }

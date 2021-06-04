@@ -4,7 +4,7 @@ import json
 import pymysql
 from django.views.decorators.csrf import csrf_exempt
 from FElab_app.opt_models import c_Models
-from FElab_app.RF_regressor import RF_model
+from FElab_app.variable_importances import RF_model
 from FElab_app.back_test import back_test
 
 import pandas as pd
@@ -23,7 +23,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from FElab_app.load import LoadConfig
+from FElab_app.load_mymodel import LoadConfig
 import collections
 
 loaded_model = LoadConfig.model
@@ -193,9 +193,9 @@ def ajax_news_analysis(request):
 
 @csrf_exempt
 def ajax_company_analysis(request):
-    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='bokdata')
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
     stock_conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
-    assetnames= '005930' #request.POST.get('input is company code like 013890')
+    assetnames= request.POST.get('stock_code')
 
     rf_model = RF_model()
 

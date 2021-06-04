@@ -113,7 +113,6 @@
                                 <th class='numberCell'>S&P500</th>
                                 <th class='numberCell'>비트코인<br><span class='deg'> 단위: 원</span></th>
                                 <th class='numberCell'>이더리움<br><span class='deg'> 단위: 원</span></th>
-
                             </tr>
                         </thead>
                         <tbody id='asset_row'>
@@ -181,6 +180,37 @@
                         <div>
                             <h2 style='color:#007BFF; padding: 20px;'>뉴스 정보</h2>
                         </div>
+                    </div>
+                </div>
+                <section class='content' style='margin:50px 40px;'>
+                    <h2 class="topicTitle">변수 중요도</h2>
+                    <span>최근 5년간의 거시경제지표 데이터를 수집하여 어떤 지표가 해당 기업의 주가에 영향을 많이 미치는지 분석한 결과입니다.</span><br>
+                    
+                </section>
+                <section class='content' style='margin:50px 40px;'>
+                    <div class="accuracy_table" >
+                        <table class='table backtest_table' style='font-size: 0.9rem'>
+                            <thead>
+                                <tr style="border-top-style:hidden;">
+                                    <th>Model</th>
+                                    <th class='numberCell'>MSE</th>
+                                    <th class='numberCell'>RMSE</th>
+                                    <th class='numberCell'>Rsquared</th>
+                                </tr>
+                            </thead>
+                            <tbody id='accuracy_row'>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <div class='analysis_result_container'>
+                    <div class='imp_chart_wrapper'>
+                        <h2 class='topicTitle'>Ada-Boost 모델</h2>
+                        <canvas class='imp_chart' id='imp_chart_ada' ></canvas>
+                    </div>
+                    <div class='imp_chart_wrapper'>
+                        <h2 class='topicTitle'>Random-Forest 모델</h2>
+                        <canvas class='imp_chart' id='imp_chart_rf'></canvas>
                     </div>
                 </div>
             </div>

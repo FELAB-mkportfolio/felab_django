@@ -2,6 +2,9 @@ var mystocks_names;
 var mystocks_codes;
 var mystocksDB=[];
 var stocknames=[];
+var imp_chart_company_cnt =0;
+var imp_chart_array=[];
+var sent_chart_cnt=0;
 $(document).ready(function(){
     if(localStorage.getItem('mystocks_names')){
         mystocks_names = localStorage.getItem('mystocks_names').split(',');;  
@@ -166,6 +169,7 @@ $(document).ready(function(){
     });
     $('.horizon-next').click(function(event) {
         event.preventDefault();
+        //모바일 버전에서는 scroll 되는 범위를 줄여줘야함.
         if (screen.width>=375 && screen.width<420){
             $('#content').animate({
                 scrollLeft: "+=275px"
@@ -207,7 +211,6 @@ $(document).ready(function(){
         }
     });
     $('#market_analysis_btn').click(function(){
-       
         if (typeof(news_data) == "undefined" || $('#comboBox').val()==""){
             alert("수집된 뉴스가 없습니다");
         }
@@ -223,7 +226,6 @@ $(document).ready(function(){
                     for (i=0;i<data.words_list.length;i++){
                         words.push({'text': data.words_list[i][0], 'weight': data.words_list[i][1]})
                     }
-                    //$('.bt_right_block').css('width','60%');
                     $('#wordcloud').jQCloud(words,{
                         autoResize : false,
                         height: 350,
@@ -239,6 +241,9 @@ $(document).ready(function(){
                     $('#company_analysis_result').css('display','none');
                     $('#macro_analysis_result').css('display','none');
                     
+                    if(sent_chart_cnt>=1){
+                        window.sent_chart.destroy();
+                    }
                     Draw_sentchart(data.LSTM_sent);
 
                 },beforeSend:function(){
@@ -250,8 +255,6 @@ $(document).ready(function(){
                 }
             });
         }
-       
-
     });
     $('#company_analysis_btn').click(function(){
         if (stocknames.includes($('#comboBox2').val())){
@@ -265,9 +268,29 @@ $(document).ready(function(){
                 dataType: "json",
                 data: {'stock_code': 'kp'+$('#comboBox2').val().split(' ')[0]},
                 success: function (data) {
+                    console.log(data);
+                    if(imp_chart_company_cnt>=1){
+                        imp_chart_array[0].destroy();
+                        imp_chart_array[1].destroy();
+                        imp_chart_array =[];
+                    }
+                    Draw_impchart_company(data.ada_boost, 'imp_chart_ada');
+                    Draw_impchart_company(data.random_forest, 'imp_chart_rf');
+                    $('#accuracy_row').empty();
+                    $('#accuracy_row').append('<tr id="ada_row"><td>Ada-Boost</td></tr><tr id="rf_row"><td>Random-Forest</td></tr>');
                     
-                },
-                error: function (request, status, error) {
+                    for(var i=0; i<data.accuracy[0]['accuracy_measure'].length;i++){
+                        $('#ada_row').append('<td>'+data.accuracy[0]['ada_boost'][i]+'</td>');
+                    }
+                    for(var i=0; i<data.accuracy[0]['accuracy_measure'].length;i++){
+                        $('#rf_row').append('<td>'+data.accuracy[0]['random_forest'][i]+'</td>');
+                    }
+                    
+                },beforeSend:function(){
+                    loading();
+                },complete:function(){
+                    closeloading();
+                },error: function (request, status, error) {
                     console.log('실패');
                 }
             });
@@ -398,14 +421,49 @@ function Draw_impchart(importances){
         }
     });
 }
+function Draw_impchart_company(importances,elementid){
+    imp_chart_company_cnt++;
+    var impctx = document.getElementById(elementid).getContext('2d');
+    var imp_chart = new Chart(impctx, {
+        type: 'horizontalBar',
+        data: {
+            labels:importances[0]['Feature'],
+            datasets:[{
+                label : '',
+                data: importances[0]['Importances'],
+                backgroundColor: ['#003f5c','#2f4b7c','#665191','#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#2f4b7c','#665191','#a05195','#d45087','#f95d6a','#ff7c43','#ffa600'],
+            }],
+        },
+        options: {
+            legend: {
+                display: false
+            },
+            responsive:true,
+            maintainAspectRatio:false,
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: 0 // Edit the value according to what you need
+                    }
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
+        }
+    });
+    imp_chart_array.push(imp_chart);
+}
+
 function Draw_sentchart(sent){
-    var sentctx= document.getElementById('sent_chart').getContext('2d');
+    sent_chart_cnt++;
+    sentctx= document.getElementById('sent_chart').getContext('2d');
 
     var purple_orange_gradient = sentctx.createLinearGradient(0, 0, 0, 600);
     purple_orange_gradient.addColorStop(0, 'orange');
     purple_orange_gradient.addColorStop(1, 'purple');
     
-    var sent_chart = new Chart(sentctx, {
+    window.sent_chart = new Chart(sentctx, {
         type: 'bar',
         data: {
             labels: ["감성점수"],

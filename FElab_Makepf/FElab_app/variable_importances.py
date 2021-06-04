@@ -43,7 +43,7 @@ class RF_model():
         '''
         curs = conn.cursor()
         # 013890
-        sql = "SELECT * FROM bok_data"
+        sql = "select bok_data.index, RealEstateIndices as 부동산업지수, ReturBonds as 국고채3년수익률, ConsumerPrice as 소비자물가등락율, KOSPI, Unemployment as 실업률, ManufacturingOperatingRates as 제조업가동률, HousingPrice as 주택매매가격등락률, Construction as 건설업_업황실적, Wholesale as 도소매업_업황실적, Service as 서비스업_업황실적, LargeBusinesses as 대기업_업황실적,SmallBusinesses as 중소기업_업항실적, Export as 수출기업_업황실적, Domestic as 내수기업_업황실적, FoodProducts as 식료품_업황실적, Chemicals as 화학제품_업황실적, Medicine 의약품_업황실적, ElectronicCommunications as 전자_영상_통신장비_업황실적, ElectricalEquipment as 전기장비, Automobiles as 자동차_업황실적, Shipbuilding as 조선_기타운수_업황실적, furniture as 가구_업황실적 from bok_data;"
 
         bok_data = pd.read_sql(sql,conn)
 
@@ -54,7 +54,7 @@ class RF_model():
         ###
         #bok_data # 주의 사항 데이터 마다 현 시점으로 부터 1달전, 2달전 업데이트가 다를 수 있음 NA값이 허용되는 분석 혹은 삭제 필
 
-        ticker = 'kp' + select
+        ticker = str(select)
         curs = stock_conn.cursor()
         sql = "SELECT * FROM " + ticker
         stock_data = pd.read_sql(sql,stock_conn)
