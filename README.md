@@ -18,7 +18,7 @@ _Note: This is only a navigation guide for the specification, and does not defin
 ## Sections
 
 ### Title
--WebSite 이름
+-투자 분석 시스템
 
 ### Methodology
 
