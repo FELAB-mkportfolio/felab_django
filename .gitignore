@@ -5,3 +5,7 @@
 *.csv
 
 *.pyc
+
+/FElab_Makepf/settings.py
+
+/FElab_Makepf/wsgi.py
