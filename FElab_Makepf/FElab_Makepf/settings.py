@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'FElab_app',
+    'FElab_app2',
 ]
 
 MIDDLEWARE = [
