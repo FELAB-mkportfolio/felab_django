@@ -89,23 +89,22 @@
         </div>
     </section>
     <section class='b_container__content bcgray'>
-        <div id='button_container'>
-            <div style='border-right:1px solid #cccccc; width:50%;'>
-                <h3 class='topicTitle' style='text-align: center;height:50px;'>새로운 자산을 추가하여 포트폴리오를 재구성합니다.</h3>
-                <div style='display:flex;justify-content: center;margin:20px 0;'>
-                    <button id='add_asset_btn' style="margin:0 auto">자산 추가하기</button>
+        <div class='b_container__content_header' style='margin-top:0;background-color: #191f28;color:white;'>
+            <div style='display: flex;justify-content: center;'>
+                <div class='category_container'>
+                    <div><img src='/static/images/learning.png' class='category_icon'></div>
+                    <a id = 'add_asset_btn' class="category clicked">자산 추가하기</a><br>
+                    <span class='category_comment'>새로운 자산을 추가하여 포트폴리오를 재구성합니다.</span>
                 </div>
-            </div>
-            <div style='width:50%;'>
-                <h3 class='topicTitle' style='text-align: center;height:50px;'>내 포트폴리오가 과거 기간 어느 정도의 성과를 냈는지 백테스트를 진행합니다.</h3>
-                <div style='display:flex;justify-content: center;margin:20px 0;'>
-                    <button onclick="tobacktest()" id="tobacktest_btn">백테스트 하기</button>
+                <div class='category_container'>
+                    <div><img src='/static/images/growth.png' class='category_icon'></div>
+                    <a onclick="tobacktest()" id="tobacktest_btn" class="category">백테스트 하기</a><br>
+                    <span class='category_comment'>내 포트폴리오의 백테스트를 진행합니다.</span>
                 </div>
             </div>
         </div>
     </section>
 </div>
-
 
 <div id='add_block' style='margin:150px 0 50px;'>
     <section class='content'>

@@ -44,7 +44,7 @@ def home(request):
 
 @csrf_exempt
 def ajax_stockname_return(request):
-    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='financial_data')
     sql = "SELECT * FROM codename;"
         
     #sql문 실행/ 데이터 받기
@@ -193,7 +193,7 @@ def ajax_news_analysis(request):
 
 @csrf_exempt
 def ajax_company_analysis(request):
-    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='financial_data')
     stock_conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db=db['db_name'])
     assetnames= request.POST.get('stock_code')
 
@@ -203,7 +203,7 @@ def ajax_company_analysis(request):
     return JsonResponse(data, safe=False)
 @csrf_exempt
 def ajax_macro_return(request):
-    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='stockcodename')
+    conn = pymysql.connect(host=db['host'], user=db['user'], password=db['password'], db='financial_data')
     sql = "SELECT *,DATE_FORMAT(Date,'%Y-%m') m FROM macro_economics GROUP BY M;"
     curs = conn.cursor()
     curs.execute(sql)
@@ -243,7 +243,6 @@ def signup(request):
     return render(request, 'FElab_app/signup.html', {'signup_form':signup_form})
 
 #로그인 페이지
-def login(reques):
-    return render(reques, 'FElab_app/Login.html', {})
-
+def login(request):
+    return render(request, 'FElab_app/Login.html', {})
 

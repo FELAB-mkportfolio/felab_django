@@ -123,6 +123,17 @@
 .content .wrap section {
     overflow: hidden; margin: 60px auto; padding: 0; padding-top:60px; box-sizing: border-box; max-width: 800px; margin-bottom: 120px;
 }
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    height: 600px;
+    margin: 100px 50px;
+}
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+.card_content{ padding: 2px 16px;}
+.card_text p{font-size: 1rem;}
 #header_section{
     border-bottom:2px solid #cccccc; text-align:right;  cursor:pointer;
 }
@@ -245,9 +256,10 @@ select {
     background-color: #06c;color:white;border-radius: 0;
 
 }
-#register_pf, #add_asset_btn{
+#register_pf{
     background-color: #00469d;width: 160px;color:white;border:none;height: 60px;font-size: 2rem;
 }
+#add_asset_btn {width: 160px;color:lightblue;border:none;height: 60px;font-size: 2.5rem;}
 @media (min-width: 768px){
     .modal-container {
         padding: 70px 45px;
@@ -257,7 +269,7 @@ select {
 }
 /* 포폴 결과 */
 #tobacktest_btn{
-    background-color: white; width: 160px; color:#00469d; border:1px solid #cccccc; height: 60px;font-size: 2rem;
+    width: 160px;color: lightblue;height: 60px;font-size: 2.5rem;
 }
 #my_assetsBox{
     text-align:center; height:230px; overflow-y: auto; overflow-x: hidden;
@@ -280,9 +292,7 @@ select {
 .portfolio_pie{
     height:300px; width:300px; margin: 0px auto;
 }
-#portfolio_pie_chart{
-    height: 200;
-}
+
 .portfolio_optimize{
     width:60%; margin:40px auto;
 }
@@ -344,6 +354,7 @@ select {
 .backtest_input_row{
     margin: 20px 0; text-align: center; 
 }
+#indicator_container{ height:300px;}
 .backtest_graph_container{
     height:600px;
     margin-bottom:50px;
