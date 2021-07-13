@@ -5,7 +5,10 @@
 *.csv
 
 *.pyc
-
-/FElab_Makepf/settings.py
-
-/FElab_Makepf/wsgi.py
+*.log
+*.pot
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media
