@@ -8,7 +8,7 @@
 *.log
 *.pot
 __pycache__/
-local_settings.py
+FElab_Makepf/settings.py
 db.sqlite3
 db.sqlite3-journal
 media
