@@ -8,7 +8,8 @@
 *.log
 *.pot
 __pycache__/
-FElab_Makepf/settings.py
+C:\Users\user\FElab_Makepf\FElab_Makepf\FElab_Makepf/wsgi.py
+C:\Users\user\FElab_Makepf\FElab_Makepf\FElab_Makepf/settings.py
 db.sqlite3
 db.sqlite3-journal
 media
