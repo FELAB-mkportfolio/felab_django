@@ -5,6 +5,7 @@ var stocknames=[];
 var imp_chart_company_cnt =0;
 var imp_chart_array=[];
 var sent_chart_cnt=0;
+var $root = $('html, body');
 $(document).ready(function(){
     if(localStorage.getItem('mystocks_names')){
         mystocks_names = localStorage.getItem('mystocks_names').split(',');;  
@@ -66,12 +67,19 @@ $(document).ready(function(){
             $('#company_analysis').css('display','none');
             $('#company_analysis_result').css('display','none');
             $('#macro_analysis').css('display','none');
+            $root.animate({
+                scrollTop: $('#market_analysis').offset().top
+            }, 1000);
+            
         }
         else if($(this).html()=="기업 분석"){
             $('#market_analysis').css('display','none');
             $('#market_analysis_result').css('display','none');
             $('#company_analysis').css('display','block');
             $('#macro_analysis').css('display','none');
+            $root.animate({
+                scrollTop: $('#company_analysis').offset().top
+            }, 1000);
         }
         else{
             $('#market_analysis').css('display','none');
@@ -79,6 +87,9 @@ $(document).ready(function(){
             $('#macro_analysis').css('display','block');
             $('#market_analysis_result').css('display','none');
             $('#company_analysis_result').css('display','none');
+            $root.animate({
+                scrollTop: $('#macro_analysis').offset().top
+            }, 1000);
             $.ajax({
                 url: '/ajax_macro_return/',
                 type: "POST",

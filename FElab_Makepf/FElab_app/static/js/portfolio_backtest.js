@@ -288,7 +288,8 @@ $(document).ready(function () {
                 },complete:function(){
                     closeloading();
                 },error: function (request, status, error) {
-                    console.log('실패');
+                    alert("입력하신 기간동안의 데이터가 부족한 종목이 포함되어 있습니다.");
+                    $('#backtest_outputdiv').css('display','none');
                 }
         });
     }

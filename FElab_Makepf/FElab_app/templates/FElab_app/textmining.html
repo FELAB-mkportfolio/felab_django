@@ -35,7 +35,7 @@
         </div>
         <div class="b_container__content_body">
             <div class='analysis_section' id='market_analysis'>
-                <h3 style='text-align: center;padding: 0 50px 10px 50px;margin:20px;color:#454F5D;'>뉴스 검색</h3>
+                <h3 style='text-align: center;color:#454F5D;'>뉴스 검색</h3>
                 <div style='height:40px;display: flex;justify-content: center;'>
                     <input id="comboBox" style='text-align:right;background-color: #eeeeee;width:50%;height:100%;' />
                     <button id="search_btn" class='blue_btn' style="width:100px;">검색하기</button>
@@ -54,9 +54,12 @@
                     <span style='text-align: right;margin: 50px 0;' class="now_date"></span><br>
                     <span style='font-size: 13px;color:#cccccc'>최대 100건 수집이 가능합니다.</span>
                 </div>
-                <div class='news_wrap' style="margin:10px 20px;font-size:15px;height:350px;overflow-y: auto;overflow-x: hidden;">
-                    <div id="news_board"></div>
+                <div style='display:flex;justify-content: center;'>
+                    <div class='news_wrap'>
+                        <div id="news_board"></div>
+                    </div>
                 </div>
+                    
             </div>
             <div class='analysis_section' id='company_analysis' style='height:300px;'>
                 <h3 style='text-align: center;padding: 0 50px 10px 50px;margin:20px;color:#454F5D;'>기업 검색</h3>
@@ -65,7 +68,7 @@
                     <button id='company_analysis_btn' class='blue_btn' style='width:100px'>분석하기</button>
                 </div>
                 <div>
-                    <div id='myasset' style='width:50%;margin-top:10px;margin-left:70px;'>
+                    <div id='myasset' style='margin-top:10px;margin-left:70px;'>
                         <span>보유 종목</span>
                     </div>
                 </div>
@@ -73,7 +76,7 @@
             <div class='analysis_section' id='macro_analysis' style='height:auto;'>
                 <section class='content' style='margin:50px 40px;'>
                     <h2 class="topicTitle">금융 데이터 과거 추이</h2>
-                    <span>2017년부터 현재까지 금융 데이터를 수집하여 분석하였습니다.</span><br>
+                    <span>2017년부터 현재까지 금융 데이터를 수집하였습니다.</span><br>
                 </section>
                 <div style='display: flex;height:300px;'>
                     <div class = "horizon horizon-prev" style='width:50px;height:50px;margin-top:100px;'>

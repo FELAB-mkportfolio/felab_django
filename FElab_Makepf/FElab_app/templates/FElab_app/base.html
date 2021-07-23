@@ -28,17 +28,32 @@
         <img src="{% static 'images/loading.gif' %}" style='width:100px;height:100px;'></img>
     </div>
     <!-- navigation bar-->
-    <nav class="navbar" style='font-size: 15px; display:block;height:auto;z-index: 1;position:absolute;right:0;'>
-        <image src="/static/images/menu.png" id="js-navbar-toggle"></image>
-        <ul class="main-nav" id="js-menu">
-            <li>
-                <a href="/" class="nav-links">Home</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style='border: none;'>
+        <a class="navbar-brand" href="/home">Invest.khu</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav" style='font-size: 15px;'>
+            <li class="nav-item active">
+              <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li>
-                <a href="https://www.notion.so/b453dd6e2c3a4561b38da88ec627643c" class="nav-links">About Us</a>
+            <li class="nav-item">
+              <a class="nav-link" href="/portfolio_optimize">Portfolio Optimize</a>
             </li>
-        </ul>
-    </nav>
+            <li class="nav-item">
+              <a class="nav-link" href="/portfolio_backtest">Backtest</a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="/textmining">Financial Data Analysis</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://www.notion.so/b453dd6e2c3a4561b38da88ec627643c">About us </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
     <div id='wrap'>
         {% block content %}
         {% endblock %}

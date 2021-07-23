@@ -149,7 +149,6 @@ $(document).ready(function () {
         } catch (error) {
             date = null;
         }
-
         return date;
     }
     $('#optimize_btn').click(function () {
@@ -183,8 +182,8 @@ $(document).ready(function () {
                 localStorage.setItem("to", $('#my_to').val());
                 localStorage.setItem("mystocks_names",mystocks_names);
                 for (var i=0; i<mystocks_codes.length;i++){
-                    $('#modal_form').append("<input type='hidden' name='mystocks[]' value='"+mystocks_codes[i]+"'/>");
-                    $('#modal_form').append("<input type='hidden' name='mystocks_weights[]' value='"+mystocks_weights[i]+"'/>");
+                    $('#modal_form').append("<input type='hidden' class='mystocks_codes' name='mystocks[]' value='"+mystocks_codes[i]+"'/>");
+                    $('#modal_form').append("<input type='hidden' class='mystocks_weights' name='mystocks_weights[]' value='"+mystocks_weights[i]+"'/>");
                 }
                 $.ajax({
                     url: '/ajax_portfolio_optimize_return/',
@@ -198,6 +197,9 @@ $(document).ready(function () {
                         $('#modal_form').submit();
                     },error: function(request, status, error){
                         alert("입력하신 기간동안의 데이터가 부족한 종목이 포함되어 있습니다.");
+                        $('input').remove(".mystocks_codes");
+                        $('input').remove(".mystocks_weights");
+
                     }
                 });
                 
@@ -318,7 +320,7 @@ function stockGraph(stockdata,chart) {
         series.dataFields.lowValueY = "Low";
         series.dataFields.highValueY = "High";
         series.clustered = false;
-        series.tooltipText = "open: {openValueY.value}\nlow: {lowValueY.value}\nhigh: {highValueY.value}\nclose: {valueY.value}";
+        series.tooltipText = "주가 \nopen: {openValueY.value}\nlow: {lowValueY.value}\nhigh: {highValueY.value}\nclose: {valueY.value}";
         series.name = "MSFT";
         series.defaultState.transitionDuration = 0;
 
@@ -344,7 +346,7 @@ function stockGraph(stockdata,chart) {
         series2.clustered = false;
         series2.dataFields.valueY = "Volume";
         series2.yAxis = valueAxis2;
-        series2.tooltipText = "{valueY.value}";
+        series2.tooltipText = "거래량 \n{valueY.value}";
         series2.name = "Series 2";
         // volume should be summed
         series2.groupFields.valueY = "sum";

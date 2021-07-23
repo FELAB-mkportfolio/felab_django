@@ -5,7 +5,10 @@
         box-sizing:border-box;
     }
     p{
-        font-size: 20px;
+        font-size: 15px;
+    }
+    html{
+        scroll-behavior: smooth; 
     }
 @font-face {
     font-family: 'AppleSDGothicNeoB';
@@ -52,21 +55,7 @@
     .white_btn{
         background-color: white;height:40px; border: none;color:#00468d;
     }
-    .main-nav {
-        list-style-type: none;display: none;
-    }
-    .nav-links, .logo {
-        text-decoration: none;color: black;
-    }
-    .main-nav li {
-        text-align: center;margin: 15px auto;font-size:20px;
-    }
-    .main-nav li a{
-        color:white;
-    }
-    #js-navbar-toggle{
-        width:30px;
-    }
+    
     input[class=amcharts-input]{
         border:none; border-bottom: 1px solid #8C0000; margin: 5px 0;
     }
@@ -109,10 +98,10 @@
 /*      */
 /* main 페이지의 header */
 .header {
-    height: 230px; width: 100%; background: url(/static/images/background.jpg); background-size: cover;   
+    height: 230px; width: 100%; background: url(/static/images/background2.jpg); background-size: cover;
 }
 .topicTitle{
-    font-size: 30px; font-weight: bold;
+    font-size: 25px; font-weight: bold;
 }
 .topicBox {
     text-align:center; margin: 50px;
@@ -121,7 +110,7 @@
     font-size: 15px;
 }
 .content .wrap section {
-    overflow: hidden; margin: 60px auto; padding: 0; padding-top:60px; box-sizing: border-box; max-width: 800px; margin-bottom: 120px;
+    overflow: hidden; margin: 60px auto; padding: 0; padding-top:60px; box-sizing: border-box; max-width: 800px; margin-bottom: 60px;
 }
 .card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -169,21 +158,21 @@ section .content{
     font-size: 35px;color:#06c;
 }
 .h_container__title{
-    width:80%; margin: 100px; text-align: center; font-size: 20px; 
+    width:80%; margin: 70px; text-align: center; font-size: 15px; 
 }
 /*각 페이지의 Body */
 .b_container{
     background-color: white; font-family: 'AppleSDGothicNeoM';
 }
 .b_container__content_header{
-    width:100%;text-align: center; font-weight: 700; font-size: 32px; color: #191f28; line-height: 1.6; margin: 60px auto; padding-top:60px;  
+    width:100%;text-align: center; font-weight: 700;color: #191f28; line-height: 1.6; margin: 0px auto; padding-top:60px;
 }
 .b_container__content_body{
     width:100%;text-align: center;
 }
 /* 각 페이지의 content_section */
 .b_container__content{
-    box-sizing: border-box; width:100%; margin-bottom: 120px;
+    box-sizing: border-box; width:100%;
 }
 
 /*포폴 최적화 css */
@@ -259,7 +248,7 @@ select {
 #register_pf{
     background-color: #00469d;width: 160px;color:white;border:none;height: 60px;font-size: 2rem;
 }
-#add_asset_btn {width: 160px;color:lightblue;border:none;height: 60px;font-size: 2.5rem;}
+#add_asset_btn {width: 160px;color:lightblue;border:none;height: 60px;font-size: 20px;}
 @media (min-width: 768px){
     .modal-container {
         padding: 70px 45px;
@@ -269,7 +258,7 @@ select {
 }
 /* 포폴 결과 */
 #tobacktest_btn{
-    width: 160px;color: lightblue;height: 60px;font-size: 2.5rem;
+    width: 160px;color: lightblue;height: 60px;font-size: 20px;
 }
 #my_assetsBox{
     text-align:center; height:230px; overflow-y: auto; overflow-x: hidden;
@@ -290,7 +279,7 @@ select {
     display: flex; margin:50px 20px; height:500px; justify-content: center; font-family: 'AppleSDGothicNeoM';
 }
 .portfolio_pie{
-    height:300px; width:300px; margin: 0px auto;
+    height:250px; width:250px; margin: 20px auto;
 }
 
 .portfolio_optimize{
@@ -331,7 +320,7 @@ select {
 }
 /*백테스트 css */
 #backtest_inputdiv{
-    margin: 100px 200px;height:600px; background-color: white; border-radius: 5px;display: flex;
+    margin: 50px 100px;height:550px; background-color: white; border-radius: 5px;display: flex;
 }
 #backtest_inputdiv_left{
     border-right:1px solid #cccccc;
@@ -346,7 +335,7 @@ select {
     position:relative; background-color: white; font-family: 'AppleSDGothicNeoM';
 }
 #backtest_btn{
-    width:40%;height:60px;border:none;
+    width: 40%;border:none;
 }
 #backtest_portfolio_table{
     width:80%;
@@ -354,9 +343,16 @@ select {
 .backtest_input_row{
     margin: 20px 0; text-align: center; 
 }
+.backtest_input_row_title{
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center; 
+}
+.backtest_input_date{
+    font-size:15px;
+}
 #indicator_container{ height:300px;}
 .backtest_graph_container{
-    height:600px;
     margin-bottom:50px;
     justify-content:center;
     display:flex;
@@ -377,19 +373,19 @@ select {
 }
 /* 텍스트마이닝 */
 .category_container{
-    width: 33.33%; height:250px; display:block; float:left; padding: 0 16px; text-align: center; border-radius: 10px ;margin:0 20px;
+    width: 33.33%; height:200px; display:block; float:left; padding: 0 16px; text-align: center; border-radius: 10px ;margin:0 20px;
 }
 .category_icon{
     height:50px; width:50px; border-radius: 25px;
 }
 .category{
-    margin: 30px 20px 30px 20px; color: #cccccc; font-size: 30px;
+    margin: 30px 20px 30px 20px; color: white; font-size: 20px;
 }
 .category_comment{
-    font-weight: 10;font-size:20px;
+    font-weight: 10;font-size:15px;
 }
 .analysis_section{
-    overflow-y: hidden; display:none; 
+    overflow-y: hidden; display:none; margin: 50px 0;
 }
 .analysis_result_container{
     display: flex;justify-content: center;height:350px;
@@ -403,6 +399,7 @@ select {
 #stockchart_div{
     max-width:700px; height:500px; background-color: white; padding: 10px; margin-right: 20px; overflow-y:auto; overflow-x:hidden;
 }
+.news_wrap{margin:10px 20px;font-size:15px;height:350px;overflow-y: auto;overflow-x: hidden; width: 70%;}
 #company_news_board{
     max-width:400px; height:500px; background-color: #191f28; font-weight: 500;  overflow-y:auto; overflow-x:hidden;
 }
@@ -542,9 +539,6 @@ canvas .macro_graph{
     }
     .half_block{
         width:100%;
-    }
-    .b_container__content_header{
-        font-size: 15px;
     }
     #backtest_inputdiv{
         margin: 0;

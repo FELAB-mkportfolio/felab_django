@@ -17,7 +17,7 @@
         <div class='b_container__content_header'>
             <h2 class='topicTitle'>나의 포트폴리오 비중대로 자산에 투자했다면 성과가 어땠을지, 어느정도의 리스크까지 감수할 수 있었는지 확인해보세요. </h2>
         </div>
-        <div class="b_container__content_body">
+        <div class="b_container__content_body" style='height:600px;'>
             <div id='backtest_inputdiv'>
                 <div class='half_block' id='backtest_inputdiv_left'>
                     <input class='bcgray' id="comboBox" onfocus="if(this.value == '종목 검색') { this.value = ''; }" value="종목 검색" style='width:200px;margin-top: 50px;' />
@@ -42,9 +42,9 @@
                 <div class='half_block' id='backtest_inputdiv_right'>
                     <div class='backtest_input_row' >
                         <div class='backtest_input_row_title'>
-                            <label for="from" style='font-size:20px;'>투자 기간을 입력해 주세요</label>
+                            <label for="from">투자 기간을 입력해 주세요</label>
                         </div>
-                        <div>
+                        <div class="backtest_input_date">
                             From:  <input type="text" class="input_date" id="from" name="from" autocomplete="off" style='width:200px;height:40px;'/>
                         </div>
                         <div>
@@ -53,9 +53,9 @@
                     </div>
                     <div class='backtest_input_row'>
                         <div class='backtest_input_row_title'>
-                            <label style='font-size:20px;'>리밸런싱 주기와 최적화 전략을 입력해 주세요</label><br>
-                            <span>리밸런싱은 정해진 주기마다 포트폴리오를 재구성하는 것을 의미합니다.</span>
+                            <label>리밸런싱 주기와 최적화 전략을 입력해 주세요</label><br>
                         </div>
+                        <span>리밸런싱은 정해진 주기마다 포트폴리오를 재구성하는 것을 의미합니다.</span>
                         <div style='display:flex;justify-content: center;'>
                             <select id='rebalancing_month' style='border-bottom: 2px solid #cccccc;width:200px;'>
                                 <option value='1'>1개월</option>
@@ -73,7 +73,7 @@
                             </select>
                             <select id='rebalancing_option' style='border-bottom: 2px solid #cccccc;width:200px;'>
                                 <option value='basic'>선택한 비중을 유지합니다.</option>
-                                <option value='gmv'>Global Maximum Variance</option>
+                                <option value='gmv'>Global Minimum Variance</option>
                                 <option value='ms'>Maximum Sharpe</option>
                                 <option value='rp'>Risk Parity</option>
                             </select>
@@ -83,20 +83,20 @@
                     </div>
                     <div class='backtest_input_row'>
                         <div class='backtest_input_row_title'>
-                            <label style='font-size:20px;'>투자 금액을 입력해 주세요</label>
+                            <label>투자 금액을 입력해 주세요</label>
                         </div>
                         <div>
-                            <input type='number' class='input_amount' id='start_amount' style='width:200px;height:40px;text-align: center;' value="1000000"/>원
+                            <input type='number' class='input_amount' id='start_amount' style='text-align: center;' value="1000000"/>원
                         </div>
                     </div>
                     <div class='backtest_input_row'>
                         <div class='backtest_input_row_title'>
-                            <label style='font-size:20px;'>수익률 산출 주기</label>
+                            <label>수익률 산출 주기</label>
                         </div>
                         <div>
-                            <label style='font-size:20px;'>월 별 <input type='radio' name='interval' value='monthly' checked></label>
-                            <label style='font-size:20px;'>주 별 <input type='radio' name='interval' value='weekly'></label>
-                            <label style='font-size:20px;'>일 별 <input type='radio' name='interval' value='daily'></label>
+                            <label>월 별 <input type='radio' name='interval' value='monthly' checked></label>
+                            <label>주 별 <input type='radio' name='interval' value='weekly'></label>
+                            <label>일 별 <input type='radio' name='interval' value='daily'></label>
                         </div>
                     </div>
                     <div class='backtest_input_row'>
@@ -107,7 +107,7 @@
         </div>
     </section>
     <section class='b_container__content' id='backtest_outputdiv'>
-        <div class='b_container__content_header' style='padding-top:0;'>
+        <div class='b_container__content_header'>
             <h2>백테스트 결과</h2><span style='font-size:20px;'>투자 기간</span><span id='daterange' style='font-size:20px;'></span>
         </div>
         <div class='b_container__content_body'>
@@ -213,7 +213,7 @@
         </div>
     </section>
             
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+</div>
 
 <div class="popup" data-popup="showSise"> <!-- 표출되는 팝업 입니다. --> 
     <div class="popup-inner"> 
