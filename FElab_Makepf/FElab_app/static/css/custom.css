@@ -158,7 +158,7 @@ section .content{
     font-size: 35px;color:#06c;
 }
 .h_container__title{
-    width:80%; margin: 70px; text-align: center; font-size: 15px; 
+    width:80%; margin: 70px; text-align: center; font-size: 20px; 
 }
 /*각 페이지의 Body */
 .b_container{
@@ -320,7 +320,7 @@ select {
 }
 /*백테스트 css */
 #backtest_inputdiv{
-    margin: 50px 100px;height:550px; background-color: white; border-radius: 5px;display: flex;
+    margin: 50px 100px;height:600px; background-color: white; border-radius: 5px;display: flex;
 }
 #backtest_inputdiv_left{
     border-right:1px solid #cccccc;
